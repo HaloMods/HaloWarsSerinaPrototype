@@ -1,0 +1,14 @@
+syntax: glob
+
+glob:test_results/
+
+bin/
+lib/
+obj/
+ipch/
+
+*.user
+*.ncb
+*.sdf
+*.suo
+*.opensdf
