@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0897190D-F3D5-4F69-BE78-441D391BC5BE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PhxLib</RootNamespace>
+    <AssemblyName>PhxLib</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>False</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>False</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>False</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
+    <CodeContractsInferRequires>False</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsSuggestEnsures>False</CodeContractsSuggestEnsures>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsDisjunctiveRequires>False</CodeContractsDisjunctiveRequires>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>False</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>False</CodeContractsCacheAnalysisResults>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ExcelLibrary">
+      <HintPath>..\ExcelLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Collections\BBitSet.cs" />
+    <Compile Include="Collections\BCollectionParams.cs" />
+    <Compile Include="Collections\BList.AutoId.cs" />
+    <Compile Include="Collections\BList.cs" />
+    <Compile Include="Collections\BList.ExplicitIndex.cs" />
+    <Compile Include="Collections\BList.Types.cs" />
+    <Compile Include="Collections\BProtoEnum.cs" />
+    <Compile Include="DataAnnotations\DatabaseObject.cs" />
+    <Compile Include="Debug\Exceptions.cs" />
+    <Compile Include="Debug\Trace.cs" />
+    <Compile Include="Engine\Database.ValuePooling.cs" />
+    <Compile Include="Engine\Database\Database.Load.cs" />
+    <Compile Include="Engine\Database\Database.XmlFixes.cs" />
+    <Compile Include="Engine\Database\Database.XmlStreaming.cs" />
+    <Compile Include="Engine\Data\Ability.cs" />
+    <Compile Include="Engine\Data\Civ.cs" />
+    <Compile Include="Engine\Data\Collectibles.cs" />
+    <Compile Include="Engine\GameDirectories.cs" />
+    <Compile Include="Engine\UI\Locale.cs" />
+    <Compile Include="Engine\UI\UIControls.cs" />
+    <Compile Include="Engine\Data\DamageType.cs" />
+    <Compile Include="Engine\Database\Database.cs" />
+    <Compile Include="Engine\Database\DatabaseObject.cs" />
+    <Compile Include="Engine\Data\GameData.cs" />
+    <Compile Include="Engine\UI\HPBar.cs" />
+    <Compile Include="Engine\Data\Leader.cs" />
+    <Compile Include="Engine\Data\Objects\ProtoObject.cs" />
+    <Compile Include="Engine\Data\ProtoPower.cs" />
+    <Compile Include="Engine\Data\Objects\ProtoSquad.cs" />
+    <Compile Include="Engine\Data\ProtoTech.cs" />
+    <Compile Include="Engine\Scenario\Scenario.cs" />
+    <Compile Include="Engine\Scenario\ScenarioDescription.cs" />
+    <Compile Include="Engine\Data\Tactic.cs" />
+    <Compile Include="Engine\TriggerSystem\Trigger.cs" />
+    <Compile Include="Engine\TriggerSystem\TriggerCondition.cs" />
+    <Compile Include="Engine\TriggerSystem\TriggerEffect.cs" />
+    <Compile Include="Engine\TriggerSystem\TriggerScript.cs" />
+    <Compile Include="Engine\TriggerSystem\TriggerVar.cs" />
+    <Compile Include="Engine\Data\UserClass.cs" />
+    <Compile Include="Engine\Data\WeaponType.cs" />
+    <Compile Include="Engine\_Constants.cs" />
+    <Compile Include="HaloWars\Data\Objects\CodeProtoObject.cs" />
+    <Compile Include="HaloWars\Database.cs" />
+    <Compile Include="HaloWars\PhxEngineHW.cs" />
+    <Compile Include="HaloWars\Scenario\Scenario.cs" />
+    <Compile Include="HaloWars\TriggerSystem\TriggerVar.cs" />
+    <Compile Include="PhxEngine.cs" />
+    <Compile Include="_KSoft\IO\XmlStream.cs" />
+    <Compile Include="_KSoft\IO\XmlStream.Read.cs" />
+    <Compile Include="_KSoft\IO\XmlStream.Stream.cs" />
+    <Compile Include="_KSoft\IO\XmlStream.Write.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="_KSoft\Reflection\EnumMemberAttributes.cs" />
+    <Compile Include="_KSoft\Reflection\Util.cs" />
+    <Compile Include="_KSoft\Text\Util.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sim\" />
+    <Folder Include="XML\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
