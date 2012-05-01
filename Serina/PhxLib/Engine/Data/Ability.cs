@@ -112,9 +112,9 @@ namespace PhxLib.Engine
 
 			s.StreamElementOpt(mode, kXmlElementType, ref mType, e => e != BAbilityType.Invalid);
 			s.StreamElementOpt(mode, kXmlElementSquadMode, ref mSquadMode, e => e != BSquadMode.Invalid);
-			s.StreamElementOpt(mode, kXmlElementDamageTakenModifier, ref mDamageTakenModifier, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementDamageTakenModifier, ref mDamageTakenModifier, Util.kNotInvalidPredicateSingle);
 			s.StreamElementOpt(mode, kXmlElementTargetType, ref mTargetType, e => e != BAbilityTargetType.Invalid);
-			s.StreamElementOpt(mode, kXmlElementDuration, ref mDuration, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementDuration, ref mDuration, Util.kNotInvalidPredicateSingle);
 		}
 		#endregion
 	};

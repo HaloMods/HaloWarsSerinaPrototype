@@ -42,8 +42,8 @@ namespace PhxLib
 		public static readonly Predicate<bool> kNotFalsePredicate = x => x != false;
 		public static readonly Predicate<int> kNotInvalidPredicate = x => x != -1;
 		public static readonly Predicate<sbyte> kNotInvalidPredicateSByte = x => x != -1;
-		public static readonly Predicate<float> kNotInvalidSinglePredicate = x => x != -1.0f;
-		public static readonly Predicate<float> kNotZeroSinglePredicate = x => x != 0.0f;
+		public static readonly Predicate<float> kNotInvalidPredicateSingle = x => x != -1.0f;
+		public static readonly Predicate<float> kNotZeroPredicateSingle = x => x != 0.0f;
 		public static readonly Predicate<string> kNotNullOrEmpty = x => !string.IsNullOrEmpty(x);
 
 		public static bool StrEqualsIgnoreCase(string str1, string str2)

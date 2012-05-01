@@ -118,6 +118,8 @@ namespace PhxLib.Engine
 		CloakDetector, // ?
 		//
 		#endregion
+
+		Invalid
 	};
 
 	public enum BWeaponFlags
@@ -352,38 +354,61 @@ namespace PhxLib.Engine
 		#endregion
 
 		float mDamagePerSecond = Util.kInvalidSingle;
+		public float DamagePerSecond { get { return mDamagePerSecond; } }
 		float mDOTRate = Util.kInvalidSingle;
+		public float DOTRate { get { return mDOTRate; } }
 		float mDOTDuration = Util.kInvalidSingle;
+		public float DOTDuration { get { return mDOTDuration; } }
 
 		float mAttackRate = Util.kInvalidSingle;
+		public float AttackRate { get { return mAttackRate; } }
 		int mProjectileObjectID = Util.kInvalidInt32;
+		public float ProjectileObjectID { get { return mProjectileObjectID; } }
 
 		int mWeaponTypeID = Util.kInvalidInt32;
+		public int WeaponTypeID { get { return mWeaponTypeID; } }
 		int mVisualAmmo = Util.kInvalidInt32;
+		public int VisualAmmo { get { return mVisualAmmo; } }
 		int mTriggerScriptID = Util.kInvalidInt32;
+		public int TriggerScriptID { get { return mTriggerScriptID; } }
 
 		float mMinRange = Util.kInvalidSingle;
+		public float MinRange { get { return mMinRange; } }
 		float mMaxRange = Util.kInvalidSingle;
+		public float MaxRange { get { return mMaxRange; } }
 
 		float mReflectDamageFactor = Util.kInvalidSingle;
+		public float ReflectDamageFactor { get { return mReflectDamageFactor; } }
 		float mMovingAccuracy = Util.kInvalidSingle;
+		public float MovingAccuracy { get { return mMovingAccuracy; } }
 		float mMaxDeviation = Util.kInvalidSingle;
+		public float MaxDeviation { get { return mMaxDeviation; } }
 		float mMovingMaxDeviation = Util.kInvalidSingle;
+		public float MovingMaxDeviation { get { return mMovingMaxDeviation; } }
 		float mAccuracyDistanceFactor = Util.kInvalidSingle;
+		public float AccuracyDistanceFactor { get { return mAccuracyDistanceFactor; } }
 		float mAccuracyDeviationFactor = Util.kInvalidSingle;
+		public float AccuracyDeviationFactor { get { return mAccuracyDeviationFactor; } }
 		float mMaxVelocityLead = Util.kInvalidSingle;
+		public float MaxVelocityLead { get { return mMaxVelocityLead; } }
 		float mAirBurstSpan = Util.kInvalidSingle;
+		public float AirBurstSpan { get { return mAirBurstSpan; } }
 
 		public Collections.BTypeValues<BDamageRatingOverride> DamageOverrides { get; private set; }
 		public Collections.BListArray<BTargetPriority> TargetPriorities { get; private set; }
 
 		bool mStasisSmartTargeting;
+		public bool StasisSmartTargeting { get { return mStasisSmartTargeting; } }
 		float mStasisHealToDrainRatio = Util.kInvalidSingle;
+		public float StasisHealToDrainRatio { get { return mStasisHealToDrainRatio; } }
 
 		sbyte mBounces = (sbyte)Util.kInvalidInt32;
+		public sbyte Bounces { get { return mBounces; } }
 		float mBounceRange = Util.kInvalidSingle;
+		public float BounceRange { get { return mBounceRange; } }
 
 		float mMaxPullRange = Util.kInvalidSingle;
+		public float MaxPullRange { get { return mMaxPullRange; } }
 
 		public BWeapon()
 		{
@@ -402,28 +427,28 @@ namespace PhxLib.Engine
 
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
-			s.StreamElementOpt(mode, kXmlElementDamagePerSecond, ref mDamagePerSecond, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementDOTRate, ref mDOTRate, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementDOTDuration, ref mDOTDuration, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementDamagePerSecond, ref mDamagePerSecond, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementDOTRate, ref mDOTRate, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementDOTDuration, ref mDOTDuration, Util.kNotInvalidPredicateSingle);
 
-			s.StreamElementOpt(mode, kXmlElementAttackRate, ref mAttackRate, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementAttackRate, ref mAttackRate, Util.kNotInvalidPredicateSingle);
 			db.StreamXmlForDBID(s, mode, kXmlElementProjectile, ref mProjectileObjectID, DatabaseObjectKind.Object);
 
 			db.StreamXmlForDBID(s, mode, kXmlElementWeaponType, ref mWeaponTypeID, DatabaseObjectKind.WeaponType);
 			s.StreamElementOpt(mode, kXmlElementVisualAmmo, KSoft.NumeralBase.Decimal, ref mVisualAmmo, Util.kNotInvalidPredicate);
 			//mTriggerScriptID
 
-			s.StreamElementOpt(mode, kXmlElementMinRange, ref mMinRange, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementMaxRange, ref mMaxRange, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementMinRange, ref mMinRange, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementMaxRange, ref mMaxRange, Util.kNotInvalidPredicateSingle);
 
-			s.StreamElementOpt(mode, kXmlElementReflectDamageFactor, ref mReflectDamageFactor, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementMovingAccuracy, ref mMovingAccuracy, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementMaxDeviation, ref mMaxDeviation, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementMovingMaxDeviation, ref mMovingMaxDeviation, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementAccuracyDistanceFactor, ref mAccuracyDistanceFactor, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementAccuracyDeviationFactor, ref mAccuracyDeviationFactor, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementMaxVelocityLead, ref mMaxVelocityLead, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementAirBurstSpan, ref mAirBurstSpan, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementReflectDamageFactor, ref mReflectDamageFactor, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementMovingAccuracy, ref mMovingAccuracy, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementMaxDeviation, ref mMaxDeviation, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementMovingMaxDeviation, ref mMovingMaxDeviation, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementAccuracyDistanceFactor, ref mAccuracyDistanceFactor, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementAccuracyDeviationFactor, ref mAccuracyDeviationFactor, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementMaxVelocityLead, ref mMaxVelocityLead, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementAirBurstSpan, ref mAirBurstSpan, Util.kNotInvalidPredicateSingle);
 
 			DamageOverrides.StreamXml(s, mode, db);
 			TargetPriorities.StreamXml(s, mode, db);
@@ -433,12 +458,12 @@ namespace PhxLib.Engine
 				using (s.EnterCursorBookmark(mode, kXmlElementStasis))
 					s.StreamAttribute(mode, kXmlElementStasisAttrSmartTargeting, ref mStasisSmartTargeting);
 			}
-			s.StreamElementOpt(mode, kXmlElementStasisHealToDrainRatio, ref mStasisHealToDrainRatio, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementStasisHealToDrainRatio, ref mStasisHealToDrainRatio, Util.kNotInvalidPredicateSingle);
 
 			s.StreamElementOpt(mode, kXmlElementBounces, KSoft.NumeralBase.Decimal, ref mBounces, Util.kNotInvalidPredicateSByte);
-			s.StreamElementOpt(mode, kXmlElementBounceRange, ref mBounceRange, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementBounceRange, ref mBounceRange, Util.kNotInvalidPredicateSingle);
 
-			s.StreamElementOpt(mode, kXmlElementMaxPullRange, ref mMaxPullRange, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementMaxPullRange, ref mMaxPullRange, Util.kNotInvalidPredicateSingle);
 		}
 		#endregion
 	};
@@ -534,6 +559,100 @@ namespace PhxLib.Engine
 		const string kXmlElementCount = "Count"; // StringID
 		const string kXmlElementMaxNumUnitsPerformAction = "MaxNumUnitsPerformAction"; // int
 		const string kXmlElementDamageCharge = "DamageCharge"; // float
+		#endregion
+
+		#region Properties
+		BActionType mActionType;
+		float mProjectileSpread = Util.kInvalidSingle;
+
+		int mSquadTypeID = Util.kInvalidInt32;
+		int mWeaponID = Util.kInvalidInt32;
+		int mLinkedActionID = Util.kInvalidInt32;
+
+		BSquadMode mSquadMode = BSquadMode.Invalid;
+		BSquadMode mNewSquadMode = BSquadMode.Invalid;
+		//NewTacticState
+
+		float mWorkRate = Util.kInvalidSingle;
+		float mWorkRateVariance = Util.kInvalidSingle;
+		float mWorkRange = Util.kInvalidSingle;
+
+		float mDamageModifiersDmg;
+		float mDamageModifiersDmgTaken;
+		bool mDamageModifiersByCombatValue;
+
+		int mResourceID = Util.kInvalidInt32;
+		bool mDefault;
+
+		int mSlaveAttackAction = Util.kInvalidInt32;
+		int mBaseDPSWeaponID = Util.kInvalidInt32;
+
+		BActionType mPersistentActionType = BActionType.Invalid;
+
+		float mDuration = Util.kInvalidSingle;
+		float mDurationSpread = Util.kInvalidSingle;
+
+		float mAutoRepairIdleTime = Util.kInvalidSingle;
+		float mAutoRepairThreshold = Util.kInvalidSingle;
+		float AutoRepairSearchDistance = Util.kInvalidSingle;
+		int InvalidTargetObjectID = Util.kInvalidInt32;
+
+		int mProtoObjectID = Util.kInvalidInt32;
+		bool mProtoObjectIsSquad;
+		int mCountStringID = Util.kInvalidInt32;
+		int mkMaxNumUnitsPerformAction = Util.kInvalidInt32;
+		float mDamageCharge = Util.kInvalidSingle;
+		#endregion
+
+		#region BListAutoIdObject Members
+		bool ShouldStreamDamageModifiers(KSoft.IO.XmlElementStream s, FA mode)
+		{
+			if (mode == FA.Read) return s.ElementsExists(kXmlElementDamageModifiers);
+			else if (mode == FA.Write) return mDamageModifiersDmg != Util.kInvalidSingle;
+
+			return false;
+		}
+		bool ShouldStreamDuration(KSoft.IO.XmlElementStream s, FA mode)
+		{
+			if (mode == FA.Read) return s.ElementsExists(kXmlElementDuration);
+			else if (mode == FA.Write) return mDuration != Util.kInvalidSingle;
+
+			return false;
+		}
+		bool ShouldStreamAutoRepair(KSoft.IO.XmlElementStream s, FA mode)
+		{
+			if (mode == FA.Read) return s.ElementsExists(kXmlElementAutoRepair);
+			else if (mode == FA.Write) return mAutoRepairIdleTime != Util.kInvalidSingle;
+
+			return false;
+		}
+		bool ShouldStreamProtoObject(KSoft.IO.XmlElementStream s, FA mode)
+		{
+			if (mode == FA.Read) return s.ElementsExists(kXmlElementProtoObject);
+			else if (mode == FA.Write) return mProtoObjectID != Util.kInvalidInt32;
+
+			return false;
+		}
+
+		public /*override*/ void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		{
+			s.StreamElement(mode, kXmlElementActionType, ref mActionType);
+			s.StreamElementOpt(mode, kXmlElementProjectileSpread, ref mProjectileSpread, Util.kNotInvalidPredicateSingle);
+
+			s.StreamElementOpt(mode, kXmlElementSquadType, KSoft.NumeralBase.Decimal, ref mSquadTypeID, Util.kNotInvalidPredicate);
+			s.StreamElementOpt(mode, kXmlElementWeapon, KSoft.NumeralBase.Decimal, ref mWeaponID, Util.kNotInvalidPredicate);
+			s.StreamElementOpt(mode, kXmlElementLinkedAction, KSoft.NumeralBase.Decimal, ref mLinkedActionID, Util.kNotInvalidPredicate);
+
+			if (ShouldStreamDamageModifiers(s, mode))
+			{
+				using (s.EnterCursorBookmark(mode, kXmlElementDamageModifiers))
+				{
+					s.StreamAttribute(mode, kXmlElementDamageModifiersAttrDamage, ref mDamageModifiersDmg);
+					s.StreamAttribute(mode, kXmlElementDamageModifiersAttrDamageTaken, ref mDamageModifiersDmgTaken);
+					s.StreamAttribute(mode, kXmlElementDamageModifiersAttrByCombatValue, ref mDamageModifiersByCombatValue);
+				}
+			}
+		}
 		#endregion
 	};
 

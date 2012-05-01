@@ -279,22 +279,22 @@ namespace PhxLib.Engine
 			CodeObjectTypes.StreamXml(s, mode, db);
 
 			#region Misc values
-			s.StreamElementOpt(mode, kXmlElementGarrisonDamageMultiplier, ref mGarrisonDamageMultiplier, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementConstructionDamageMultiplier, ref mConstructionDamageMultiplier, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementGarrisonDamageMultiplier, ref mGarrisonDamageMultiplier, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementConstructionDamageMultiplier, ref mConstructionDamageMultiplier, Util.kNotInvalidPredicateSingle);
 			//
-			s.StreamElementOpt(mode, kXmlElementShieldRegenDelay, ref mShieldRegenDelay, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementShieldRegenTime, ref mShieldRegenTime, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementShieldRegenDelay, ref mShieldRegenDelay, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementShieldRegenTime, ref mShieldRegenTime, Util.kNotInvalidPredicateSingle);
 			//
-			s.StreamElementOpt(mode, kXmlElementAttackRatingMultiplier, ref mAttackRatingMultiplier, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementDefenseRatingMultiplier, ref mDefenseRatingMultiplier, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementGoodAgainstMinAttackRating, ref mGoodAgainstMinAttackRating, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementAttackRatingMultiplier, ref mAttackRatingMultiplier, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementDefenseRatingMultiplier, ref mDefenseRatingMultiplier, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementGoodAgainstMinAttackRating, ref mGoodAgainstMinAttackRating, Util.kNotInvalidPredicateSingle);
 			//
-			s.StreamElementOpt(mode, kXmlElementChanceToRocket, ref mChanceToRocket, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementChanceToRocket, ref mChanceToRocket, Util.kNotInvalidPredicateSingle);
 			//
-			s.StreamElementOpt(mode, kXmlElementTributeAmount, ref mTributeAmount, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementTributeCost, ref mTributeCost, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementTributeAmount, ref mTributeAmount, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementTributeCost, ref mTributeCost, Util.kNotInvalidPredicateSingle);
 			//
-			s.StreamElementOpt(mode, kXmlElementDamageReceivedXPFactor, ref mDamageReceivedXPFactor, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementDamageReceivedXPFactor, ref mDamageReceivedXPFactor, Util.kNotInvalidPredicateSingle);
 			#endregion
 		}
 

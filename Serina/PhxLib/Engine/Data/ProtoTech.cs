@@ -277,7 +277,7 @@ namespace PhxLib.Engine
 					s.StreamAttributeOpt(mode, kXmlAttrAction, ref mAction, Util.kNotNullOrEmpty);
 					s.StreamAttribute(mode, kXmlAttrSubType, ref mSubType);
 					// e.g., SubType==Icon and these won't be used...TODO: is Icon the only one?
-					s.StreamAttributeOpt(mode, kXmlAttrAmount, ref mAmount, Util.kNotInvalidSinglePredicate);
+					s.StreamAttributeOpt(mode, kXmlAttrAmount, ref mAmount, Util.kNotInvalidPredicateSingle);
 					s.StreamAttributeOpt(mode, kXmlAttrRelativity, ref mRelativity, x => x != BObjectDataRelative.Invalid);
 					StreamXmlObjectData(s, mode, db);
 					stream_targets = true;
