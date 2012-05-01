@@ -90,8 +90,8 @@ namespace PhxLib.Engine
 			base.StreamXml(s, mode, db);
 
 			ResourceCost.StreamXml(s, mode, db);
-			s.StreamElementOpt(mode, kXmlElementBuildPoints, ref mBuildTime, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementResearchPoints, ref mResearchTime, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementBuildPoints, ref mBuildTime, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementResearchPoints, ref mResearchTime, Util.kNotInvalidPredicateSingle);
 		}
 		#endregion
 	};

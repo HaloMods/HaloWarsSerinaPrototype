@@ -195,7 +195,7 @@ namespace PhxLib.Engine
 				Populations.StreamXml(s, mode, db);
 
 				s.StreamElementOpt(mode, kXmlElementPowerType, ref mPowerType, e => e != BPowerType.None);
-				s.StreamElementOpt(mode, kXmlElementAutoRecharge, ref mAutoRecharge, Util.kNotInvalidSinglePredicate);
+				s.StreamElementOpt(mode, kXmlElementAutoRecharge, ref mAutoRecharge, Util.kNotInvalidPredicateSingle);
 				s.StreamElementOpt(mode, kXmlElementUseLimit, ref mUseLimit, Util.kNotInvalidPredicate);
 				StreamXmlFlags(s, mode);
 			}

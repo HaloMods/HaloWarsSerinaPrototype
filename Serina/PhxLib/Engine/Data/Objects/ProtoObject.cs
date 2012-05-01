@@ -255,13 +255,13 @@ namespace PhxLib.Engine
 		#region IXmlElementStreamable Members
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
-			s.StreamAttributeOpt(mode, kXmlAttrXP, ref mXP, Util.kNotZeroSinglePredicate);
-			s.StreamAttributeOpt(mode, kXmlAttrDamage, ref mDamage, Util.kNotZeroSinglePredicate);
-			s.StreamAttributeOpt(mode, kXmlAttrVelocity, ref mVelocity, Util.kNotZeroSinglePredicate);
-			s.StreamAttributeOpt(mode, kXmlAttrAccuracy, ref mAccuracy, Util.kNotZeroSinglePredicate);
-			s.StreamAttributeOpt(mode, kXmlAttrWorkRate, ref mWorkRate, Util.kNotZeroSinglePredicate);
-			s.StreamAttributeOpt(mode, kXmlAttrWeaponRange, ref mWeaponRange, Util.kNotZeroSinglePredicate);
-			s.StreamAttributeOpt(mode, kXmlAttrDamageTaken, ref mDamageTaken, Util.kNotZeroSinglePredicate);
+			s.StreamAttributeOpt(mode, kXmlAttrXP, ref mXP, Util.kNotZeroPredicateSingle);
+			s.StreamAttributeOpt(mode, kXmlAttrDamage, ref mDamage, Util.kNotZeroPredicateSingle);
+			s.StreamAttributeOpt(mode, kXmlAttrVelocity, ref mVelocity, Util.kNotZeroPredicateSingle);
+			s.StreamAttributeOpt(mode, kXmlAttrAccuracy, ref mAccuracy, Util.kNotZeroPredicateSingle);
+			s.StreamAttributeOpt(mode, kXmlAttrWorkRate, ref mWorkRate, Util.kNotZeroPredicateSingle);
+			s.StreamAttributeOpt(mode, kXmlAttrWeaponRange, ref mWeaponRange, Util.kNotZeroPredicateSingle);
+			s.StreamAttributeOpt(mode, kXmlAttrDamageTaken, ref mDamageTaken, Util.kNotZeroPredicateSingle);
 		}
 		#endregion
 
@@ -335,7 +335,7 @@ namespace PhxLib.Engine
 		/// <summary>see: UNSC reactors</summary>
 		// Also, CostEscalationObject and Flag.LinearCostEscalation
 		public float CostEscalation { get { return mCostEscalation; } }
-		public bool HasCostEscalation { get { return Util.kNotInvalidSinglePredicate(CostEscalation); } }
+		public bool HasCostEscalation { get { return Util.kNotInvalidPredicateSingle(CostEscalation); } }
 
 		float mHitpoints = Util.kInvalidSingle;
 		public float Hitpoints { get { return mHitpoints; } }
@@ -382,11 +382,11 @@ namespace PhxLib.Engine
 
 			Veterancy.StreamXml(s, mode, db);
 
-			s.StreamElementOpt(mode, kXmlElementCostEscalation, ref mCostEscalation, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementHitpoints, ref mHitpoints, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementAttackGradeDPS, ref mAttackGradeDPS, Util.kNotInvalidSinglePredicate);
-//			s.StreamElementOpt(mode, kXmlElementCombatValue, ref mCombatValue, Util.kNotInvalidSinglePredicate);
-			s.StreamElementOpt(mode, kXmlElementBounty, ref mBounty, Util.kNotInvalidSinglePredicate);
+			s.StreamElementOpt(mode, kXmlElementCostEscalation, ref mCostEscalation, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementHitpoints, ref mHitpoints, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementAttackGradeDPS, ref mAttackGradeDPS, Util.kNotInvalidPredicateSingle);
+//			s.StreamElementOpt(mode, kXmlElementCombatValue, ref mCombatValue, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementBounty, ref mBounty, Util.kNotInvalidPredicateSingle);
 			Populations.StreamXml(s, mode, db);
 			PopulationsCapAddition.StreamXml(s, mode, db);
 
