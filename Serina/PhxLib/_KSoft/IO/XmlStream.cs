@@ -58,6 +58,14 @@ namespace KSoft.IO
 		#region Owner
 		/// <summary>Owner of this stream</summary>
 		public object Owner { get; set; }
+
+		/// <summary></summary>
+		/// <param name="new_owner"></param>
+		/// <returns></returns>
+		public /*IDisposable*/IKSoftStreamOwnerBookmark EnterOwnerBookmark(object new_owner = null)
+		{
+			return new IKSoftStreamOwnerBookmark(this, new_owner);
+		}
 		#endregion
 
 		#region StreamName
@@ -72,7 +80,7 @@ namespace KSoft.IO
 		public XmlDocument Document { get { return m_root; } }
 		#endregion
 
-		#region Cursor (node)
+		#region Cursor
 		XmlElement m_cursor;
 		/// <summary>Element data we are streaming data to and from</summary>
 		public XmlElement Cursor
@@ -350,6 +358,33 @@ namespace KSoft.IO
 			if (m_stream != null)
 			{
 				m_stream.StreamElementEnd(m_mode, ref m_oldCursor);
+				m_stream = null;
+			}
+		}
+	};
+
+	public struct IKSoftStreamOwnerBookmark : IDisposable
+	{
+		XmlElementStream m_stream;
+		object m_oldOwner;
+
+		/// <summary>Saves the stream's owner so a new one can be specified, but is then later restored to the previous owner, via <see cref="Dispose()"/></summary>
+		/// <param name="stream">The underlying stream for this bookmark</param>
+		/// <param name="new_owner"></param>
+		public IKSoftStreamOwnerBookmark(XmlElementStream stream, object new_owner)
+		{
+			Contract.Requires<ArgumentNullException>(stream != null);
+
+			m_oldOwner = (m_stream = stream).Owner;
+			m_stream.Owner = new_owner;
+		}
+
+		/// <summary>Returns the owner of the underlying stream to the previous owner</summary>
+		public void Dispose()
+		{
+			if (m_stream != null)
+			{
+				m_stream.Owner = m_oldOwner;
 				m_stream = null;
 			}
 		}

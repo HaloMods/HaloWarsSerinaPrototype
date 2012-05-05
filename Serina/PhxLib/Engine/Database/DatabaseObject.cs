@@ -56,7 +56,7 @@ namespace PhxLib.Engine
 		#region IXmlElementStreamable Members
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
-			Util.StreamStringID(s, mode, kXmlElementDisplayName, ref mDisplayNameID, db);
+			db.StreamXmlForStringID(s, mode, kXmlElementDisplayName, ref mDisplayNameID);
 		}
 		#endregion
 	};

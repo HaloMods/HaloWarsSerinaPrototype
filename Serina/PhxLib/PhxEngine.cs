@@ -18,7 +18,7 @@ namespace PhxLib
 			public string RootName { get; set; }
 
 			public bool Writable { get; set; }
-			public bool UnrequiredFile { get; set; }
+			public bool NonrequiredFile { get; set; }
 		};
 
 		public GameDirectories Directories { get; private set; }
@@ -40,14 +40,46 @@ namespace PhxLib
 			s.ExceptionOnEnumParseFail = true;
 			s.InitializeAtRootElement();
 		}
-		public bool TryStreamData(XmlFileInfo xfi, FA mode, 
-			Action<KSoft.IO.XmlElementStream, FA, BDatabaseBase> stream_proc)
+		public bool TryStreamData<TContext>(XmlFileInfo xfi, FA mode, 
+			Action<KSoft.IO.XmlElementStream, FA, BDatabaseBase, TContext> stream_proc, TContext ctxt,
+			string ext = null)
 		{
 			Contract.Requires(xfi != null);
 			Contract.Requires(stream_proc != null);
 
 			System.IO.FileInfo file;
-			bool result = Directories.TryGetFile(xfi.Location, xfi.Directory, xfi.FileName, out file);
+			bool result = Directories.TryGetFile(xfi.Location, xfi.Directory, xfi.FileName, out file, ext);
+
+			if (mode == FA.Read)
+			{
+				if (!result) return false;
+
+				using (var s = new KSoft.IO.XmlElementStream(file.FullName, mode, this))
+				{
+					SetupStream(s);
+					stream_proc(s, mode, this.Database, ctxt);
+				}
+			}
+			else if (mode == FA.Write)
+			{
+				if(xfi.Writable) using (var s = KSoft.IO.XmlElementStream.CreateForWrite(xfi.RootName, this))
+				{
+					SetupStream(s);
+					stream_proc(s, mode, this.Database, ctxt);
+					s.Document.Save(file.FullName);
+				}
+			}
+
+			return true;
+		}
+		public bool TryStreamData(XmlFileInfo xfi, FA mode, 
+			Action<KSoft.IO.XmlElementStream, FA, BDatabaseBase> stream_proc, string ext = null)
+		{
+			Contract.Requires(xfi != null);
+			Contract.Requires(stream_proc != null);
+
+			System.IO.FileInfo file;
+			bool result = Directories.TryGetFile(xfi.Location, xfi.Directory, xfi.FileName, out file, ext);
 
 			if (mode == FA.Read)
 			{

@@ -63,6 +63,19 @@ namespace PhxLib.Collections
 		bool mIsUpdating;
 
 		#region Database interfaces
+		/// <remarks>Mainly a hack for adding new items dynamically</remarks>
+		void PreAdd(T item, string item_name, int id = Util.kInvalidInt32)
+		{
+			item.AutoID = id != Util.kInvalidInt32 ? id : Count;
+			if (item_name != null) item.Data = item_name;
+		}
+		internal void DynamicAdd(T item, string item_name)
+		{
+			PreAdd(item, item_name);
+			if (m_dbi != null) m_dbi.Add(item.Data, item);
+			Add(item);
+		}
+
 		Dictionary<string, T> m_dbi;
 		internal void SetupDatabaseInterface(out Dictionary<string, T> dbi)
 		{
@@ -93,8 +106,7 @@ namespace PhxLib.Collections
 			}
 
 			item = new T();
-			item.AutoID = iteration;
-			if (item_name != null) item.Data = item_name;
+			PreAdd(item, item_name, iteration);
 			if (m_dbi != null) m_dbi.Add(item.Data, item);
 
 			Add(item);

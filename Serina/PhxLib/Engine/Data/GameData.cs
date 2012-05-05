@@ -139,6 +139,34 @@ namespace PhxLib.Engine
 		#endregion
 	};
 
+	public class BInfectionMap : IO.IPhxXmlStreamable
+	{
+		#region Xml constants
+		public static readonly Collections.BListParams kBListParams = new Collections.BListParams
+		{
+			RootName = "InfectionMap",
+			ElementName = "InfectionMapEntry",
+		};
+
+		const string kXmlAttrBase = "base";
+		const string kXmlAttrInfected = "infected";
+		const string kXmlAttrInfectedSquad = "infectedSquad";
+		#endregion
+
+		int mBaseObjectID = Util.kInvalidInt32;
+		int mInfectedObjectID = Util.kInvalidInt32;
+		int mInfectedSquadID = Util.kInvalidInt32;
+
+		#region IPhxXmlStreamable Members
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		{
+			db.StreamXmlForDBID(s, mode, kXmlAttrBase, ref mBaseObjectID, DatabaseObjectKind.Object, false, Util.kSourceAttr);
+			db.StreamXmlForDBID(s, mode, kXmlAttrInfected, ref mInfectedObjectID, DatabaseObjectKind.Object, false, Util.kSourceAttr);
+			db.StreamXmlForDBID(s, mode, kXmlAttrInfectedSquad, ref mInfectedSquadID, DatabaseObjectKind.Squad, false, Util.kSourceAttr);
+		}
+		#endregion
+	};
+
 	public class BGameData : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
@@ -238,6 +266,8 @@ namespace PhxLib.Engine
 		float mTributeCost = Util.kInvalidSingle;
 		public float TributeCost { get { return mTributeCost; } }
 		//
+		public Collections.BListArray<BInfectionMap> InfectionMap { get; private set; }
+		//
 		public float mDamageReceivedXPFactor = Util.kInvalidSingle;
 		public float DamageReceivedXPFactor { get { return mDamageReceivedXPFactor; } }
 		#endregion
@@ -259,6 +289,8 @@ namespace PhxLib.Engine
 			#endregion
 			CodeProtoObjects = new Collections.BTypeValuesString(kCodeProtoObjectsParams);
 			CodeObjectTypes = new Collections.BTypeValuesString(kCodeObjectTypesParams);
+
+			InfectionMap = new Collections.BListArray<BInfectionMap>(BInfectionMap.kBListParams);
 		}
 
 		#region IXmlElementStreamable Members
@@ -293,6 +325,8 @@ namespace PhxLib.Engine
 			//
 			s.StreamElementOpt(mode, kXmlElementTributeAmount, ref mTributeAmount, Util.kNotInvalidPredicateSingle);
 			s.StreamElementOpt(mode, kXmlElementTributeCost, ref mTributeCost, Util.kNotInvalidPredicateSingle);
+			//
+			InfectionMap.StreamXml(s, mode, db);
 			//
 			s.StreamElementOpt(mode, kXmlElementDamageReceivedXPFactor, ref mDamageReceivedXPFactor, Util.kNotInvalidPredicateSingle);
 			#endregion

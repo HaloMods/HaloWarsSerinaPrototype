@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml;
 
 using FA = System.IO.FileAccess;
+using XmlIgnore = System.Xml.Serialization.XmlIgnoreAttribute;
 
 namespace PhxLib.Engine
 {
@@ -43,6 +44,8 @@ namespace PhxLib.Engine
 		// 0x146
 		AlwaysShowHPBar, // 1<<3
 		NoPlatoonMerge, // 1<<6
+
+		[Obsolete, XmlIgnore] JoinAll,
 	};
 
 	public struct BProtoSquadUnit : IO.IPhxXmlStreamable
@@ -94,12 +97,16 @@ namespace PhxLib.Engine
 			RootName = kBListParams.RootName
 		};
 
-		const string kXmlElementFlags = "Flags";
+		static readonly Collections.CodeEnum<BProtoSquadFlags> kFlagsProtoEnum = new Collections.CodeEnum<BProtoSquadFlags>();
+		static readonly Collections.BBitSetParams kFlagsParams = new Collections.BBitSetParams("Flag",
+			db => kFlagsProtoEnum);
 
 		const string kXmlElementCanAttackWhileMoving = "CanAttackWhileMoving";
 		#endregion
 
 		public Collections.BListArray<BProtoSquadUnit> Units { get; private set; }
+
+		public Collections.BBitSet Flags { get; private set; }
 
 		/// <summary>Is this Squad just made up of a single Unit?</summary>
 		public bool SquadIsUnit { get {
@@ -109,6 +116,8 @@ namespace PhxLib.Engine
 		public BProtoSquad() : base(BResource.kBListTypeValuesParams_CostLowercaseType)
 		{
 			Units = new Collections.BListArray<BProtoSquadUnit>(BProtoSquadUnit.kBListParams);
+
+			Flags = new Collections.BBitSet(kFlagsParams);
 		}
 
 		#region IXmlElementStreamable Members
@@ -126,6 +135,8 @@ namespace PhxLib.Engine
 
 			if (ShouldStreamUnits(s, mode))
 				Units.StreamXml(s, mode, db);
+
+			Flags.StreamXml(s, mode, db);
 		}
 		#endregion
 	};

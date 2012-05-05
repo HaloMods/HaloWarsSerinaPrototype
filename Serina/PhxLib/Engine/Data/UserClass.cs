@@ -57,10 +57,11 @@ namespace PhxLib.Engine
 			Fields = new Collections.BListAutoId<BUserClassField>(BUserClassField.kBListParams);
 		}
 
-		#region IXmlElementStreamable Members
+		#region BListAutoIdObject Members
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
 			s.StreamAttribute(mode, kXmlAttrDbId, KSoft.NumeralBase.Decimal, ref mDbId);
+			Fields.StreamXml(s, mode, db);
 		}
 		#endregion
 	};

@@ -17,13 +17,21 @@ namespace PhxLib.Engine
 	public enum GameDirectory
 	{
 		Art,
+			Terrain,
 
 		Data,
-		AbilityScripts,
-		AIData,
-		PowerScripts,
-		Tactics,
-		TriggerScripts,
+			AbilityScripts,
+			AIData,
+			PowerScripts,
+			Tactics,
+			TriggerScripts,
+
+		Campaign,
+		Physics,
+		Scenario,
+		Shaders,
+		Sound,
+		TalkingHeads,
 	};
 	public class GameDirectories
 	{
@@ -38,6 +46,9 @@ namespace PhxLib.Engine
 		protected const string kTacticsPath = @"tactics\";
 		protected const string kTriggerScriptsPath = @"triggerscripts\";
 		#endregion
+		protected const string kScenariosPath = @"Scenario\";
+		protected const string kSoundPath = @"Sound\";
+		protected const string kTalkingHeadsPath = @"video\talkingheads\";
 
 		/*public*/ string RootDirectory { get; /*private*/ set; }
 		/*public*/ string UpdateDirectory { get; /*private*/ set; }

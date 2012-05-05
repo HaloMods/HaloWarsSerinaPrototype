@@ -91,7 +91,7 @@ namespace PhxLib.Engine
 			db.StreamXmlForDBID(s, mode, kXmlElementTech, ref mTechID, DatabaseObjectKind.Tech);
 			db.StreamXmlForDBID(s, mode, kXmlElementCiv, ref mCivID, DatabaseObjectKind.Civ);
 			db.StreamXmlForDBID(s, mode, kXmlElementPower, ref mPowerID, DatabaseObjectKind.Power);
-			Util.StreamStringID(s, mode, kXmlElementNameID, ref mNameID, db);
+			db.StreamXmlForStringID(s, mode, kXmlElementNameID, ref mNameID);
 
 			Resources.StreamXml(s, mode, db);
 			if(ShouldStreamStartingUnit(s, mode)) StreamXmlStartingUnit(s, mode, db);

@@ -47,6 +47,7 @@ namespace PhxLib.Engine
 		public Collections.BListAutoId<BLeader> Leaders { get; private set; }
 
 		public Dictionary<int, string/*BTacticData*/> ObjectIdToTacticsMap { get; private set; }
+		public Dictionary<string, BTacticData> TacticsMap { get; private set; }
 
 		protected BDatabaseBase(PhxEngine engine, Collections.IProtoEnum game_object_types)
 		{
@@ -68,18 +69,33 @@ namespace PhxLib.Engine
 			Leaders = new Collections.BListAutoId<BLeader>(BLeader.kBListParams);
 
 			ObjectIdToTacticsMap = new Dictionary<int, string>();
+			TacticsMap = new Dictionary<string, BTacticData>();
 
 			InitializeDatabaseInterfaces();
 		}
 
 		#region StringTable Util
-		public void AddStringIDReference(int index)
+		void AddStringIDReference(int index)
 		{
 			StringTable[index] = kInvalidString;
 		}
-		public void SetStringIDValue(int index, string value)
+		void SetStringIDValue(int index, string value)
 		{
 			StringTable[index] = value;
+		}
+
+		public void StreamXmlForStringID(KSoft.IO.XmlElementStream s, FA mode, string name,
+			ref int value, XmlNodeType type = Util.kSourceElement)
+		{
+			if (type == XmlNodeType.Element)		s.StreamElementOpt(mode, name, KSoft.NumeralBase.Decimal, ref value, Util.kNotInvalidPredicate);
+			else if (type == XmlNodeType.Attribute)	s.StreamAttributeOpt(mode, name, KSoft.NumeralBase.Decimal, ref value, Util.kNotInvalidPredicate);
+			else if (type == XmlNodeType.Text)		s.StreamCursor(mode, KSoft.NumeralBase.Decimal, ref value);
+
+			if (mode == FA.Read)
+			{
+				if (value != Util.kInvalidInt32)
+					AddStringIDReference(value);
+			}
 		}
 		#endregion
 
@@ -137,29 +153,29 @@ namespace PhxLib.Engine
 			return coll.Count != 0;
 		}
 
-		int TryGetId(Collections.BTypeNames dbi, string name)
+		static int TryGetId(Collections.BTypeNames dbi, string name)
 		{
 			return dbi.FindIndex(s => Util.StrEqualsIgnoreCase(s, name));
 		}
-		string TryGetName(Collections.BTypeNames dbi, int id)
+		static string TryGetName(Collections.BTypeNames dbi, int id)
 		{
 			if (id >= 0 && id < dbi.Count) return dbi[id];
 
 			return null;
 		}
-		int TryGetId<T>(Collections.BListAutoId<T> dbi, string name)
+		static int TryGetId<T>(Collections.BListAutoId<T> dbi, string name)
 			where T : class, Collections.IListAutoIdObject, new()
 		{
 			return dbi.FindIndex(r => Util.StrEqualsIgnoreCase(r.Data, name));
 		}
-		string TryGetName<T>(Collections.BListAutoId<T> dbi, int id)
+		internal static string TryGetName<T>(Collections.BListAutoId<T> dbi, int id)
 			where T : class, Collections.IListAutoIdObject, new()
 		{
 			if (id >= 0 && id < dbi.Count) return dbi[id].Data;
 
 			return null;
 		}
-		int TryGetId<T>(Dictionary<string, T> dbi, string name)
+		internal static int TryGetId<T>(Dictionary<string, T> dbi, string name)
 			where T : Collections.IListAutoIdObject
 		{
 			int id = Util.kInvalidInt32;
@@ -257,7 +273,6 @@ namespace PhxLib.Engine
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xml_source));
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xml_source) == (xml_name != null));
 
-			const string kTacticsExt = ".tactics";
 			string id_name = null;
 			bool to_lower = false;
 
@@ -270,11 +285,12 @@ namespace PhxLib.Engine
 					id_name = System.IO.Path.GetFileNameWithoutExtension(id_name);
 
 					ObjectIdToTacticsMap[obj.AutoID] = id_name;
+					TacticsMap[id_name] = null;
 				}
 			}
 			else if (mode == FA.Write && was_streamed)
 			{
-				id_name = obj.Name + kTacticsExt;
+				id_name = obj.Name + BTacticData.kFileExt;
 				Util.StreamStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
 			}
 
@@ -323,12 +339,25 @@ namespace PhxLib.Engine
 			return was_streamed;
 		}
 
+		internal static void StreamDamageType(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db,
+			Collections.BListOfIDsParams<object> @params, object ctxt, ref int id)
+		{
+			db.StreamXmlForDBID(s, mode, null, ref id, DatabaseObjectKind.DamageType, false, Util.kSourceCursor);
+		}
+		internal static void StreamUnitID(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db,
+			Collections.BListOfIDsParams<object> @params, object ctxt, ref int id)
+		{
+			db.StreamXmlForDBID(s, mode, null, ref id, DatabaseObjectKind.Unit, false, Util.kSourceCursor);
+		}
+
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode)
 		{
+			PreStreamXml(mode);
+
 			GameData.StreamXml(s, mode, this);
 			DamageTypes.StreamXml(s, mode, this);
 			WeaponTypes.StreamXml(s, mode, this);
-			//UserClasses.StreamXml(s, mode, this);
+			UserClasses.StreamXml(s, mode, this);
 			ObjectTypes.StreamXml(s, mode, this);
 			Abilities.StreamXml(s, mode, this);
 			Objects.StreamXml(s, mode, this);
@@ -337,6 +366,8 @@ namespace PhxLib.Engine
 			Techs.StreamXml(s, mode, this);
 			Civs.StreamXml(s, mode, this);
 			Leaders.StreamXml(s, mode, this);
+
+			PostStreamXml(mode);
 		}
 		#endregion
 	};
