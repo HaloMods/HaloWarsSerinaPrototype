@@ -118,6 +118,7 @@
     <Compile Include="Engine\Data\UserClass.cs" />
     <Compile Include="Engine\Data\WeaponType.cs" />
     <Compile Include="Engine\_Constants.cs" />
+    <Compile Include="HaloWars\Database.XmlFixes.cs" />
     <Compile Include="HaloWars\Data\Objects\CodeProtoObject.cs" />
     <Compile Include="HaloWars\Database.cs" />
     <Compile Include="HaloWars\PhxEngineHW.cs" />

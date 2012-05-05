@@ -6,6 +6,31 @@ namespace PhxLib.Engine
 {
 	partial class BDatabaseBase
 	{
+		protected virtual void PreStreamXml(FA mode) { }
+		protected virtual void PostStreamXml(FA mode) { }
+
+		PhxEngine.XmlFileInfo StreamTacticsGetFileInfo(FA mode)
+		{
+			return new PhxEngine.XmlFileInfo()
+			{
+				Location = ContentStorage.UpdateOrGame,
+				Directory = GameDirectory.Tactics,
+
+				RootName = BTacticData.kXmlRoot,
+
+				Writable = mode == FA.Write,
+			};
+		}
+		static void StreamTactic(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db, string name)
+		{
+			var td = new BTacticData();
+
+			if (mode == FA.Read) db.FixTacticsXml(s, name);
+			td.StreamXml(s, mode, db);
+
+			db.TacticsMap[name] = td;
+		}
+
 		/// <remarks>For streaming directly from gamedata.xml</remarks>
 		static void StreamXmlGameData(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
@@ -24,6 +49,7 @@ namespace PhxLib.Engine
 			db.WeaponTypes.Params.SetForceNoRootElementStreaming(true);
 			db.WeaponTypes.StreamXml(s, mode, db);
 			db.WeaponTypes.Params.SetForceNoRootElementStreaming(false);
+			if (mode == FA.Read) db.FixWeaponTypes();
 		}
 		/// <remarks>For streaming directly from UserClasses.xml</remarks>
 		static void StreamXmlUserClasses(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
@@ -56,7 +82,7 @@ namespace PhxLib.Engine
 		/// <remarks>For streaming directly from objects.xml</remarks>
 		static void StreamXmlObjects(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
-			FixObjectsXmlBullshit(s);
+			if (mode == FA.Read) db.FixObjectsXml(s);
 			db.Objects.Params.SetForceNoRootElementStreaming(true);
 			db.Objects.StreamXml(s, mode, db);
 			db.Objects.Params.SetForceNoRootElementStreaming(false);
@@ -92,7 +118,7 @@ namespace PhxLib.Engine
 		/// <remarks>For streaming directly from techs.xml</remarks>
 		static void StreamXmlTechs(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
-			FixTechsXmlBullshit(s);
+			if (mode == FA.Read) db.FixTechsXml(s);
 			db.Techs.Params.SetForceNoRootElementStreaming(true);
 			db.Techs.StreamXml(s, mode, db);
 			db.Techs.Params.SetForceNoRootElementStreaming(false);
@@ -117,7 +143,7 @@ namespace PhxLib.Engine
 		/// <remarks>For streaming directly from objects.xml</remarks>
 		static void StreamXmlObjectsUpdate(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
-			//FixObjectsXmlBullshit(s);
+			//if(mode == FA.Read) db.FixObjectsXml(s);
 			db.Objects.Params.SetForceNoRootElementStreaming(true);
 			db.Objects.StreamXmlUpdate(s, db);
 			db.Objects.Params.SetForceNoRootElementStreaming(false);
@@ -134,7 +160,7 @@ namespace PhxLib.Engine
 		/// <remarks>For streaming directly from techs.xml</remarks>
 		static void StreamXmlTechsUpdate(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
-			FixTechsXmlBullshit(s);
+			if (mode == FA.Read) db.FixTechsXml(s);
 			db.Techs.Params.SetForceNoRootElementStreaming(true);
 			db.Techs.StreamXmlUpdate(s, db);
 			db.Techs.Params.SetForceNoRootElementStreaming(false);

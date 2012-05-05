@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using Contracts = System.Diagnostics.Contracts;
+using Contract = System.Diagnostics.Contracts.Contract;
 
 using FA = System.IO.FileAccess;
 using XmlIgnore = System.Xml.Serialization.XmlIgnoreAttribute;
@@ -353,6 +355,7 @@ namespace PhxLib.Engine
 		const string kXmlElementMaxPullRange = "MaxPullRange"; // float
 		#endregion
 
+		#region Properties
 		float mDamagePerSecond = Util.kInvalidSingle;
 		public float DamagePerSecond { get { return mDamagePerSecond; } }
 		float mDOTRate = Util.kInvalidSingle;
@@ -409,6 +412,7 @@ namespace PhxLib.Engine
 
 		float mMaxPullRange = Util.kInvalidSingle;
 		public float MaxPullRange { get { return mMaxPullRange; } }
+		#endregion
 
 		public BWeapon()
 		{
@@ -417,14 +421,6 @@ namespace PhxLib.Engine
 		}
 
 		#region BListAutoIdObject Members
-		bool ShouldStreamStasis(KSoft.IO.XmlElementStream s, FA mode)
-		{
-			if (mode == FA.Read) return s.ElementsExists(kXmlElementStasis);
-			else if (mode == FA.Write) return mStasisSmartTargeting;
-
-			return false;
-		}
-
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
 			s.StreamElementOpt(mode, kXmlElementDamagePerSecond, ref mDamagePerSecond, Util.kNotInvalidPredicateSingle);
@@ -453,17 +449,27 @@ namespace PhxLib.Engine
 			DamageOverrides.StreamXml(s, mode, db);
 			TargetPriorities.StreamXml(s, mode, db);
 
+			#region Stasis
 			if (ShouldStreamStasis(s, mode))
 			{
 				using (s.EnterCursorBookmark(mode, kXmlElementStasis))
 					s.StreamAttribute(mode, kXmlElementStasisAttrSmartTargeting, ref mStasisSmartTargeting);
 			}
+			#endregion
 			s.StreamElementOpt(mode, kXmlElementStasisHealToDrainRatio, ref mStasisHealToDrainRatio, Util.kNotInvalidPredicateSingle);
 
 			s.StreamElementOpt(mode, kXmlElementBounces, KSoft.NumeralBase.Decimal, ref mBounces, Util.kNotInvalidPredicateSByte);
 			s.StreamElementOpt(mode, kXmlElementBounceRange, ref mBounceRange, Util.kNotInvalidPredicateSingle);
 
 			s.StreamElementOpt(mode, kXmlElementMaxPullRange, ref mMaxPullRange, Util.kNotInvalidPredicateSingle);
+		}
+
+		bool ShouldStreamStasis(KSoft.IO.XmlElementStream s, FA mode)
+		{
+			if (mode == FA.Read) return s.ElementsExists(kXmlElementStasis);
+			else if (mode == FA.Write) return mStasisSmartTargeting;
+
+			return false;
 		}
 		#endregion
 	};
@@ -491,7 +497,7 @@ namespace PhxLib.Engine
 		#endregion
 	};
 
-	public class BProtoAction
+	public class BProtoAction : Collections.BListAutoIdObject
 	{
 		enum BJoinType
 		{
@@ -507,6 +513,9 @@ namespace PhxLib.Engine
 			Ground,
 			Air,
 		};
+
+		static readonly Predicate<BActionType> kNotInvalidActionType = e => e != BActionType.Invalid;
+		static readonly Predicate<BSquadMode> kNotInvalidSquadMode = e => e != BSquadMode.Invalid;
 
 		#region Xml constants
 		public static readonly Collections.BListParams kBListParams = new Collections.BListParams
@@ -584,7 +593,7 @@ namespace PhxLib.Engine
 		int mResourceID = Util.kInvalidInt32;
 		bool mDefault;
 
-		int mSlaveAttackAction = Util.kInvalidInt32;
+		int mSlaveAttackActionID = Util.kInvalidInt32;
 		int mBaseDPSWeaponID = Util.kInvalidInt32;
 
 		BActionType mPersistentActionType = BActionType.Invalid;
@@ -592,19 +601,89 @@ namespace PhxLib.Engine
 		float mDuration = Util.kInvalidSingle;
 		float mDurationSpread = Util.kInvalidSingle;
 
-		float mAutoRepairIdleTime = Util.kInvalidSingle;
+		int mAutoRepairIdleTime = Util.kInvalidInt32;
 		float mAutoRepairThreshold = Util.kInvalidSingle;
-		float AutoRepairSearchDistance = Util.kInvalidSingle;
-		int InvalidTargetObjectID = Util.kInvalidInt32;
+		float mAutoRepairSearchDistance = Util.kInvalidSingle;
+		int mInvalidTargetObjectID = Util.kInvalidInt32;
 
 		int mProtoObjectID = Util.kInvalidInt32;
 		bool mProtoObjectIsSquad;
 		int mCountStringID = Util.kInvalidInt32;
-		int mkMaxNumUnitsPerformAction = Util.kInvalidInt32;
+		int mMaxNumUnitsPerformAction = Util.kInvalidInt32;
 		float mDamageCharge = Util.kInvalidSingle;
 		#endregion
 
 		#region BListAutoIdObject Members
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		{
+			var td = s.Owner as BTacticData;
+
+			s.StreamElementOpt(mode, kXmlElementActionType, ref mActionType, kNotInvalidActionType);
+			s.StreamElementOpt(mode, kXmlElementProjectileSpread, ref mProjectileSpread, Util.kNotInvalidPredicateSingle);
+
+			db.StreamXmlForDBID(s, mode, kXmlElementSquadType, ref mSquadTypeID, DatabaseObjectKind.Squad);
+			td.StreamXmlForDBID(s, mode, kXmlElementWeapon, ref mWeaponID, BTacticData.ObjectKind.Weapon);
+			td.StreamXmlForDBID(s, mode, kXmlElementLinkedAction, ref mLinkedActionID, BTacticData.ObjectKind.Action);
+
+			s.StreamElementOpt(mode, kXmlElementSquadMode, ref mSquadMode, kNotInvalidSquadMode);
+			s.StreamElementOpt(mode, kXmlElementNewSquadMode, ref mNewSquadMode, kNotInvalidSquadMode);
+			//td.StreamXmlForDBID(s, mode, kXmlElementNewTacticState, ref mNewTacticStateID, BTacticData.ObjectKind.TacticState);
+
+			#region Work
+			s.StreamElementOpt(mode, kXmlElementWorkRate, ref mWorkRate, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementWorkRateVariance, ref mWorkRateVariance, Util.kNotInvalidPredicateSingle);
+			s.StreamElementOpt(mode, kXmlElementWorkRange, ref mWorkRange, Util.kNotInvalidPredicateSingle);
+			#endregion
+
+			#region DamageModifiers
+			if (ShouldStreamDamageModifiers(s, mode)) using (s.EnterCursorBookmark(mode, kXmlElementDamageModifiers))
+			{
+				s.StreamAttribute(mode, kXmlElementDamageModifiersAttrDamage, ref mDamageModifiersDmg);
+				s.StreamAttributeOpt(mode, kXmlElementDamageModifiersAttrDamageTaken, ref mDamageModifiersDmgTaken, Util.kNotInvalidPredicateSingle);
+				s.StreamAttributeOpt(mode, kXmlElementDamageModifiersAttrByCombatValue, ref mDamageModifiersByCombatValue, Util.kNotFalsePredicate);
+			}
+			#endregion
+
+			db.StreamXmlForDBID(s, mode, kXmlElementResource, ref mResourceID, DatabaseObjectKind.Cost);
+			s.StreamElementOpt(mode, kXmlElementDefault, ref mDefault, Util.kNotFalsePredicate);
+
+			td.StreamXmlForDBID(s, mode, kXmlElementSlaveAttackAction, ref mSlaveAttackActionID, BTacticData.ObjectKind.Action);
+			td.StreamXmlForDBID(s, mode, kXmlElementBaseDPSWeapon, ref mBaseDPSWeaponID, BTacticData.ObjectKind.Weapon);
+
+			s.StreamElementOpt(mode, kXmlElementPersistentActionType, ref mPersistentActionType, kNotInvalidActionType);
+
+			#region Duration
+			if (ShouldStreamDuration(s, mode)) using (s.EnterCursorBookmark(mode, kXmlElementDuration))
+			{
+				s.StreamCursor(mode, ref mDuration);
+				s.StreamAttributeOpt(mode, kXmlElementDurationAttrSpread, ref mDurationSpread, Util.kNotInvalidPredicateSingle);
+			}
+			#endregion
+
+			#region AutoRepair
+			if (ShouldStreamAutoRepair(s, mode)) using (s.EnterCursorBookmark(mode, kXmlElementAutoRepair))
+			{
+				s.StreamAttribute(mode, kXmlElementAutoRepairAttrIdleTime, KSoft.NumeralBase.Decimal, ref mAutoRepairIdleTime);
+				s.StreamAttribute(mode, kXmlElementAutoRepairAttrThreshold, ref mAutoRepairThreshold);
+				s.StreamAttribute(mode, kXmlElementAutoRepairAttrSearchDistance, ref mAutoRepairSearchDistance);
+			}
+			#endregion
+			db.StreamXmlForDBID(s, mode, kXmlElementInvalidTarget, ref mInvalidTargetObjectID, DatabaseObjectKind.Object);
+
+			#region ProtoObject
+			if (ShouldStreamProtoObject(s, mode)) using (s.EnterCursorBookmark(mode, kXmlElementProtoObject))
+			{
+				// TODO: This IS optional, right? Only on 'true'?
+				s.StreamAttributeOpt(mode, kXmlElementProtoObjectAttrSquad, ref mProtoObjectIsSquad, Util.kNotFalsePredicate);
+				db.StreamXmlForDBID(s, mode, null, ref mSquadTypeID, 
+					mProtoObjectIsSquad ? DatabaseObjectKind.Squad : DatabaseObjectKind.Object, false, Util.kSourceCursor);
+			}
+			#endregion
+			//db.StreamXmlForStringID(s, mode, kXmlElementCount, ref mCountStringID);
+			s.StreamElementOpt(mode, kXmlElementMaxNumUnitsPerformAction, KSoft.NumeralBase.Decimal, ref mMaxNumUnitsPerformAction, Util.kNotInvalidPredicate);
+			s.StreamElementOpt(mode, kXmlElementDamageCharge, ref mDamageCharge, Util.kNotInvalidPredicateSingle);
+		}
+
 		bool ShouldStreamDamageModifiers(KSoft.IO.XmlElementStream s, FA mode)
 		{
 			if (mode == FA.Read) return s.ElementsExists(kXmlElementDamageModifiers);
@@ -633,30 +712,10 @@ namespace PhxLib.Engine
 
 			return false;
 		}
-
-		public /*override*/ void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
-		{
-			s.StreamElement(mode, kXmlElementActionType, ref mActionType);
-			s.StreamElementOpt(mode, kXmlElementProjectileSpread, ref mProjectileSpread, Util.kNotInvalidPredicateSingle);
-
-			s.StreamElementOpt(mode, kXmlElementSquadType, KSoft.NumeralBase.Decimal, ref mSquadTypeID, Util.kNotInvalidPredicate);
-			s.StreamElementOpt(mode, kXmlElementWeapon, KSoft.NumeralBase.Decimal, ref mWeaponID, Util.kNotInvalidPredicate);
-			s.StreamElementOpt(mode, kXmlElementLinkedAction, KSoft.NumeralBase.Decimal, ref mLinkedActionID, Util.kNotInvalidPredicate);
-
-			if (ShouldStreamDamageModifiers(s, mode))
-			{
-				using (s.EnterCursorBookmark(mode, kXmlElementDamageModifiers))
-				{
-					s.StreamAttribute(mode, kXmlElementDamageModifiersAttrDamage, ref mDamageModifiersDmg);
-					s.StreamAttribute(mode, kXmlElementDamageModifiersAttrDamageTaken, ref mDamageModifiersDmgTaken);
-					s.StreamAttribute(mode, kXmlElementDamageModifiersAttrByCombatValue, ref mDamageModifiersByCombatValue);
-				}
-			}
-		}
 		#endregion
 	};
 
-	public class BTacticTargetRule
+	public class BTacticTargetRule : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
 		public static readonly Collections.BListParams kBListParams = new Collections.BListParams
@@ -668,52 +727,219 @@ namespace PhxLib.Engine
 		const string kXmlElementRelation = "Relation"; // BDiplomacy
 		const string kXmlElementSquadMode = "SquadMode"; // BSquadMode
 		const string kXmlElementAutoTargetSquadMode = "AutoTargetSquadMode"; // BSquadMode
-		const string kXmlElementDamageType = "DamageType"; // BDamageType
-		const string kXmlElementTargetType = "TargetType"; // object type or proto unit
+		static readonly Collections.BListOfIDsParams kDamageTypeBListParams = // BDamageType
+			new Collections.BListOfIDsParams("DamageType", BDatabaseBase.StreamDamageType);
+		static readonly Collections.BListOfIDsParams kTargetTypeBListParams = // object type or proto unit
+			new Collections.BListOfIDsParams("TargetType", BDatabaseBase.StreamUnitID);
 		const string kXmlElementAction = "Action"; // BProtoAction
 		const string kXmlElementTargetState = "TargetState"; // BTacticTargetRuleTargetState
 		const string kXmlElementAbility = "Ability"; // BAbility
 		const string kXmlElementOptionalAbility = "OptionalAbility"; // BAbility
-		const string kXmlElement = "";
 		#endregion
 
 		BDiplomacy mRelation = BDiplomacy.Invalid;
 
 		BSquadMode mSquadMode = BSquadMode.Invalid,
 			mAutoTargetSquadMode = BSquadMode.Invalid;
+
+		public Collections.BListOfIDs DamageTypes { get; private set; }
+		public Collections.BListOfIDs TargetTypes { get; private set; }
+
+		int mProtoActionID = Util.kInvalidInt32;
+		//BTacticTargetRuleTargetState mTargetStates;
+
+		int mAbilityID = Util.kInvalidInt32;
+		public bool IsOptionalAbility { get; private set; }
+
+		public BTacticTargetRule()
+		{
+			DamageTypes = new Collections.BListOfIDs(kDamageTypeBListParams);
+			TargetTypes = new Collections.BListOfIDs(kTargetTypeBListParams);
+		}
+
+		#region IPhxXmlStreamable Members
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		{
+			var td = s.Owner as BTacticData;
+
+			s.StreamElementOpt(mode, kXmlElementRelation, ref mRelation, e => e != BDiplomacy.Invalid);
+			if(!s.StreamElementOpt(mode, kXmlElementSquadMode, ref mSquadMode, e => e != BSquadMode.Invalid))
+				s.StreamElementOpt(mode, kXmlElementAutoTargetSquadMode, ref mAutoTargetSquadMode, e => e != BSquadMode.Invalid);
+
+			DamageTypes.StreamXml(s, mode, db);
+			TargetTypes.StreamXml(s, mode, db);
+
+			td.StreamXmlForDBID(s, mode, kXmlElementAction, ref mProtoActionID, BTacticData.ObjectKind.Action);
+
+			if (!db.StreamXmlForDBID(s, mode, kXmlElementAbility, ref mAbilityID, DatabaseObjectKind.Ability))
+				IsOptionalAbility = db.StreamXmlForDBID(s, mode, kXmlElementOptionalAbility, ref mAbilityID, DatabaseObjectKind.Ability);
+		}
+		#endregion
 	};
-	public class BTactic
+	public class BTactic : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
 		const string kXmlRoot = "Tactic";
 
-		const string kXmlElementPersistentAction = "PersistentAction"; // BProtoAction
-		const string kXmlElementPersistentSquadAction = "PersistentSquadAction"; // BProtoAction
-		const string kXmlElement = "";
+		static readonly Collections.BListOfIDsParams<BTacticData> kPersistentActionBListParams =
+			new Collections.BListOfIDsParams<BTacticData>("PersistentAction", BTacticData.StreamProtoActionID, BTacticData.GetContext);
+		static readonly Collections.BListOfIDsParams<BTacticData> kPersistentSquadActionBListParams =
+			new Collections.BListOfIDsParams<BTacticData>("PersistentSquadAction", BTacticData.StreamProtoActionID, BTacticData.GetContext);
+		#endregion
+
+		public Collections.BListArray<BTacticTargetRule> TargetRules { get; private set; }
+		public Collections.BListOfIDs<BTacticData> PersistentActions { get; private set; }
+		public Collections.BListOfIDs<BTacticData> PersistentSquadActions { get; private set; }
+
+		public BTactic()
+		{
+			TargetRules = new Collections.BListArray<BTacticTargetRule>(BTacticTargetRule.kBListParams);
+			PersistentActions = new Collections.BListOfIDs<BTacticData>(kPersistentActionBListParams);
+			PersistentSquadActions = new Collections.BListOfIDs<BTacticData>(kPersistentSquadActionBListParams);
+		}
+
+		#region IPhxXmlStreamable Members
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		{
+			TargetRules.StreamXml(s, mode, db);
+			PersistentActions.StreamXml(s, mode, db);
+			PersistentSquadActions.StreamXml(s, mode, db);
+		}
 		#endregion
 	};
 
 	public class BTacticData : IO.IPhxXmlStreamable
 	{
+		public const string kFileExt = ".tactics";
+
+		public enum ObjectKind
+		{
+			Weapon,
+			TacticState,
+			Action,
+		};
+
 		#region Xml constants
-		const string kXmlRoot = "TacticData";
+		public const string kXmlRoot = "TacticData";
+
+		internal static BTacticData GetContext(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		{
+			return s.Owner as BTacticData;
+		}
+
+		internal static void StreamWeaponID(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db,
+			Collections.BListOfIDsParams<BTacticData> @params, BTacticData ctxt, ref int id)
+		{
+			ctxt.StreamXmlForDBID(s, mode, null, ref id, ObjectKind.Weapon, false, Util.kSourceCursor);
+		}
+		internal static void StreamProtoActionID(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db,
+			Collections.BListOfIDsParams<BTacticData> @params, BTacticData ctxt, ref int id)
+		{
+			ctxt.StreamXmlForDBID(s, mode, null, ref id, ObjectKind.Action, false, Util.kSourceCursor);
+		}
 		#endregion
 
 		public Collections.BListAutoId<BWeapon> Weapons { get; private set; }
+		public Collections.BListAutoId<BProtoAction> Actions { get; private set; }
 
 		public BTactic Tactic { get; private set; }
 
 		public BTacticData()
 		{
 			Weapons = new Collections.BListAutoId<BWeapon>(BWeapon.kBListParams);
+			Actions = new Collections.BListAutoId<BProtoAction>(BProtoAction.kBListParams);
 			
 			Tactic = new BTactic();
+
+			InitializeDatabaseInterfaces();
 		}
 
+		#region Database interfaces
+		Dictionary<string, BWeapon> m_dbiWeapons;
+		//Dictionary<string, BTacticState> m_dbiTacticStates;
+		Dictionary<string, BProtoAction> m_dbiActions;
+
+		void InitializeDatabaseInterfaces()
+		{
+			Weapons.SetupDatabaseInterface(out m_dbiWeapons);
+			//TacticStates.SetupDatabaseInterface(out m_dbiTacticStates);
+			Actions.SetupDatabaseInterface(out m_dbiActions);
+		}
+
+		public int GetId(ObjectKind kind, string name)
+		{
+			switch (kind)
+			{
+				case ObjectKind.Weapon:			return BDatabaseBase.TryGetId(m_dbiWeapons, name);
+				//case ObjectKind.TacticState:	return BDatabaseBase.TryGetId(m_dbiTacticStates, name);
+				case ObjectKind.Action:			return BDatabaseBase.TryGetId(m_dbiActions, name);
+
+				default: throw new Debug.UnreachableException(kind.ToString());
+			}
+		}
+		public string GetName(ObjectKind kind, int id)
+		{
+			switch (kind)
+			{
+				case ObjectKind.Weapon:		return BDatabaseBase.TryGetName(Weapons, id);
+				//case ObjectKind.TacticState:return BDatabaseBase.TryGetName(TacticStates, id);
+				case ObjectKind.Action:		return BDatabaseBase.TryGetName(Actions, id);
+
+				default: throw new Debug.UnreachableException(kind.ToString());
+			}
+		}
+		#endregion
+
 		#region IPhxXmlStreamable Members
+		public bool StreamXmlForDBID(KSoft.IO.XmlElementStream s, FA mode, string xml_name, ref int dbid, 
+			ObjectKind kind,
+			bool is_optional = true, XmlNodeType xml_source = XmlNodeType.Element)
+		{
+			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xml_source));
+			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xml_source) == (xml_name != null));
+
+			string id_name = null;
+			bool was_streamed = true;
+			bool to_lower = false;
+
+			if (mode == FA.Read)
+			{
+				if (is_optional)
+					was_streamed = Util.StreamInternStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
+				else
+					Util.StreamInternString(s, mode, xml_name, ref id_name, to_lower, xml_source);
+
+				if (was_streamed)
+				{
+					dbid = GetId(kind, id_name);
+					Contract.Assert(dbid != Util.kInvalidInt32);
+				}
+				else
+					dbid = Util.kInvalidInt32;
+			}
+			else if (mode == FA.Write && dbid != Util.kInvalidInt32)
+			{
+				id_name = GetName(kind, dbid);
+				Contract.Assert(!string.IsNullOrEmpty(id_name));
+
+				if (is_optional)
+					Util.StreamInternStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
+				else
+					Util.StreamInternString(s, mode, xml_name, ref id_name, to_lower, xml_source);
+			}
+
+			return was_streamed;
+		}
+
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
 		{
-			Weapons.StreamXml(s, mode, db);
+			using (s.EnterOwnerBookmark(this))
+			{
+				Weapons.StreamXml(s, mode, db);
+				//TacticStates.StreamXml(s, mode, db);
+				Actions.StreamXml(s, mode, db);
+				Tactic.StreamXml(s, mode, db);
+			}
 		}
 		#endregion
 	};

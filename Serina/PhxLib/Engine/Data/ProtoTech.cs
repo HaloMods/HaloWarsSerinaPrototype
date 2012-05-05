@@ -4,28 +4,28 @@ using System.Linq;
 using System.Xml;
 
 using FA = System.IO.FileAccess;
+using XmlIgnore = System.Xml.Serialization.XmlIgnoreAttribute;
 
 namespace PhxLib.Engine
 {
-	[Flags]
 	public enum BProtoTechFlags
 	{
 		// 0x1C
-		NoSound = 1<<0,
-		//Forbid = 1<<1,
-		Perpetual = 1<<2,
-		OrPrereqs = 1<<3,
-		Shadow = 1<<4,
+		NoSound,// = 1<<0,
+		[XmlIgnore] Forbid,// = 1<<1,
+		Perpetual,// = 1<<2,
+		OrPrereqs,// = 1<<3,
+		Shadow,// = 1<<4,
 		/// <summary>Tech applies to a unique, ie specific, unit</summary>
-		UniqueProtoUnitInstance = 1<<5,
-		Unobtainable = 1<<6,
-		//OwnStaticData = 1<<7,
+		UniqueProtoUnitInstance,// = 1<<5,
+		Unobtainable,// = 1<<6,
+		[XmlIgnore] OwnStaticData,// = 1<<7,
 
 		// 0x1D
-		Instant = (1<<7) << 8,
+		Instant,// = 1<<7,
 
 		// 0x78
-		HiddenFromStats = (1<<0) << 16, // actually just appears to be a bool field
+		HiddenFromStats,// = 1<<0, // actually just appears to be a bool field
 	};
 
 	public enum BProtoTechStatus
@@ -63,7 +63,7 @@ namespace PhxLib.Engine
 		Player,
 	};
 
-	public struct BProtoTechPrereq
+	public struct BProtoTechPrereq : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
 		const string kXmlRootName = "Prereqs";
@@ -76,6 +76,13 @@ namespace PhxLib.Engine
 		//operator, gt, lt
 
 		const string kXmlElement = "";
+		#endregion
+
+		#region IPhxXmlStreamable Members
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		{
+			throw new NotImplementedException();
+		}
 		#endregion
 	};
 	public struct BProtoTechEffectTarget : IO.IPhxXmlStreamable
@@ -170,7 +177,8 @@ namespace PhxLib.Engine
 
 		BObjectDataType mSubType;
 
-		float mAmount = Util.kInvalidSingle;
+		// Amount can be negative, so use NaN as the 'invalid' value instead
+		float mAmount = Util.kInvalidSingleNaN;
 
 		BObjectDataRelative mRelativity = BObjectDataRelative.Invalid;
 
@@ -277,7 +285,7 @@ namespace PhxLib.Engine
 					s.StreamAttributeOpt(mode, kXmlAttrAction, ref mAction, Util.kNotNullOrEmpty);
 					s.StreamAttribute(mode, kXmlAttrSubType, ref mSubType);
 					// e.g., SubType==Icon and these won't be used...TODO: is Icon the only one?
-					s.StreamAttributeOpt(mode, kXmlAttrAmount, ref mAmount, Util.kNotInvalidPredicateSingle);
+					s.StreamAttributeOpt(mode, kXmlAttrAmount, ref mAmount, Util.kNotInvalidPredicateSingleNaN);
 					s.StreamAttributeOpt(mode, kXmlAttrRelativity, ref mRelativity, x => x != BObjectDataRelative.Invalid);
 					StreamXmlObjectData(s, mode, db);
 					stream_targets = true;

@@ -16,6 +16,7 @@ namespace PhxLib.HaloWars
 
 	public enum BCodeProtoObject
 	{
+		// Objects
 		Revealer,
 		Blocker,
 		AIEyeIcon,
@@ -27,10 +28,12 @@ namespace PhxLib.HaloWars
 		PhysicsThrownObject,
 		SkirmishEmptyBaseObject,
 		Scn07Scarab,
+		// Squads
 		SkirmishScarab,
 		Cobra,
 		Vampire,
 		LeaderPowerCaster,
+		// Objects
 		SPCHeroForge,
 		SPCHeroForgeWarthog,
 		SPCHeroAnders,

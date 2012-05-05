@@ -35,6 +35,7 @@ namespace PhxLib
 	{
 		public const int kInvalidInt32 = -1;
 		public const float kInvalidSingle = -1.0f;
+		public const float kInvalidSingleNaN = float.NaN;
 
 		public static readonly Func<int> kGetInvalidInt32 = () => kInvalidInt32;
 		public static readonly Func<float> kGetInvalidSingle = () => kInvalidSingle;
@@ -43,6 +44,7 @@ namespace PhxLib
 		public static readonly Predicate<int> kNotInvalidPredicate = x => x != -1;
 		public static readonly Predicate<sbyte> kNotInvalidPredicateSByte = x => x != -1;
 		public static readonly Predicate<float> kNotInvalidPredicateSingle = x => x != -1.0f;
+		public static readonly Predicate<float> kNotInvalidPredicateSingleNaN = x => !float.IsNaN(x);
 		public static readonly Predicate<float> kNotZeroPredicateSingle = x => x != 0.0f;
 		public static readonly Predicate<string> kNotNullOrEmpty = x => !string.IsNullOrEmpty(x);
 
@@ -107,20 +109,6 @@ namespace PhxLib
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
 
 			return StreamStringOpt(s, mode, name, ref value, to_lower, type, true);
-		}
-
-		public static void StreamStringID(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref int value, Engine.BDatabaseBase db, XmlNodeType type = kSourceElement)
-		{
-			if (type == XmlNodeType.Element)		s.StreamElementOpt(mode, name, KSoft.NumeralBase.Decimal, ref value, kNotInvalidPredicate);
-			else if (type == XmlNodeType.Attribute)	s.StreamAttributeOpt(mode, name, KSoft.NumeralBase.Decimal, ref value, kNotInvalidPredicate);
-			else if (type == XmlNodeType.Text)		s.StreamCursor(mode, KSoft.NumeralBase.Decimal, ref value);
-
-			if (mode == FA.Read)
-			{
-				if (value != Util.kInvalidInt32)
-					db.AddStringIDReference(value);
-			}
 		}
 
 		public static string GetAttributeNameHack(KSoft.IO.XmlElementStream s, string attr_name)
