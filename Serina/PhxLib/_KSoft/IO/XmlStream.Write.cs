@@ -282,6 +282,15 @@ namespace KSoft.IO
 
 		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
 		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
+		/// <remarks>Does not change <see cref="Cursor"/></remarks>
+		public void WriteElement(string name)
+		{
+			Contract.Requires(!string.IsNullOrEmpty(name));
+
+			WriteElementAppend(name);
+		}
+		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
+		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		public void WriteElement(string name, string value)

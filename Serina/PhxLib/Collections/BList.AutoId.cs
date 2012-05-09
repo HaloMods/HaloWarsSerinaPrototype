@@ -73,7 +73,7 @@ namespace PhxLib.Collections
 		{
 			PreAdd(item, item_name);
 			if (m_dbi != null) m_dbi.Add(item.Data, item);
-			Add(item);
+			base.Add(item);
 		}
 
 		Dictionary<string, T> m_dbi;
@@ -92,7 +92,7 @@ namespace PhxLib.Collections
 				int idx = GetMemberIndexByName(item_name);
 				if (idx != -1)
 				{
-					item = this[idx];
+					item = base[idx];
 					return stream_item;
 				}
 
@@ -101,7 +101,7 @@ namespace PhxLib.Collections
 
 			if (RequiresDataNamePreloading && mIsPreloaded)
 			{
-				item = this[iteration];
+				item = base[iteration];
 				return stream_item;
 			}
 
@@ -109,7 +109,7 @@ namespace PhxLib.Collections
 			PreAdd(item, item_name, iteration);
 			if (m_dbi != null) m_dbi.Add(item.Data, item);
 
-			Add(item);
+			base.Add(item);
 			return stream_item;
 		}
 		#endregion
