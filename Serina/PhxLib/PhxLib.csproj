@@ -82,6 +82,7 @@
     <Compile Include="Collections\BList.AutoId.cs" />
     <Compile Include="Collections\BList.cs" />
     <Compile Include="Collections\BList.ExplicitIndex.cs" />
+    <Compile Include="Collections\BList.OfIDs.cs" />
     <Compile Include="Collections\BList.Types.cs" />
     <Compile Include="Collections\BProtoEnum.cs" />
     <Compile Include="DataAnnotations\DatabaseObject.cs" />

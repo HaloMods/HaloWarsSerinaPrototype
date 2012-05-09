@@ -65,10 +65,10 @@ namespace PhxLib.Collections
 			{
 				// expand the list up-to the requested index
 				for (int x = Count; x <= index; x++)
-					Add(eip.kTypeGetInvalid());
+					base.Add(eip.kTypeGetInvalid());
 			}
 			else
-				this[index] = eip.kTypeGetInvalid();
+				base[index] = eip.kTypeGetInvalid();
 		}
 
 		#region IXmlElementStreamable Members
@@ -123,7 +123,7 @@ namespace PhxLib.Collections
 			InitializeItem(index);
 			T data = new T();
 			data.StreamXml(s, FA.Read, db);
-			this[index] = data;
+			base[index] = data;
 		}
 		protected override void WriteXml(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db, T data)
 		{

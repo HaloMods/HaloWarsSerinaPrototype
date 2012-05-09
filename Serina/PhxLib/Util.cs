@@ -43,6 +43,7 @@ namespace PhxLib
 		public static readonly Predicate<bool> kNotFalsePredicate = x => x != false;
 		public static readonly Predicate<int> kNotInvalidPredicate = x => x != -1;
 		public static readonly Predicate<sbyte> kNotInvalidPredicateSByte = x => x != -1;
+		public static readonly Predicate<short> kNotInvalidPredicateInt16 = x => x != -1;
 		public static readonly Predicate<float> kNotInvalidPredicateSingle = x => x != -1.0f;
 		public static readonly Predicate<float> kNotInvalidPredicateSingleNaN = x => !float.IsNaN(x);
 		public static readonly Predicate<float> kNotZeroPredicateSingle = x => x != 0.0f;
@@ -109,6 +110,15 @@ namespace PhxLib
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
 
 			return StreamStringOpt(s, mode, name, ref value, to_lower, type, true);
+		}
+
+		public static bool StreamElementNamedFlag(KSoft.IO.XmlElementStream s, FA mode, string name,
+			ref bool value)
+		{
+			if (mode == FA.Read) value = s.ElementsExists(name);
+			else if (mode == FA.Write && value) s.WriteElement(name);
+
+			return value;
 		}
 
 		public static string GetAttributeNameHack(KSoft.IO.XmlElementStream s, string attr_name)
