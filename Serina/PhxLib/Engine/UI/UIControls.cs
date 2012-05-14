@@ -7,14 +7,14 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.Engine
 {
-	public enum GameCommand // TODO: find a better place for this (UIGame related)
+	public enum BGameCommand // TODO: find a better place for this (UIGame related)
 	{
 		GlobalRallyPoint,
 		SelectPower,
 		Repair,
 	};
 
-	public enum UIControlBaseType
+	public enum BUIControlBaseType
 	{
 		X,
 		Y,
@@ -27,12 +27,12 @@ namespace PhxLib.Engine
 		Button,
 	};
 
-	public enum UIControlPovDir
+	public enum BUIControlPovDir
 	{
 		Up,				Right,			Down,			Left,
 	};
 
-	public enum UIButton
+	public enum BUIControlType
 	{
 		StickLeftUp,	StickLeftDown,	StickLeftLeft,	StickLeftRight,
 		StickRightUp,	StickRightDown,	StickRightLeft,	StickRightRight,
@@ -73,7 +73,7 @@ namespace PhxLib.Engine
 		KeyAlltLeft,	KeyAltRight,	KeyGreenModifier,	KeyOrangeModifier,
 	};
 
-	public enum UIControlFunctionType
+	public enum BUIControlFunctionType
 	{
 		Flare,		SpeedModifier,	Start,		Back,				Translation,		Pan,
 		Tilt,		Zoom,			Selection,	DoubleClickSelect,	MultiSelect,		Clear,

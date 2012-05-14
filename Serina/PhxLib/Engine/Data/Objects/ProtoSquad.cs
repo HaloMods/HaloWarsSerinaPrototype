@@ -51,7 +51,7 @@ namespace PhxLib.Engine
 	public struct BProtoSquadUnit : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Unit")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Unit")
 		{
 			Flags = 0
 		};
@@ -65,41 +65,40 @@ namespace PhxLib.Engine
 		public int UnitID { get { return mUnitID; } }
 
 		#region IXmlElementStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrCount, KSoft.NumeralBase.Decimal, ref mCount);
-			db.StreamXmlForDBID(s, mode, null, ref mUnitID, DatabaseObjectKind.Object, false, Util.kSourceCursor);
+			xs.StreamXmlForDBID(s, mode, null, ref mUnitID, DatabaseObjectKind.Object, false, XML.Util.kSourceCursor);
 		}
 		#endregion
 	};
 	public class BProtoSquad : DatabaseIdObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Squad")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Squad")
 		{
 			DataName = DatabaseNamedObject.kXmlAttrName,
-			Flags = Collections.BCollectionParamsFlags.ToLowerDataNames |
-				Collections.BCollectionParamsFlags.RequiresDataNamePreloading |
-				Collections.BCollectionParamsFlags.SupportsUpdating
+			Flags = XML.BCollectionXmlParamsFlags.ToLowerDataNames |
+				XML.BCollectionXmlParamsFlags.RequiresDataNamePreloading |
+				XML.BCollectionXmlParamsFlags.SupportsUpdating
 		};
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfo = new PhxEngine.XmlFileInfo
 		{
 			Location = ContentStorage.Game,
 			Directory = GameDirectory.Data,
 			FileName = "Squads.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfoUpdate = new PhxEngine.XmlFileInfo
 		{
 			Location = ContentStorage.Update,
 			Directory = GameDirectory.Data,
 			FileName = "Squads_Update.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		static readonly Collections.CodeEnum<BProtoSquadFlags> kFlagsProtoEnum = new Collections.CodeEnum<BProtoSquadFlags>();
-		static readonly Collections.BBitSetParams kFlagsParams = new Collections.BBitSetParams("Flag",
-			db => kFlagsProtoEnum);
+		static readonly Collections.BBitSetParams kFlagsParams = new Collections.BBitSetParams(() => kFlagsProtoEnum);
 
 		const string kXmlElementCanAttackWhileMoving = "CanAttackWhileMoving";
 		#endregion
@@ -113,9 +112,9 @@ namespace PhxLib.Engine
 			return Units.Count == 1 && Units[0].Count == 1;
 		}}
 
-		public BProtoSquad() : base(BResource.kBListTypeValuesParams_CostLowercaseType)
+		public BProtoSquad() : base(BResource.kBListTypeValuesParams, BResource.kBListTypeValuesXmlParams_CostLowercaseType)
 		{
-			Units = new Collections.BListArray<BProtoSquadUnit>(BProtoSquadUnit.kBListParams);
+			Units = new Collections.BListArray<BProtoSquadUnit>();
 
 			Flags = new Collections.BBitSet(kFlagsParams);
 		}
@@ -123,20 +122,19 @@ namespace PhxLib.Engine
 		#region IXmlElementStreamable Members
 		bool ShouldStreamUnits(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			if (mode == FA.Read) return s.ElementsExists(BProtoSquadUnit.kBListParams.RootName);
-			else if (mode == FA.Write) return Units.Count != 0;
+			if (mode == FA.Read) return s.ElementsExists(BProtoSquadUnit.kBListXmlParams.RootName);
+			else if (mode == FA.Write) return !Units.IsEmpty;
 
 			return false;
 		}
 
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			base.StreamXml(s, mode, db);
+			base.StreamXml(s, mode, xs);
 
-			if (ShouldStreamUnits(s, mode))
-				Units.StreamXml(s, mode, db);
+			if (ShouldStreamUnits(s, mode)) XML.Util.Serialize(s, mode, xs, Units, BProtoSquadUnit.kBListXmlParams);
 
-			Flags.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Flags, XML.BBitSetXmlParams.kFlagsSansRoot);
 		}
 		#endregion
 	};

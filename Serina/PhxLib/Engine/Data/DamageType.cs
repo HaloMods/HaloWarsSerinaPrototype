@@ -10,12 +10,12 @@ namespace PhxLib.Engine
 	public class BDamageType : Collections.BListAutoIdObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("DamageType");
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("DamageType");
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfo = new PhxEngine.XmlFileInfo
 		{
 			Directory = GameDirectory.Data,
 			FileName = "DamageTypes.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		const string kXmlAttrAttackRating = "AttackRating";
@@ -33,7 +33,7 @@ namespace PhxLib.Engine
 		public bool Shielded { get { return m_shielded; } }
 
 		#region BListAutoIdObject Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttributeOpt(mode, kXmlAttrAttackRating, ref m_attackRating, Util.kNotFalsePredicate);
 			s.StreamAttributeOpt(mode, kXmlAttrBaseType, ref m_baseType, Util.kNotFalsePredicate);

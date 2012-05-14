@@ -9,21 +9,23 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.Engine
 {
-	public abstract partial class BDatabaseBase : KSoft.IO.IXmlElementStreamable
+	public abstract partial class BDatabaseBase
 	{
 		public const string kInvalidString = "BORK BORK BORK";
 
 		#region Xml constants
-		static readonly Collections.BListParams kObjectTypesParams = new Collections.BListParams("ObjectType");
-		public static readonly PhxEngine.XmlFileInfo kObjectTypesXmlFileInfo = new PhxEngine.XmlFileInfo
+		internal static readonly XML.BListXmlParams kObjectTypesXmlParams = new XML.BListXmlParams("ObjectType");
+		internal static readonly PhxEngine.XmlFileInfo kObjectTypesXmlFileInfo = new PhxEngine.XmlFileInfo
 		{
 			Directory = GameDirectory.Data,
 			FileName = "ObjectTypes.xml",
-			RootName = kObjectTypesParams.RootName
+			RootName = kObjectTypesXmlParams.RootName
 		};
 		#endregion
 
 		public PhxEngine Engine { get; private set; }
+
+		protected abstract XML.BDatabaseXmlSerializerBase NewXmlSerializer();
 
 		public abstract Collections.IProtoEnum GameObjectTypes { get; }
 		public abstract Collections.IProtoEnum GameProtoObjectTypes { get; }
@@ -46,8 +48,8 @@ namespace PhxLib.Engine
 		public Collections.BListAutoId<BCiv> Civs { get; private set; }
 		public Collections.BListAutoId<BLeader> Leaders { get; private set; }
 
-		public Dictionary<int, string/*BTacticData*/> ObjectIdToTacticsMap { get; private set; }
-		public Dictionary<string, BTacticData> TacticsMap { get; private set; }
+		public Dictionary<int, BTacticData> ObjectTacticsMap { get; private set; }
+		//public Dictionary<string, BTacticData> TacticsMap { get; private set; }
 
 		protected BDatabaseBase(PhxEngine engine, Collections.IProtoEnum game_object_types)
 		{
@@ -56,46 +58,37 @@ namespace PhxLib.Engine
 			StringTable = new Dictionary<int, string>();
 
 			GameData = new BGameData();
-			DamageTypes = new Collections.BListAutoId<BDamageType>(BDamageType.kBListParams);
-			WeaponTypes = new Collections.BListAutoId<BWeaponType>(BWeaponType.kBListParams);
-			UserClasses = new Collections.BListAutoId<BUserClass>(BUserClass.kBListParams);
-			ObjectTypes = new Collections.BTypeNamesWithCode(kObjectTypesParams, game_object_types);
-			Abilities = new Collections.BListAutoId<BAbility>(BAbility.kBListParams);
-			Objects = new Collections.BListAutoId<BProtoObject>(BProtoObject.kBListParams);
-			Squads = new Collections.BListAutoId<BProtoSquad>(BProtoSquad.kBListParams);
-			Powers = new Collections.BListAutoId<BProtoPower>(BProtoPower.kBListParams);
-			Techs = new Collections.BListAutoId<BProtoTech>(BProtoTech.kBListParams);
-			Civs = new Collections.BListAutoId<BCiv>(BCiv.kBListParams);
-			Leaders = new Collections.BListAutoId<BLeader>(BLeader.kBListParams);
-
-			ObjectIdToTacticsMap = new Dictionary<int, string>();
-			TacticsMap = new Dictionary<string, BTacticData>();
+			DamageTypes = new Collections.BListAutoId<BDamageType>();
+			WeaponTypes = new Collections.BListAutoId<BWeaponType>();
+			UserClasses = new Collections.BListAutoId<BUserClass>();
+			ObjectTypes = new Collections.BTypeNamesWithCode(game_object_types);
+			Abilities = new Collections.BListAutoId<BAbility>();
+			Objects = new Collections.BListAutoId<BProtoObject>();
+			Squads = new Collections.BListAutoId<BProtoSquad>();
+			Powers = new Collections.BListAutoId<BProtoPower>();
+			Techs = new Collections.BListAutoId<BProtoTech>();
+			Civs = new Collections.BListAutoId<BCiv>();
+			Leaders = new Collections.BListAutoId<BLeader>();
 
 			InitializeDatabaseInterfaces();
 		}
 
+		internal void BuildObjectTacticsMap(Dictionary<int, string> id_to_tactic_map, Dictionary<string, BTacticData> tactic_name_to_tactic)
+		{
+			ObjectTacticsMap = new Dictionary<int, BTacticData>(id_to_tactic_map.Count);
+
+			foreach (var kv in id_to_tactic_map)
+				ObjectTacticsMap.Add(kv.Key, tactic_name_to_tactic[kv.Value]);
+		}
+
 		#region StringTable Util
-		void AddStringIDReference(int index)
+		internal void AddStringIDReference(int index)
 		{
 			StringTable[index] = kInvalidString;
 		}
 		void SetStringIDValue(int index, string value)
 		{
 			StringTable[index] = value;
-		}
-
-		public void StreamXmlForStringID(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref int value, XmlNodeType type = Util.kSourceElement)
-		{
-			if (type == XmlNodeType.Element)		s.StreamElementOpt(mode, name, KSoft.NumeralBase.Decimal, ref value, Util.kNotInvalidPredicate);
-			else if (type == XmlNodeType.Attribute)	s.StreamAttributeOpt(mode, name, KSoft.NumeralBase.Decimal, ref value, Util.kNotInvalidPredicate);
-			else if (type == XmlNodeType.Text)		s.StreamCursor(mode, KSoft.NumeralBase.Decimal, ref value);
-
-			if (mode == FA.Read)
-			{
-				if (value != Util.kInvalidInt32)
-					AddStringIDReference(value);
-			}
 		}
 		#endregion
 
@@ -266,109 +259,19 @@ namespace PhxLib.Engine
 		}
 		#endregion
 
-		#region IXmlElementStreamable Members
-		public bool StreamXmlTactic(KSoft.IO.XmlElementStream s, FA mode, string xml_name, BProtoObject obj, 
-			ref bool was_streamed, XmlNodeType xml_source = XmlNodeType.Element)
+		public void Load()
 		{
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xml_source));
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xml_source) == (xml_name != null));
-
-			string id_name = null;
-			bool to_lower = false;
-
-			if (mode == FA.Read)
+			using (var xs = NewXmlSerializer())
 			{
-				was_streamed = Util.StreamStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
-
-				if (was_streamed)
-				{
-					id_name = System.IO.Path.GetFileNameWithoutExtension(id_name);
-
-					ObjectIdToTacticsMap[obj.AutoID] = id_name;
-					TacticsMap[id_name] = null;
-				}
+				xs.Load(XML.BDatabaseXmlSerializerLoadFlags.LoadUpdates);
 			}
-			else if (mode == FA.Write && was_streamed)
-			{
-				id_name = obj.Name + BTacticData.kFileExt;
-				Util.StreamStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
-			}
-
-			return was_streamed;
 		}
-
-		public bool StreamXmlForDBID(KSoft.IO.XmlElementStream s, FA mode, string xml_name, ref int dbid, 
-			DatabaseObjectKind kind,
-			bool is_optional = true, XmlNodeType xml_source = XmlNodeType.Element)
-		{
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xml_source));
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xml_source) == (xml_name != null));
-			Contract.Assert(DataStoreIsReady(kind));
-
-			string id_name = null;
-			bool was_streamed = true;
-			bool to_lower = kind == DatabaseObjectKind.Object || kind == DatabaseObjectKind.Unit || 
-				kind == DatabaseObjectKind.Squad || kind == DatabaseObjectKind.Tech;
-
-			if (mode == FA.Read)
-			{
-				if (is_optional)
-					was_streamed = Util.StreamInternStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
-				else
-					Util.StreamInternString(s, mode, xml_name, ref id_name, to_lower, xml_source);
-
-				if (was_streamed)
-				{
-					dbid = GetId(kind, id_name);
-					Contract.Assert(dbid != Util.kInvalidInt32);
-				}
-				else
-					dbid = Util.kInvalidInt32;
-			}
-			else if (mode == FA.Write && dbid != Util.kInvalidInt32)
-			{
-				id_name = GetName(kind, dbid);
-				Contract.Assert(!string.IsNullOrEmpty(id_name));
-
-				if (is_optional)
-					Util.StreamInternStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
-				else
-					Util.StreamInternString(s, mode, xml_name, ref id_name, to_lower, xml_source);
-			}
-
-			return was_streamed;
-		}
-
-		internal static void StreamDamageType(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db,
-			Collections.BListOfIDsParams<object> @params, object ctxt, ref int id)
-		{
-			db.StreamXmlForDBID(s, mode, null, ref id, DatabaseObjectKind.DamageType, false, Util.kSourceCursor);
-		}
-		internal static void StreamUnitID(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db,
-			Collections.BListOfIDsParams<object> @params, object ctxt, ref int id)
-		{
-			db.StreamXmlForDBID(s, mode, null, ref id, DatabaseObjectKind.Unit, false, Util.kSourceCursor);
-		}
-
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			PreStreamXml(mode);
-
-			GameData.StreamXml(s, mode, this);
-			DamageTypes.StreamXml(s, mode, this);
-			WeaponTypes.StreamXml(s, mode, this);
-			UserClasses.StreamXml(s, mode, this);
-			ObjectTypes.StreamXml(s, mode, this);
-			Abilities.StreamXml(s, mode, this);
-			Objects.StreamXml(s, mode, this);
-			Squads.StreamXml(s, mode, this);
-			Powers.StreamXml(s, mode, this);
-			Techs.StreamXml(s, mode, this);
-			Civs.StreamXml(s, mode, this);
-			Leaders.StreamXml(s, mode, this);
-
-			PostStreamXml(mode);
+			using (var xs = NewXmlSerializer())
+			{
+				xs.StreamXml(s, mode);
+			}
 		}
-		#endregion
 	};
 }

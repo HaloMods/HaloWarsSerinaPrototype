@@ -54,9 +54,9 @@ namespace PhxLib.Engine
 		}
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			db.StreamXmlForStringID(s, mode, kXmlElementDisplayName, ref mDisplayNameID);
+			xs.StreamXmlForStringID(s, mode, kXmlElementDisplayName, ref mDisplayNameID);
 		}
 		#endregion
 	};
@@ -68,6 +68,8 @@ namespace PhxLib.Engine
 		const string kXmlElementResearchPoints = "ResearchPoints";
 		#endregion
 
+		XML.BTypeValuesXmlParams<float> mResourceCostXmlParams;
+
 		public Collections.BTypeValuesSingle ResourceCost { get; private set; }
 
 		float mBuildTime;
@@ -77,19 +79,21 @@ namespace PhxLib.Engine
 		/// <summary>Time, in seconds, it takes to build or research this object</summary>
 		public float PurchaseTime { get { return mBuildTime != Util.kGetInvalidSingle() ? mBuildTime : mResearchTime; } }
 
-		protected DatabasePurchasableObject(Collections.BTypeValuesParams<float> rsrc_cost_params)
+		protected DatabasePurchasableObject(Collections.BTypeValuesParams<float> rsrc_cost_params, XML.BTypeValuesXmlParams<float> rsrc_cost_xml_params)
 		{
+			mResourceCostXmlParams = rsrc_cost_xml_params;
+
 			ResourceCost = new Collections.BTypeValuesSingle(rsrc_cost_params);
 
 			mBuildTime = mResearchTime = Util.kGetInvalidSingle();
 		}
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			base.StreamXml(s, mode, db);
+			base.StreamXml(s, mode, xs);
 
-			ResourceCost.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, ResourceCost, mResourceCostXmlParams);
 			s.StreamElementOpt(mode, kXmlElementBuildPoints, ref mBuildTime, Util.kNotInvalidPredicateSingle);
 			s.StreamElementOpt(mode, kXmlElementResearchPoints, ref mResearchTime, Util.kNotInvalidPredicateSingle);
 		}
@@ -105,22 +109,23 @@ namespace PhxLib.Engine
 		protected int mDbId;
 		public int DbId { get { return mDbId; } }
 
-		protected DatabaseIdObject(Collections.BTypeValuesParams<float> rsrc_cost_params) : base(rsrc_cost_params)
+		protected DatabaseIdObject(Collections.BTypeValuesParams<float> rsrc_cost_params, XML.BTypeValuesXmlParams<float> rsrc_cost_xml_params)
+			: base(rsrc_cost_params, rsrc_cost_xml_params)
 		{
 			mDbId = Util.kInvalidInt32;
 		}
 
 		#region IXmlElementStreamable Members
-		protected virtual void StreamXmlDbId(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		protected virtual void StreamXmlDbId(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrDbId, KSoft.NumeralBase.Decimal, ref mDbId);
 		}
 
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			base.StreamXml(s, mode, db);
+			base.StreamXml(s, mode, xs);
 
-			StreamXmlDbId(s, mode, db);
+			StreamXmlDbId(s, mode, xs);
 		}
 		#endregion
 	};

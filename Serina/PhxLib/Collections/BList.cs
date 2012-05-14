@@ -10,43 +10,9 @@ namespace PhxLib.Collections
 {
 	public class BListParams : BCollectionParams
 	{
-		public /*readonly*/ string DataName;
-
-		#region Flags
-		[Contracts.Pure]
-		public bool InternDataNames { get { return HasFlag(BCollectionParamsFlags.InternDataNames); } }
-		[Contracts.Pure]
-		public bool UseInnerTextForData { get { return HasFlag(BCollectionParamsFlags.UseInnerTextForData); } }
-		[Contracts.Pure]
-		public bool UseElementForData { get { return HasFlag(BCollectionParamsFlags.UseElementForData); } }
-		[Contracts.Pure]
-		public bool RequiresDataNamePreloading { get { return HasFlag(BCollectionParamsFlags.RequiresDataNamePreloading); } }
-		[Contracts.Pure]
-		public bool SupportsUpdating { get { return HasFlag(BCollectionParamsFlags.SupportsUpdating); } }
-		#endregion
-
-		public BListParams() { }
-		/// <summary>Sets RootName to plural of ElementName and sets UseInnerTextForData</summary>
-		/// <param name="element_name"></param>
-		/// <param name="additional_flags"></param>
-		public BListParams(string element_name, BCollectionParamsFlags additional_flags = 0) : base(element_name)
-		{
-			Flags = additional_flags;
-			Flags |= BCollectionParamsFlags.UseInnerTextForData;
-		}
-
-		public void StreamDataName(KSoft.IO.XmlElementStream s, FA mode, ref string name)
-		{
-			BCollectionParams.StreamValue(s, mode, DataName, ref name, 
-				UseInnerTextForData, UseElementForData, InternDataNames, HasFlag(BCollectionParamsFlags.ToLowerDataNames));
-		}
-		public void StreamIsUpdateAttr(KSoft.IO.XmlElementStream s, FA mode, ref bool is_update)
-		{
-			s.StreamAttributeOpt(mode, "update", ref is_update, Util.kNotFalsePredicate);
-		}
 	};
 
-	public abstract class BListBase<T> : List<T>, IEqualityComparer<BListBase<T>>, IO.IPhxXmlStreamable
+	public abstract class BListBase<T> : List<T>, IEqualityComparer<BListBase<T>>
 	{
 		protected static readonly IEqualityComparer<T> kValueEqualityComparer = EqualityComparer<T>.Default;
 
@@ -79,54 +45,21 @@ namespace PhxLib.Collections
 		/// <summary>Parameters that dictate the functionality of this list</summary>
 		public BListParams Params { get; private set; }
 
-		protected BListBase(BListParams @params) : base(@params.InitialCapacity)
+		protected BListBase(BListParams @params) : base(@params != null ? @params.InitialCapacity : BCollectionParams.kDefaultCapacity)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
 
 			Params = @params;
 		}
+		protected BListBase() { }
 
-		#region IXmlElementStreamable Members
-		protected abstract void ReadXml(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db, int iteration);
-		protected abstract void WriteXml(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db, T data);
-
-		protected virtual void ReadXmlDetermineListSize(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db)
+		public bool IsEmpty { get { return Count == 0; } }
+		internal void OptimizeStorage()
 		{
-			int xml_node_count = s.Cursor.ChildNodes.Count;
-			if(base.Capacity < xml_node_count)
-				base.Capacity = xml_node_count;
+			//if (Count == 0)
+			//	mList = null;
+			this.TrimExcess();
 		}
-		protected virtual void ReadXmlNodes(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db)
-		{
-			ReadXmlDetermineListSize(s, db);
-
-			int x = 0;
-			foreach (XmlNode n in s.Cursor.ChildNodes)
-			{
-				if (n.Name != Params.ElementName) continue;
-
-				using (s.EnterCursorBookmark(n as XmlElement))
-					ReadXml(s, db, x++);
-			}
-
-			base.TrimExcess();
-		}
-		protected virtual void WriteXmlNodes(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db)
-		{
-			foreach (T data in this)
-				using (s.EnterCursorBookmark(Params.ElementName))
-					WriteXml(s, db, data);
-		}
-
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, Engine.BDatabaseBase db)
-		{
-			using (s.EnterCursorBookmark(mode, Params.GetOptionalRootName()))
-			{
-					 if (mode == FA.Read)	ReadXmlNodes(s, db);
-				else if (mode == FA.Write)	WriteXmlNodes(s, db);
-			}
-		}
-		#endregion
 
 		#region IEqualityComparer<BListBase<T>> Members
 		public bool Equals(BListBase<T> x, BListBase<T> y)
@@ -147,24 +80,5 @@ namespace PhxLib.Collections
 	public class BListArray<T> : BListBase<T>
 		where T : IO.IPhxXmlStreamable, new()
 	{
-		public BListArray(BListParams @params) : base(@params)
-		{
-			Contract.Requires<ArgumentNullException>(@params != null);
-		}
-
-		#region IXmlElementStreamable Members
-		protected override void ReadXml(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db, int iteration)
-		{
-			T item = new T();
-			item.StreamXml(s, FA.Read, db);
-
-			Add(item);
-		}
-
-		protected override void WriteXml(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db, T data)
-		{
-			data.StreamXml(s, FA.Write, db);
-		}
-		#endregion
 	};
 }

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml;
+using Contracts = System.Diagnostics.Contracts;
+using Contract = System.Diagnostics.Contracts.Contract;
 
 using FA = System.IO.FileAccess;
 
@@ -25,21 +26,21 @@ namespace PhxLib.Engine
 	public enum BPowerFlags
 	{
 		// 0xCC
-		SequentialRecharge = 1<<0,
-		LeaderPower = 1<<1,
-		ShowTargetHighlight = 1<<2,
-		ShowLimit = 1<<3,
-		MultiRechargePower = 1<<4,
-		UnitPower = 1<<5,
-		InfiniteUses = 1<<6,
+		SequentialRecharge,// = 1<<0,
+		LeaderPower,// = 1<<1,
+		ShowTargetHighlight,// = 1<<2,
+		ShowLimit,// = 1<<3,
+		MultiRechargePower,// = 1<<4,
+		UnitPower,// = 1<<5,
+		InfiniteUses,// = 1<<6,
 
 		// 0xCD, camera flags
-		CameraEnableUserYaw = (1<<0) << 8,
-		CameraEnableUserZoom = (1<<1) << 8,
-		CameraEnableUserScroll = (1<<2) << 8,
+		CameraEnableUserYaw,// = 1<<0,
+		CameraEnableUserZoom,// = 1<<1,
+		CameraEnableUserScroll,// = 1<<2,
 		
 		// 0xCE
-		Disruptable = (1<<4) << 16, // Xml parses for NotDisruptable
+		NotDisruptable,// = 1<<4, // actually "Disruptable" in code
 	};
 	public enum BMinigameType
 	{
@@ -53,7 +54,7 @@ namespace PhxLib.Engine
 	public class BProtoPower : DatabaseNamedObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Power")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Power")
 		{
 			DataName = DatabaseNamedObject.kXmlAttrName,
 			Flags = 0
@@ -62,7 +63,7 @@ namespace PhxLib.Engine
 		{
 			Directory = GameDirectory.Data,
 			FileName = "Powers.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		const string kXmlElementAttributes = "Attributes";
@@ -110,24 +111,30 @@ namespace PhxLib.Engine
 
 		const string kXmlElementTriggerScript = "TriggerScript";
 		const string kXmlElementCommandTriggerScript = "CommandTriggerScript";
-		#endregion
 
-		class BCostTypeValuesSingleAttrHack : Collections.BListExplicitIndexBase<float>
+		class BCostTypeValuesSingleAttrHackXmlSerializer : XML.BListExplicitIndexXmlSerializerBase<float>
 		{
 			// Just an alias for less typing and code
-			static readonly Collections.BTypeValuesParams<float> kParams = BResource.kBListTypeValuesParams_Cost;
+			static readonly XML.BTypeValuesXmlParams<float> kParams = BResource.kBListTypeValuesXmlParams_Cost;
 
-			public BCostTypeValuesSingleAttrHack() : base(kParams) {}
+			Collections.BTypeValuesSingle mList;
+
+			public override Collections.BListExplicitIndexBase<float> ListExplicitIndex { get { return mList; } }
+
+			public BCostTypeValuesSingleAttrHackXmlSerializer(Collections.BTypeValuesSingle list) : base(kParams)
+			{
+				mList = list;
+			}
 
 			#region IXmlElementStreamable Members
-			protected override void ReadXml(KSoft.IO.XmlElementStream s, BDatabaseBase db, int iteration) { throw new NotImplementedException(); }
-			protected override void WriteXml(KSoft.IO.XmlElementStream s, BDatabaseBase db, float data) { throw new NotImplementedException(); }
-			protected override int ReadExplicitIndex(KSoft.IO.XmlElementStream s, BDatabaseBase db) { throw new NotImplementedException(); }
-			protected override void WriteExplicitIndex(KSoft.IO.XmlElementStream s, BDatabaseBase db, int index) { throw new NotImplementedException(); }
+			protected override void ReadXml(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs, int iteration) { throw new NotImplementedException(); }
+			protected override void WriteXml(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs, float data) { throw new NotImplementedException(); }
+			protected override int ReadExplicitIndex(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs) { throw new NotImplementedException(); }
+			protected override void WriteExplicitIndex(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs, int index) { throw new NotImplementedException(); }
 
-			protected override void ReadXmlNodes(KSoft.IO.XmlElementStream s, BDatabaseBase db)
+			protected override void ReadXmlNodes(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs)
 			{
-				var penum = kParams.kGetProtoEnumFromDB(db);
+				var penum = mList.TypeValuesParams.kGetProtoEnumFromDB(xs.Database);
 
 				foreach (XmlAttribute attr in s.Cursor.Attributes)
 				{
@@ -136,22 +143,24 @@ namespace PhxLib.Engine
 					int index = penum.GetMemberId(attr.Name);
 					if (index == Util.kInvalidInt32) continue;
 
-					InitializeItem(index);
+					mList.InitializeItem(index);
 					float value = Util.kInvalidSingle;
 					s.ReadAttribute(attr.Name, ref value);
-					this[index] = value;
+					mList[index] = value;
 				}
 			}
-			protected override void WriteXmlNodes(KSoft.IO.XmlElementStream s, BDatabaseBase db)
+			protected override void WriteXmlNodes(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs)
 			{
-				var penum = kParams.kGetProtoEnumFromDB(db);
-				float k_invalid = kParams.kTypeGetInvalid();
+				var tvp = mList.TypeValuesParams;
 
-				for (int x = 0; x < Count; x++)
+				var penum = tvp.kGetProtoEnumFromDB(xs.Database);
+				float k_invalid = tvp.kTypeGetInvalid();
+
+				for (int x = 0; x < mList.Count; x++)
 				{
-					float data = this[x];
+					float data = mList[x];
 
-					if (kParams.kComparer.Compare(data, k_invalid) != 0)
+					if (tvp.kComparer.Compare(data, k_invalid) != 0)
 					{
 						string name = penum.GetMemberName(x);
 						s.WriteAttribute(name, data);
@@ -159,40 +168,54 @@ namespace PhxLib.Engine
 				}
 			}
 			#endregion
-		};
 
-		public Collections.BListBase<float> Cost { get; private set; }
+			public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase db,
+				Collections.BTypeValuesSingle list)
+			{
+				Contract.Requires(s != null);
+				Contract.Requires(db != null);
+				Contract.Requires(list != null);
+
+				var xs = new BCostTypeValuesSingleAttrHackXmlSerializer(list);
+				{
+					xs.StreamXml(s, mode, db);
+				}
+			}
+		};
+		#endregion
+
+		public Collections.BTypeValuesSingle Cost { get; private set; }
 
 		public Collections.BTypeValuesSingle Populations { get; private set; }
 
 		BPowerType mPowerType = BPowerType.None;
 		float mAutoRecharge = Util.kInvalidSingle;
 		int mUseLimit = Util.kInvalidInt32;
-		BPowerFlags mFlags = BPowerFlags.Disruptable;
+		BPowerFlags mFlags;
 
 		string mTriggerScript, mCommandTriggerScript;
 
 		public BProtoPower()
 		{
-			Cost = new BCostTypeValuesSingleAttrHack();
+			Cost = new Collections.BTypeValuesSingle(BResource.kBListTypeValuesParams);
 
-			Populations = new Collections.BTypeValuesSingle(BPopulation.kBListParamsSingle_LowerCase);
+			Populations = new Collections.BTypeValuesSingle(BPopulation.kBListParamsSingle);
 		}
 
 		#region IXmlElementStreamable Members
 		void StreamXmlFlags(KSoft.IO.XmlElementStream s, FA mode)
 		{
 		}
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			using (s.EnterCursorBookmark(mode, kXmlElementAttributes))
 			{
-				base.StreamXml(s, mode, db);
+				base.StreamXml(s, mode, xs);
 
-				Cost.StreamXml(s, mode, db);
+				BCostTypeValuesSingleAttrHackXmlSerializer.Serialize(s, mode, xs, Cost);
 				// DynamicCost
 				// TargetEffectiveness
-				Populations.StreamXml(s, mode, db);
+				XML.Util.Serialize(s, mode, xs, Populations, BPopulation.kBListXmlParamsSingle_LowerCase);
 
 				s.StreamElementOpt(mode, kXmlElementPowerType, ref mPowerType, e => e != BPowerType.None);
 				s.StreamElementOpt(mode, kXmlElementAutoRecharge, ref mAutoRecharge, Util.kNotInvalidPredicateSingle);

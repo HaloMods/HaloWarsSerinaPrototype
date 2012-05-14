@@ -11,7 +11,9 @@ namespace PhxLib.Engine
 	{
 		#region Xml constants
 		public static readonly Collections.BTypeValuesParams<BDamageModifier> kBListParams = new
-			Collections.BTypeValuesParams<BDamageModifier>("DamageModifier", "type", db => db.DamageTypes);
+			Collections.BTypeValuesParams<BDamageModifier>(db => db.DamageTypes);
+		public static readonly XML.BTypeValuesXmlParams<BDamageModifier> kBListXmlParams = new
+			XML.BTypeValuesXmlParams<BDamageModifier>("DamageModifier", "type");
 
 		const string kXmlAttrRating = "rating";
 		//float reflectDamageFactor
@@ -24,7 +26,7 @@ namespace PhxLib.Engine
 		public float Value { get { return mValue; } }
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrRating, ref mRating);
 			s.StreamCursor(mode, ref mValue);
@@ -46,16 +48,16 @@ namespace PhxLib.Engine
 	public class BWeaponType : Collections.BListAutoIdObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("WeaponType")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("WeaponType")
 		{
 			DataName = "Name",
-			Flags = Collections.BCollectionParamsFlags.UseElementForData
+			Flags = XML.BCollectionXmlParamsFlags.UseElementForData
 		};
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfo = new PhxEngine.XmlFileInfo
 		{
 			Directory = GameDirectory.Data,
 			FileName = "WeaponTypes.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		//string DeathAnimation
@@ -69,9 +71,9 @@ namespace PhxLib.Engine
 		}
 
 		#region BListObjectBase Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			DamageModifiers.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, DamageModifiers, BDamageModifier.kBListXmlParams);
 		}
 		#endregion
 	};

@@ -24,22 +24,18 @@ namespace PhxLib.Engine
 		const bool kUseLowercaseCostTypeHack = true;
 
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Resource");
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Resource");
 
 		public static readonly Collections.BTypeValuesParams<float> kBListTypeValuesParams = new
-			Collections.BTypeValuesParams<float>("Resource", "Type", db => db.GameData.Resources) { kTypeGetInvalid = Util.kGetInvalidSingle };
-
-		public static readonly Collections.BTypeValuesParams<float> kBListTypeValuesParams_Cost = new
-			Collections.BTypeValuesParams<float>("Cost", "ResourceType", db => db.GameData.Resources) { kTypeGetInvalid = Util.kGetInvalidSingle };
-		public static readonly Collections.BTypeValuesParams<float> kBListTypeValuesParams_CostLowercaseType = !kUseLowercaseCostTypeHack ? kBListTypeValuesParams_Cost : new
-			Collections.BTypeValuesParams<float>("Cost", "ResourceType".ToLower(), db => db.GameData.Resources) { kTypeGetInvalid = Util.kGetInvalidSingle };
-
-		public static readonly Collections.BTypeValuesParams<float> kBListTypeValuesParams_AddResource = new
-			Collections.BTypeValuesParams<float>("AddResource", null, db => db.GameData.Resources)
-			{
-				kTypeGetInvalid = Util.kGetInvalidSingle,
-				Flags = Collections.BCollectionParamsFlags.UseInnerTextForData
-			};
+			Collections.BTypeValuesParams<float>(db => db.GameData.Resources) { kTypeGetInvalid = Util.kGetInvalidSingle };
+		public static readonly XML.BTypeValuesXmlParams<float> kBListTypeValuesXmlParams = new
+			XML.BTypeValuesXmlParams<float>("Resource", "Type");
+		public static readonly XML.BTypeValuesXmlParams<float> kBListTypeValuesXmlParams_Cost = new
+			XML.BTypeValuesXmlParams<float>("Cost", "ResourceType");
+		public static readonly XML.BTypeValuesXmlParams<float> kBListTypeValuesXmlParams_CostLowercaseType = !kUseLowercaseCostTypeHack ? kBListTypeValuesXmlParams_Cost : new
+			XML.BTypeValuesXmlParams<float>("Cost", "ResourceType".ToLower());
+		public static readonly XML.BTypeValuesXmlParams<float> kBListTypeValuesXmlParams_AddResource = new
+			XML.BTypeValuesXmlParams<float>("AddResource", null, XML.BCollectionXmlParamsFlags.UseInnerTextForData);
 
 		const string kXmlAttrDeductable = "Deductable";
 		#endregion
@@ -48,7 +44,7 @@ namespace PhxLib.Engine
 		public bool Deductable { get { return mDeductable; } }
 
 		#region BListAutoIdObject Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrDeductable, ref mDeductable);
 		}
@@ -75,25 +71,24 @@ namespace PhxLib.Engine
 
 		#region Xml constants
 		public static readonly Collections.BTypeValuesParams<BPopulation> kBListParams = new
-			Collections.BTypeValuesParams<BPopulation>("Pop", "Type", db => db.GameData.Populations)
+			Collections.BTypeValuesParams<BPopulation>(db => db.GameData.Populations)
 			{
 				kTypeGetInvalid = () => BPopulation.kInvalid
 			};
+		public static readonly XML.BTypeValuesXmlParams<BPopulation> kBListXmlParams = new
+			XML.BTypeValuesXmlParams<BPopulation>("Pop", "Type");
+
 		public static readonly Collections.BTypeValuesParams<float> kBListParamsSingle = new
-			Collections.BTypeValuesParams<float>("Pop", "Type", db => db.GameData.Populations)
+			Collections.BTypeValuesParams<float>(db => db.GameData.Populations)
 			{
 				kTypeGetInvalid = Util.kGetInvalidSingle
 			};
-		public static readonly Collections.BTypeValuesParams<float> kBListParamsSingle_LowerCase = new
-			Collections.BTypeValuesParams<float>("Pop", "Type".ToLower(), db => db.GameData.Populations)
-			{
-				kTypeGetInvalid = Util.kGetInvalidSingle
-			};
-		public static readonly Collections.BTypeValuesParams<float> kBListParamsSingle_CapAddition = new
-			Collections.BTypeValuesParams<float>("PopCapAddition", "Type", db => db.GameData.Populations)
-			{
-				kTypeGetInvalid = Util.kGetInvalidSingle
-			};
+		public static readonly XML.BTypeValuesXmlParams<float> kBListXmlParamsSingle = new
+			XML.BTypeValuesXmlParams<float>("Pop", "Type");
+		public static readonly XML.BTypeValuesXmlParams<float> kBListXmlParamsSingle_LowerCase = new
+			XML.BTypeValuesXmlParams<float>("Pop", "Type".ToLower());
+		public static readonly XML.BTypeValuesXmlParams<float> kBListXmlParamsSingle_CapAddition = new
+			XML.BTypeValuesXmlParams<float>("PopCapAddition", "Type");
 
 		const string kXmlAttrMax = "Max";
 		#endregion
@@ -109,7 +104,7 @@ namespace PhxLib.Engine
 		BPopulation(float max, float count) { mMax = max; mCount = count; }
 
 		#region IXmlElementStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrMax, ref mMax);
 			s.StreamCursor(mode, ref mCount);
@@ -142,7 +137,7 @@ namespace PhxLib.Engine
 	public class BInfectionMap : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams
 		{
 			RootName = "InfectionMap",
 			ElementName = "InfectionMapEntry",
@@ -158,11 +153,11 @@ namespace PhxLib.Engine
 		int mInfectedSquadID = Util.kInvalidInt32;
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			db.StreamXmlForDBID(s, mode, kXmlAttrBase, ref mBaseObjectID, DatabaseObjectKind.Object, false, Util.kSourceAttr);
-			db.StreamXmlForDBID(s, mode, kXmlAttrInfected, ref mInfectedObjectID, DatabaseObjectKind.Object, false, Util.kSourceAttr);
-			db.StreamXmlForDBID(s, mode, kXmlAttrInfectedSquad, ref mInfectedSquadID, DatabaseObjectKind.Squad, false, Util.kSourceAttr);
+			xs.StreamXmlForDBID(s, mode, kXmlAttrBase, ref mBaseObjectID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
+			xs.StreamXmlForDBID(s, mode, kXmlAttrInfected, ref mInfectedObjectID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
+			xs.StreamXmlForDBID(s, mode, kXmlAttrInfectedSquad, ref mInfectedSquadID, DatabaseObjectKind.Squad, false, XML.Util.kSourceAttr);
 		}
 		#endregion
 	};
@@ -179,28 +174,32 @@ namespace PhxLib.Engine
 			RootName = kXmlRoot
 		};
 
-		static readonly Collections.BListParams kRatesParams = new Collections.BListParams("Rate");
 		public static readonly Collections.BTypeValuesParams<float> kRatesBListTypeValuesParams = new
-			Collections.BTypeValuesParams<float>("Rate", "Rate", db => db.GameData.Rates) { kTypeGetInvalid = Util.kGetInvalidSingle };
+			Collections.BTypeValuesParams<float>(db => db.GameData.Rates) { kTypeGetInvalid = Util.kGetInvalidSingle };
+		static readonly XML.BListXmlParams kRatesXmlParams = new XML.BListXmlParams("Rate");
+		public static readonly XML.BTypeValuesXmlParams<float> kRatesBListTypeValuesXmlParams = new
+			XML.BTypeValuesXmlParams<float>("Rate", "Rate"); // oiy, really? name the 'type' attribute with the same name as the element?
 
-		static readonly Collections.BListParams kPopsParams = new Collections.BListParams("Pop");
-		static readonly Collections.BListParams kRefCountsParams = new Collections.BListParams("RefCount");
-		static readonly Collections.BListParams kHUDItemsParams = new Collections.BListParams("HUDItem");
-		static readonly Collections.BListParams kFlashableItemsParams = new PhxLib.Collections.BListParams
+		static readonly XML.BListXmlParams kPopsXmlParams = new XML.BListXmlParams("Pop");
+		static readonly XML.BListXmlParams kRefCountsXmlParams = new XML.BListXmlParams("RefCount");
+		static readonly XML.BListXmlParams kHUDItemsXmlParams = new XML.BListXmlParams("HUDItem");
+		static readonly XML.BListXmlParams kFlashableItemsXmlParams = new XML.BListXmlParams
 		{
 			RootName = "FlashableItems",
 			ElementName = "Item",
-			Flags = PhxLib.Collections.BCollectionParamsFlags.UseInnerTextForData,
+			Flags = XML.BCollectionXmlParamsFlags.UseInnerTextForData,
 		};
-		static readonly Collections.BListParams kUnitFlagsParams = new Collections.BListParams("UnitFlag");
-		static readonly Collections.BListParams kSquadFlagsParams = new Collections.BListParams("SquadFlag");
-		static readonly Collections.BTypeValuesParams<string> kCodeProtoObjectsParams = new Collections.BTypeValuesParams<string>("CodeProtoObject", "Type",
-			db => db.GameProtoObjectTypes, Collections.BCollectionParamsFlags.ToLowerDataNames)
+		static readonly XML.BListXmlParams kUnitFlagsXmlParams = new XML.BListXmlParams("UnitFlag");
+		static readonly XML.BListXmlParams kSquadFlagsXmlParams = new XML.BListXmlParams("SquadFlag");
+
+		static readonly Collections.BTypeValuesParams<string> kCodeProtoObjectsParams = new Collections.BTypeValuesParams<string>(db => db.GameProtoObjectTypes);
+		static readonly XML.BTypeValuesXmlParams<string> kCodeProtoObjectsXmlParams = new XML.BTypeValuesXmlParams<string>("CodeProtoObject", "Type",
+			XML.BCollectionXmlParamsFlags.ToLowerDataNames)
 		{
 			RootName = "CodeProtoObjects",
 		};
-		static readonly Collections.BTypeValuesParams<string> kCodeObjectTypesParams = new Collections.BTypeValuesParams<string>("CodeObjectType", "Type",
-			db => db.GameObjectTypes)
+		static readonly Collections.BTypeValuesParams<string> kCodeObjectTypesParams = new Collections.BTypeValuesParams<string>(db => db.GameObjectTypes);
+		static readonly XML.BTypeValuesXmlParams<string> kCodeObjectTypesXmlParams = new XML.BTypeValuesXmlParams<string>("CodeObjectType", "Type")
 		{
 			RootName = "CodeObjectTypes",
 		};
@@ -221,6 +220,8 @@ namespace PhxLib.Engine
 		const string kXmlElementTributeCost = "TributeCost";
 		//
 		const string kXmlElementDamageReceivedXPFactor = "DamageReceivedXPFactor";
+
+		static readonly XML.BListXmlParams kPlayerStatesXmlParams = new XML.BListXmlParams("PlayerState");
 		#endregion
 
 		public Collections.BListAutoId<BResource> Resources { get; private set; }
@@ -272,43 +273,47 @@ namespace PhxLib.Engine
 		public float DamageReceivedXPFactor { get { return mDamageReceivedXPFactor; } }
 		#endregion
 
+		public Collections.BTypeNames PlayerStates { get; private set; }
+
 		/// <summary>Get how much it costs, in total, to tribute a resource to another player</summary>
 		public float TotalTributeCost { get { return (mTributeAmount * mTributeCost) + mTributeAmount; } }
 
 		public BGameData()
 		{
-			Resources = new Collections.BListAutoId<BResource>(BResource.kBListParams);
-			Rates = new Collections.BTypeNames(kRatesParams);
-			Populations = new Collections.BTypeNames(kPopsParams);
-			RefCounts = new Collections.BTypeNames(kRefCountsParams);
+			Resources = new Collections.BListAutoId<BResource>();
+			Rates = new Collections.BTypeNames();
+			Populations = new Collections.BTypeNames();
+			RefCounts = new Collections.BTypeNames();
 			#region Nonsense
-			HUDItems = new Collections.BTypeNames(kHUDItemsParams);
-			FlashableItems = new Collections.BTypeNames(kFlashableItemsParams);
-			UnitFlags = new Collections.BTypeNames(kUnitFlagsParams);
-			SquadFlags = new Collections.BTypeNames(kSquadFlagsParams);
+			HUDItems = new Collections.BTypeNames();
+			FlashableItems = new Collections.BTypeNames();
+			UnitFlags = new Collections.BTypeNames();
+			SquadFlags = new Collections.BTypeNames();
 			#endregion
 			CodeProtoObjects = new Collections.BTypeValuesString(kCodeProtoObjectsParams);
 			CodeObjectTypes = new Collections.BTypeValuesString(kCodeObjectTypesParams);
 
-			InfectionMap = new Collections.BListArray<BInfectionMap>(BInfectionMap.kBListParams);
+			InfectionMap = new Collections.BListArray<BInfectionMap>();
+
+			PlayerStates = new Collections.BTypeNames();
 		}
 
 		#region IXmlElementStreamable Members
 		/// <remarks>For streaming directly from gamedata.xml</remarks>
-		internal void StreamGameXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		internal void StreamGameXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			Resources.StreamXml(s, mode, db);
-			Rates.StreamXml(s, mode, db);
-			Populations.StreamXml(s, mode, db);
-			RefCounts.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Resources, BResource.kBListXmlParams);
+			XML.Util.Serialize(s, mode, xs, Rates, kRatesXmlParams);
+			XML.Util.Serialize(s, mode, xs, Populations, kPopsXmlParams);
+			XML.Util.Serialize(s, mode, xs, RefCounts, kRefCountsXmlParams);
 			#region Nonsense
-			HUDItems.StreamXml(s, mode, db);
-			FlashableItems.StreamXml(s, mode, db);
-			UnitFlags.StreamXml(s, mode, db);
-			SquadFlags.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, HUDItems, kHUDItemsXmlParams);
+			XML.Util.Serialize(s, mode, xs, FlashableItems, kFlashableItemsXmlParams);
+			XML.Util.Serialize(s, mode, xs, UnitFlags, kUnitFlagsXmlParams);
+			XML.Util.Serialize(s, mode, xs, SquadFlags, kSquadFlagsXmlParams);
 			#endregion
-			CodeProtoObjects.StreamXml(s, mode, db);
-			CodeObjectTypes.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, CodeProtoObjects, kCodeProtoObjectsXmlParams);
+			XML.Util.Serialize(s, mode, xs, CodeObjectTypes, kCodeObjectTypesXmlParams);
 
 			#region Misc values
 			s.StreamElementOpt(mode, kXmlElementGarrisonDamageMultiplier, ref mGarrisonDamageMultiplier, Util.kNotInvalidPredicateSingle);
@@ -326,16 +331,18 @@ namespace PhxLib.Engine
 			s.StreamElementOpt(mode, kXmlElementTributeAmount, ref mTributeAmount, Util.kNotInvalidPredicateSingle);
 			s.StreamElementOpt(mode, kXmlElementTributeCost, ref mTributeCost, Util.kNotInvalidPredicateSingle);
 			//
-			InfectionMap.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, InfectionMap, BInfectionMap.kBListXmlParams);
 			//
 			s.StreamElementOpt(mode, kXmlElementDamageReceivedXPFactor, ref mDamageReceivedXPFactor, Util.kNotInvalidPredicateSingle);
 			#endregion
+
+			XML.Util.Serialize(s, mode, xs, PlayerStates, kPlayerStatesXmlParams);
 		}
 
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			using (s.EnterCursorBookmark(mode, kXmlRoot))
-				StreamGameXml(s, mode, db);
+				StreamGameXml(s, mode, xs);
 		}
 		#endregion
 	};

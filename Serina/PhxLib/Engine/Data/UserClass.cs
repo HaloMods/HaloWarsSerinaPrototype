@@ -10,7 +10,7 @@ namespace PhxLib.Engine
 	public class BUserClassField : Collections.BListAutoIdObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams()
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams()
 		{
 			ElementName = "Fields",
 			DataName = "Name",
@@ -22,7 +22,7 @@ namespace PhxLib.Engine
 		BTriggerVarType mType;
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrType, ref mType);
 		}
@@ -31,7 +31,7 @@ namespace PhxLib.Engine
 	public class BUserClass : Collections.BListAutoIdObject, IDatabaseIdObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("UserClass")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("UserClass")
 		{
 			DataName = "Name",
 			Flags = 0
@@ -40,7 +40,7 @@ namespace PhxLib.Engine
 		{
 			Directory = GameDirectory.Data,
 			FileName = "UserClasses.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		const string kXmlAttrDbId = "DBID";
@@ -54,14 +54,14 @@ namespace PhxLib.Engine
 		public BUserClass()
 		{
 			mDbId = Util.kInvalidInt32;
-			Fields = new Collections.BListAutoId<BUserClassField>(BUserClassField.kBListParams);
+			Fields = new Collections.BListAutoId<BUserClassField>();
 		}
 
 		#region BListAutoIdObject Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrDbId, KSoft.NumeralBase.Decimal, ref mDbId);
-			Fields.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Fields, BUserClassField.kBListXmlParams);
 		}
 		#endregion
 	};

@@ -29,10 +29,6 @@ namespace PhxLib
 		{
 			Database.Load();
 		}
-		public virtual void LoadUpdates()
-		{
-			Database.LoadUpdates();
-		}
 
 		static void SetupStream(KSoft.IO.XmlElementStream s)
 		{
@@ -40,8 +36,9 @@ namespace PhxLib
 			s.ExceptionOnEnumParseFail = true;
 			s.InitializeAtRootElement();
 		}
-		public bool TryStreamData<TContext>(XmlFileInfo xfi, FA mode, 
-			Action<KSoft.IO.XmlElementStream, FA, BDatabaseBase, TContext> stream_proc, TContext ctxt,
+		public bool TryStreamData<TContext>(XmlFileInfo xfi, FA mode,
+			XML.BDatabaseXmlSerializerBase xs,
+			Action<KSoft.IO.XmlElementStream, FA, XML.BDatabaseXmlSerializerBase, TContext> stream_proc, TContext ctxt,
 			string ext = null)
 		{
 			Contract.Requires(xfi != null);
@@ -57,7 +54,7 @@ namespace PhxLib
 				using (var s = new KSoft.IO.XmlElementStream(file.FullName, mode, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, this.Database, ctxt);
+					stream_proc(s, mode, xs, ctxt);
 				}
 			}
 			else if (mode == FA.Write)
@@ -65,15 +62,16 @@ namespace PhxLib
 				if(xfi.Writable) using (var s = KSoft.IO.XmlElementStream.CreateForWrite(xfi.RootName, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, this.Database, ctxt);
+					stream_proc(s, mode, xs, ctxt);
 					s.Document.Save(file.FullName);
 				}
 			}
 
 			return true;
 		}
-		public bool TryStreamData(XmlFileInfo xfi, FA mode, 
-			Action<KSoft.IO.XmlElementStream, FA, BDatabaseBase> stream_proc, string ext = null)
+		public bool TryStreamData(XmlFileInfo xfi, FA mode,
+			XML.BDatabaseXmlSerializerBase xs,
+			Action<KSoft.IO.XmlElementStream, FA, XML.BDatabaseXmlSerializerBase> stream_proc, string ext = null)
 		{
 			Contract.Requires(xfi != null);
 			Contract.Requires(stream_proc != null);
@@ -88,7 +86,7 @@ namespace PhxLib
 				using (var s = new KSoft.IO.XmlElementStream(file.FullName, mode, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, this.Database);
+					stream_proc(s, mode, xs);
 				}
 			}
 			else if (mode == FA.Write)
@@ -96,7 +94,7 @@ namespace PhxLib
 				if(xfi.Writable) using (var s = KSoft.IO.XmlElementStream.CreateForWrite(xfi.RootName, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, this.Database);
+					stream_proc(s, mode, xs);
 					s.Document.Save(file.FullName);
 				}
 			}
