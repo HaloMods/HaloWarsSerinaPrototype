@@ -1,13 +1,13 @@
 ﻿using System.Xml;
 
-namespace PhxLib.Engine
+namespace PhxLib.XML
 {
-	partial class BDatabaseBase
+	partial class BDatabaseXmlSerializerBase
 	{
 		protected virtual void FixWeaponTypes() {}
 
-		protected static XmlNode XPathSelectNodeByName(KSoft.IO.XmlElementStream s, Collections.BListParams op, 
-			string data_name, string attr_name = DatabaseNamedObject.kXmlAttrName)
+		protected static XmlNode XPathSelectNodeByName(KSoft.IO.XmlElementStream s, XML.BListXmlParams op, 
+			string data_name, string attr_name = Engine.DatabaseNamedObject.kXmlAttrName)
 		{
 			string xpath = string.Format(
 				"/{0}/{1}[@{2}='{3}']",

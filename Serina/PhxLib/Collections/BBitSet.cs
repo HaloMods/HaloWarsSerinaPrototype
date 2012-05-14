@@ -9,38 +9,28 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.Collections
 {
-	public class BBitSetParams : BListParams
+	public class BBitSetParams
 	{
 		/// <summary>Get the source IProtoEnum from a global object</summary>
 		public readonly Func<IProtoEnum> kGetProtoEnum;
 		/// <summary>Get the source IProtoEnum from an engine's main database</summary>
 		public readonly Func<Engine.BDatabaseBase, IProtoEnum> kGetProtoEnumFromDB;
 
-		BBitSetParams(string element_name)
-		{
-			ElementName = element_name;
-
-			Flags = 0;
-			Flags |= BCollectionParamsFlags.UseInnerTextForData;
-			Flags |= BCollectionParamsFlags.InternDataNames;
-		}
-		/// <summary>Sets ElementName, defaults to InnerText data usage and data interning</summary>
-		/// <param name="element_name">Name of the xml element which represents the type (enum) value</param>
+		/// <summary></summary>
 		/// <param name="proto_enum_getter"></param>
-		public BBitSetParams(string element_name, Func<Engine.BDatabaseBase, IProtoEnum> proto_enum_getter) : this(element_name)
+		public BBitSetParams(Func<Engine.BDatabaseBase, IProtoEnum> proto_enum_getter)
 		{
 			kGetProtoEnumFromDB = proto_enum_getter;
 		}
-		/// <summary>Sets ElementName, defaults to InnerText data usage and data interning</summary>
-		/// <param name="element_name">Name of the xml element which represents the type (enum) value</param>
+		/// <summary></summary>
 		/// <param name="proto_enum_getter"></param>
-		public BBitSetParams(string element_name, Func<IProtoEnum> proto_enum_getter) : this(element_name)
+		public BBitSetParams(Func<IProtoEnum> proto_enum_getter)
 		{
 			kGetProtoEnum = proto_enum_getter;
 		}
 	};
 
-	public class BBitSet : IO.IPhxXmlStreamable
+	public class BBitSet
 	{
 		// TODO: implement a custom BitArray that supports fastforwarding to the first bit that is set, etc
 		// In the case of Phx, most bit-sets will be sparsely populated
@@ -49,6 +39,9 @@ namespace PhxLib.Collections
 		// C:\Mount\B\SourceCode\sscli20\fx\src\compmod\system\collections\specialized\bitvector32.cs
 		System.Collections.BitArray mBits;
 
+		public int Count { get { return IsEmpty ? 0 : mBits.Count; } }
+		public int EnabledCount { get; private set; }
+
 		/// <summary>Parameters that dictate the functionality of this list</summary>
 		public BBitSetParams Params { get; private set; }
 
@@ -56,72 +49,48 @@ namespace PhxLib.Collections
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
 
+			EnabledCount = 0;
 			Params = @params;
 
-			if (Params.kGetProtoEnum != null)
-				InitializeBits(Params.kGetProtoEnum());
+			InitializeFromEnum(null);
 		}
 
-		void InitializeBits(IProtoEnum penum)
+		public bool IsEmpty { get { return mBits == null; } }
+		internal void OptimizeStorage()
 		{
-			mBits = new System.Collections.BitArray(penum.MemberCount);
+			if (EnabledCount == 0)
+				mBits = null;
 		}
 
-		#region IXmlElementStreamable Members
-		IProtoEnum GetProtoEnum(Engine.BDatabaseBase db)
+		internal IProtoEnum InitializeFromEnum(Engine.BDatabaseBase db)
 		{
-			if (Params.kGetProtoEnum != null)
-				return Params.kGetProtoEnum();
+			IProtoEnum penum = null;
 
-			return Params.kGetProtoEnumFromDB(db);
+			if (Params.kGetProtoEnum != null)	penum = Params.kGetProtoEnum();
+			else if(db != null)					penum = Params.kGetProtoEnumFromDB(db);
+
+			if(penum != null)
+				mBits = new System.Collections.BitArray(penum.MemberCount);
+
+			return penum;
 		}
 
-		void ReadXmlNodes(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db)
+		public bool this[int bit_index]
 		{
-			IProtoEnum penum;
-			if (mBits != null)
-				penum = Params.kGetProtoEnum();
-			else
+			get { return IsEmpty ? false : mBits[bit_index]; }
+			set
 			{
-				penum = Params.kGetProtoEnumFromDB(db);
-				InitializeBits(penum);
-			}
+				if (IsEmpty) return;
 
-			foreach (XmlNode n in s.Cursor.ChildNodes)
-			{
-				if (n.Name != Params.ElementName) continue;
-
-				using (s.EnterCursorBookmark(n as XmlElement))
+				bool original = mBits[bit_index];
+				if (original != value)
 				{
-					string name = null;
-					Params.StreamDataName(s, FA.Read, ref name);
+					mBits[bit_index] = value;
 
-					int id = penum.GetMemberId(name);
-					mBits[id] = true;
+					if (value == false) EnabledCount--;
+					else EnabledCount++;
 				}
 			}
 		}
-		void WriteXmlNodes(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db)
-		{
-			IProtoEnum penum = GetProtoEnum(db);
-
-			for (int x = 0; x < mBits.Count; x++)
-				if (mBits[x])
-					using (s.EnterCursorBookmark(Params.ElementName))
-					{
-						string name = penum.GetMemberName(x);
-						Params.StreamDataName(s, FA.Write, ref name);
-					}
-		}
-
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, Engine.BDatabaseBase db)
-		{
-			using (s.EnterCursorBookmark(mode, Params.GetOptionalRootName()))
-			{
-					 if (mode == FA.Read)	ReadXmlNodes(s, db);
-				else if (mode == FA.Write)	WriteXmlNodes(s, db);
-			}
-		}
-		#endregion
 	};
 }

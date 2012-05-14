@@ -5,6 +5,10 @@ using System.Text;
 
 namespace PhxLib.Engine
 {
+	/// <remarks>
+	/// The engine's parsing logic for this duplicates the IsNull and InnerText.IsNullOrEmpty checks for all
+	/// the related cases. Would be more efficient to split these up into diff groups to avoid code dup
+	/// </remarks>
 	public enum BTriggerVarType : uint
 	{
 		#region 0x0
@@ -21,41 +25,44 @@ namespace PhxLib.Engine
 		Sound,
 		Entity,
 		EntityList,
-		Trigger,
-		Time,
+		Trigger, // int
+		Time, // int
 		Player,
-		UILocation,
-		UIEntity,
-		Cost,
+		[Obsolete] UILocation,
+		[Obsolete] UIEntity,
+		Cost, // TODO: special KV parsing...
 		#endregion
 
 		#region 0x10
+		/// <remarks>Engine defined</remarks>
+		/// <see cref="BAnimType"/>
 		AnimType,
 		/// <see cref="BActionStatus"/>
 		ActionStatus,
 		Power,
 		Bool,
 		Float,
-		Iterator,
-		Team,
+		[Obsolete] Iterator,
+		Team, // int
 		PlayerList,
 		TeamList,
+		/// <see cref="BGameData.PlayerStates"/>
 		PlayerState,
-		Objective,
+		Objective, // int
 		Unit,
 		UnitList,
 		Squad,
 		SquadList,
-		UIUnit,
+		[Obsolete] UIUnit,
 		#endregion
 
 		#region 0x20
-		UISquad,
-		UISquadList,
+		[Obsolete] UISquad,
+		[Obsolete] UISquadList,
 		String,
-		MessageIndex,
-		MessageJustify,
-		MessagePoint,
+		MessageIndex, // int
+		MessageJustify, // int
+		MessagePoint, // float
 		Color,
 		ProtoObjectList,
 		ObjectTypeList,
@@ -74,12 +81,14 @@ namespace PhxLib.Engine
 		#region 0x30
 		Object,
 		ObjectList,
-		Group,
+		Group, // int
+		/// <see cref="BGameData.RefCounts"/>
 		RefCountType,
+		/// <see cref="BGameData.UnitFlags"/>
 		UnitFlag,
 		/// <see cref="BLOSType"/>
 		LOSType,
-		EntityFilterSet,
+		[Obsolete] EntityFilterSet,
 		PopBucket,
 		/// <see cref="BListPosition"/>
 		ListPosition,
@@ -89,29 +98,31 @@ namespace PhxLib.Engine
 		ExposedAction,
 		/// <see cref="BSquadMode"/>
 		SquadMode,
-		ExposedScript,
-		KBBase,
-		KBBaseList,
+		ExposedScript, // int
+		[Obsolete] KBBase,
+		[Obsolete] KBBaseList, // engine still initializes the list
 		/// <see cref="BDataScalar"/>
 		DataScalar,
 		#endregion
 
 		#region 0x40
-		KBBaseQuery,
-		DesignLine,
-		LocStringID,
+		[Obsolete] KBBaseQuery, // Obsolete? engine sets a flag in the BTriggerVar
+		DesignLine, // int
+		LocStringID, // int
 		Leader,
-		Cinematic,
+		Cinematic, // int
 		/// <see cref="BFlareType"/>
 		FlareType,
-		CinematicTag,
-		IconType,
-		Difficulty,
-		Integer,
+		CinematicTag, // int
+		IconType, // parses as ProtoObject...
+		Difficulty, // int
+		Integer, // int (XMB specialized)
+		/// <remarks>Engine defined</remarks>
+		/// <see cref="BHUDItem"/>
 		HUDItem,
-		/// <see cref="BControlType"/>
+		/// <see cref="BUIControlType"/>
 		ControlType,
-		UIButton,
+		[Obsolete] UIButton,
 		/// <see cref="BMissionType"/>
 		MissionType,
 		/// <see cref="BMissionState"/>
@@ -126,17 +137,19 @@ namespace PhxLib.Engine
 		BidType,
 		/// <see cref="BBidState"/>
 		BidState,
-		BuildingCommandState,
+		[Obsolete] BuildingCommandState,
 		Vector,
 		VectorList,
 		PlacementRule,
-		KBSquad,
-		KBSquadList,
-		KBSquadQuery,
-		AISquadAnalysis,
+		[Obsolete] KBSquad,
+		[Obsolete] KBSquadList, // engine still initializes the list
+		KBSquadQuery, // Obsolete? engine sets a flag in the BTriggerVar
+		[Obsolete] AISquadAnalysis,
 		/// <see cref="BAISquadAnalysisComponent"/>
 		AISquadAnalysisComponent,
-		KBSquadFilterSet,
+		[Obsolete] KBSquadFilterSet,
+		/// <remarks>Engine defined</remarks>
+		/// <see cref="BChatSpeaker"/>
 		ChatSpeaker,
 		/// <see cref="BRumbleType"/>
 		RumbleType,
@@ -147,34 +160,39 @@ namespace PhxLib.Engine
 		#region 0x60
 		/// <see cref="BProtoObjectCommandType"/>
 		CommandType,
+		/// <see cref="BObjectDataType"/>
 		SquadDataType,
+		/// <see cref="BEventType"/>
 		EventType,
-		TimeList,
-		DesignLineList,
+		TimeList, // int[]
+		DesignLineList, // int[]
 		/// <see cref="BGameStatePredicate"/>
 		GameStatePredicate,
 		FloatList,
-		UILocationMinigame,
+		[Obsolete] UILocationMinigame,
+		/// <see cref="BGameData.SquadFlags"/>
 		SquadFlag,
+		/// <remarks>Engine defined</remarks>
+		/// <see cref="BFlashableUIItem"/>
 		FlashableUIItem, // aka FlashableItems
-		TalkingHead,
-		Concept,
-		ConceptList,
-		UserClassType,
+		TalkingHead, // int (XMB specialized)
+		Concept, // int
+		ConceptList, // int[]
+		UserClassType, // int (XMB specialized)
 
 
 		#endregion
 
-		Distance = Float,
-		Percent = Float,
-		Hitpoints = Float,
+		Distance = Float, // s/w b/w Trigger & Time
+		Percent = Float, // s/w b/w ActionStatus & Hitpoints
+		Hitpoints = Float, // s/w b/w Percent & Power
 
-		Count = Integer,
+		Count = Integer, // s/w b/w Player & Location
 
-		Location = Vector,
-		Direction = Vector,
+		Location = Vector, // s/w b/w Count & UILocation
+		Direction = Vector, // s/w b/w TalkingHead & FlareType
 
-		LocationList = VectorList,
+		LocationList = VectorList, // s/w b/w Group & RefCountType
 	};
 
 	#region 0x00
@@ -380,97 +398,6 @@ namespace PhxLib.Engine
 		Attack,
 	};
 
-	public enum BControlType
-	{
-		Invalid,
-
-		ControlTilt,
-		ControlZoom,
-		ControlRotate,
-		ControlPan,
-		ControlCircleSelect,
-		ControlCircleMultiSelect,
-		ControlClearAllSelections,
-		ControlModifierAction,
-		ControlModifierSpeed,
-		ControlResetCameraSettings,
-		ControlGotoRally,
-		ControlGotoBase,
-		ControlGotoScout,
-		ControlGotoNode,
-		ControlGotoHero,
-		ControlGotoAlert,
-		ControlGotoSelected,
-		ControlGroupSelect,
-		ControlGroupGoto,
-		ControlGroupAssign,
-		ControlGroupAddTo,
-		ControlScreenSelectMilitary,
-		ControlGlobalSelect,
-		ControlDoubleClickSelect,
-		ControlFindCrowdMilitary,
-		ControlFindCrowdVillager,
-		ControlSetRallyPoint,
-		Flare,
-		FlareHelp,
-		FlareMeet,
-		FlareAttack,
-		MenuShowCommand,
-		MenuCloseCommand,
-		MenuNavCommand,
-		MenuCommandHasFocus0,
-		MenuCommandHasFocus1,
-		MenuCommandHasFocus2,
-		MenuCommandHasFocus3,
-		MenuCommandHasFocus4,
-		MenuCommandHasFocus5,
-		MenuCommandHasFocus6,
-		MenuCommandHasFocus7,
-		MenuCommandHasFocusN,
-		MenuCommandClickmenuN,
-		MenuCommandIsMenuOpen,
-		MenuCommanndIsMenuNotOpen,
-		MenuShowPower,
-		MenuClosePower,
-		MenuPowerHasFocusN,
-		MenuPowerClickmenuN,
-		MenuPowerIsMenuOpen,
-		MenuPowerIsMenuNotOpen,
-		MenuShowSelectPower,
-		MenuShowAbility,
-		MenuShowTribute,
-		MenuShowObjectives,
-		GameEntityBuilt,
-		GameEntityKilled,
-		ChatShown,
-		ChatRemoved,
-		ChatCompleted,
-		CommandBowl,
-		CommandAbility,
-		CommandUnpack,
-		CommandDoWork,
-		CommandAttack,
-		CommandMove,
-		CommandTrainSquad,
-		CommandTrainSquadCancel,
-		CommandResearch,
-		CommandResearchCancel,
-		CommandBuildOther,
-		CommandRecycle,
-		CommandRecycleCancel,
-		CameraLookingAt,
-		SelectUnits,
-		CinematicCompleted,
-		FadeCompleted,
-		UsedPower,
-		Timer1Sec,
-		ControlCircleSelectFullyGrown,
-		PowerOrbitalComplete,
-		GameEntityRammed,
-		GameEntityJacked,
-		GameEntityKilledByNonProjectile,
-	};
-
 	public enum BMissionType
 	{
 		Invalid,
@@ -584,6 +511,97 @@ namespace PhxLib.Engine
 	#endregion
 
 	#region 0x60
+	public enum BEventType
+	{
+		Invalid,
+
+		ControlTilt,
+		ControlZoom,
+		ControlRotate,
+		ControlPan,
+		ControlCircleSelect,
+		ControlCircleMultiSelect,
+		ControlClearAllSelections,
+		ControlModifierAction,
+		ControlModifierSpeed,
+		ControlResetCameraSettings,
+		ControlGotoRally,
+		ControlGotoBase,
+		ControlGotoScout,
+		ControlGotoNode,
+		ControlGotoHero,
+		ControlGotoAlert,
+		ControlGotoSelected,
+		ControlGroupSelect,
+		ControlGroupGoto,
+		ControlGroupAssign,
+		ControlGroupAddTo,
+		ControlScreenSelectMilitary,
+		ControlGlobalSelect,
+		ControlDoubleClickSelect,
+		ControlFindCrowdMilitary,
+		ControlFindCrowdVillager,
+		ControlSetRallyPoint,
+		Flare,
+		FlareHelp,
+		FlareMeet,
+		FlareAttack,
+		MenuShowCommand,
+		MenuCloseCommand,
+		MenuNavCommand,
+		MenuCommandHasFocus0,
+		MenuCommandHasFocus1,
+		MenuCommandHasFocus2,
+		MenuCommandHasFocus3,
+		MenuCommandHasFocus4,
+		MenuCommandHasFocus5,
+		MenuCommandHasFocus6,
+		MenuCommandHasFocus7,
+		MenuCommandHasFocusN,
+		MenuCommandClickmenuN,
+		MenuCommandIsMenuOpen,
+		MenuCommanndIsMenuNotOpen,
+		MenuShowPower,
+		MenuClosePower,
+		MenuPowerHasFocusN,
+		MenuPowerClickmenuN,
+		MenuPowerIsMenuOpen,
+		MenuPowerIsMenuNotOpen,
+		MenuShowSelectPower,
+		MenuShowAbility,
+		MenuShowTribute,
+		MenuShowObjectives,
+		GameEntityBuilt,
+		GameEntityKilled,
+		ChatShown,
+		ChatRemoved,
+		ChatCompleted,
+		CommandBowl,
+		CommandAbility,
+		CommandUnpack,
+		CommandDoWork,
+		CommandAttack,
+		CommandMove,
+		CommandTrainSquad,
+		CommandTrainSquadCancel,
+		CommandResearch,
+		CommandResearchCancel,
+		CommandBuildOther,
+		CommandRecycle,
+		CommandRecycleCancel,
+		CameraLookingAt,
+		SelectUnits,
+		CinematicCompleted,
+		FadeCompleted,
+		UsedPower,
+		Timer1Sec,
+		ControlCircleSelectFullyGrown,
+		PowerOrbitalComplete,
+		GameEntityRammed,
+		GameEntityJacked,
+		GameEntityKilledByNonProjectile,
+	};
+
 	public enum BGameStatePredicate
 	{
 		Invalid,

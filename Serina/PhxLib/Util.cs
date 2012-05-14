@@ -16,16 +16,16 @@ namespace PhxLib
 		[Contracts.ContractClass(typeof(IPhxXmlStreamableContract))]
 		public interface IPhxXmlStreamable
 		{
-			void StreamXml(KSoft.IO.XmlElementStream s, FA mode, Engine.BDatabaseBase db);
+			void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs);
 		};
 		[Contracts.ContractClassFor(typeof(IPhxXmlStreamable))]
 		abstract class IPhxXmlStreamableContract : IPhxXmlStreamable
 		{
-			public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, Engine.BDatabaseBase db)
+			public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 			{
 				Contract.Requires(s != null);
 				Contract.Requires(mode != System.IO.FileAccess.ReadWrite);
-				Contract.Requires(db != null);
+				Contract.Requires(xs != null);
 			}
 		};
 		#endregion
@@ -54,83 +54,15 @@ namespace PhxLib
 			return string.Compare(str1, str2, true) == 0;
 		}
 
-		#region XmlElementStream Util
-		public const XmlNodeType kSourceAttr = XmlNodeType.Attribute;
-		public const XmlNodeType kSourceElement = XmlNodeType.Element;
-		public const XmlNodeType kSourceCursor = XmlNodeType.Text;
-
-		public static void StreamString(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref string value, bool to_lower, XmlNodeType type = kSourceAttr, bool intern = false)
+		public static void DisposeAndNull<T>(ref T d)
+			where T : class, IDisposable
 		{
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(type));
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
-
-			if (type == XmlNodeType.Element)		s.StreamElement(mode, name, ref value);
-			else if (type == XmlNodeType.Attribute)	s.StreamAttribute(mode, name, ref value);
-			else if (type == XmlNodeType.Text)		s.StreamCursor(mode, ref value);
-
-			if (mode == FA.Read)
+			if (d != null)
 			{
-				if (to_lower) value = value.ToLowerInvariant();
-				if (intern) value = string.Intern(value);
+				d.Dispose();
+				d = null;
 			}
 		}
-		public static bool StreamStringOpt(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref string value, bool to_lower, XmlNodeType type = kSourceAttr, bool intern = false)
-		{
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(type));
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
-
-			bool result = true;
-			if (type == XmlNodeType.Element)		result = s.StreamElementOpt(mode, name, ref value, kNotNullOrEmpty);
-			else if (type == XmlNodeType.Attribute)	result = s.StreamAttributeOpt(mode, name, ref value, kNotNullOrEmpty);
-			else if (type == XmlNodeType.Text)		s.StreamCursor(mode, ref value);
-
-			if (mode == FA.Read && result)
-			{
-				if (to_lower) value = value.ToLowerInvariant();
-				if (intern) value = string.Intern(value);
-			}
-
-			return result;
-		}
-
-		public static void StreamInternString(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref string value, bool to_lower, XmlNodeType type = kSourceAttr)
-		{
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(type));
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
-
-			StreamString(s, mode, name, ref value, to_lower, type, true);
-		}
-		public static bool StreamInternStringOpt(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref string value, bool to_lower, XmlNodeType type = kSourceAttr)
-		{
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(type));
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
-
-			return StreamStringOpt(s, mode, name, ref value, to_lower, type, true);
-		}
-
-		public static bool StreamElementNamedFlag(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref bool value)
-		{
-			if (mode == FA.Read) value = s.ElementsExists(name);
-			else if (mode == FA.Write && value) s.WriteElement(name);
-
-			return value;
-		}
-
-		public static string GetAttributeNameHack(KSoft.IO.XmlElementStream s, string attr_name)
-		{
-			if (s.AttributeExists(attr_name)) return attr_name;
-
-			attr_name = attr_name.ToLower();
-			if (s.AttributeExists(attr_name)) return attr_name;
-
-			throw new InvalidOperationException();
-		}
-		#endregion
 
 		public static bool ParseGameTime(string str, out DateTime game_time, out string error_details)
 		{

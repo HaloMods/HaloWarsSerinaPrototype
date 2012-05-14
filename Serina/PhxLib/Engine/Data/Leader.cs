@@ -10,7 +10,7 @@ namespace PhxLib.Engine
 	public class BLeader : DatabaseNamedObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Leader")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Leader")
 		{
 			DataName = "Name",
 			Flags = 0
@@ -19,7 +19,7 @@ namespace PhxLib.Engine
 		{
 			Directory = GameDirectory.Data,
 			FileName = "Leaders.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		const string kXmlElementTech = "Tech";
@@ -30,13 +30,15 @@ namespace PhxLib.Engine
 		// TODO: HW's FlashPortrait elements have an ending " character (sans a starting quote). Becareful!
 
 		const string kXmlElementSupportPower = "SupportPower";
-		const string kXmlElementSupportPowerAttrTechPrereq = "TechPrereq";
+		const string kXmlElementSupportPowerAttrTechPrereq = "TechPrereq"; // proto tech
 		// Can have multiple powers...
 		const string kXmlElementSupportPowerElementPower = "Power";
 
 		const string kXmlElementStartingUnit = "StartingUnit";
 		const string kXmlElementStartingUnitAttrBuildOther = "BuildOther";
 		const string kXmlElementStartingSquad = "StartingSquad";
+		static readonly XML.BListOfIDsXmlParams kStartingSquadBListXmlParams =
+			new XML.BListOfIDsXmlParams(kXmlElementStartingSquad, XML.BDatabaseXmlSerializerBase.StreamSquadID);
 		#endregion
 
 		int mTechID = Util.kInvalidInt32;
@@ -56,9 +58,7 @@ namespace PhxLib.Engine
 		public int StartingUnitID { get { return mStartingUnitID; } }
 		int mStartingUnitBuildOtherID = Util.kInvalidInt32;
 		public int StartingUnitBuildOtherID { get { return mStartingUnitBuildOtherID; } }
-		// TODO: HEY! Leaders can have MORE THAN ONE starting squad
-		int mStartingSquadID = Util.kInvalidInt32;
-		public int StartingSquadID { get { return mStartingSquadID; } }
+		public Collections.BListOfIDs StartingSquads { get; private set; }
 
 		public Collections.BTypeValues<BPopulation> Populations { get; private set; }
 
@@ -68,6 +68,9 @@ namespace PhxLib.Engine
 		public BLeader()
 		{
 			Resources = new Collections.BTypeValuesSingle(BResource.kBListTypeValuesParams);
+
+			StartingSquads = new Collections.BListOfIDs();
+
 			Populations = new Collections.BTypeValues<BPopulation>(BPopulation.kBListParams);
 		}
 
@@ -76,27 +79,27 @@ namespace PhxLib.Engine
 		{
 			return (mode == FA.Write && mStartingUnitID != Util.kInvalidInt32) || s.ElementsExists(kXmlElementStartingUnit);
 		}
-		void StreamXmlStartingUnit(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		void StreamXmlStartingUnit(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			using (s.EnterCursorBookmark(mode, kXmlElementStartingUnit))
 			{
-				db.StreamXmlForDBID(s, mode, null, ref mStartingUnitID, DatabaseObjectKind.Object, false, Util.kSourceCursor);
-				db.StreamXmlForDBID(s, mode, kXmlElementStartingUnitAttrBuildOther, ref mStartingUnitBuildOtherID, DatabaseObjectKind.Object, false, Util.kSourceAttr);
+				xs.StreamXmlForDBID(s, mode, null, ref mStartingUnitID, DatabaseObjectKind.Object, false, XML.Util.kSourceCursor);
+				xs.StreamXmlForDBID(s, mode, kXmlElementStartingUnitAttrBuildOther, ref mStartingUnitBuildOtherID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
 			}
 		}
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			base.StreamXml(s, mode, db);
+			base.StreamXml(s, mode, xs);
 
-			db.StreamXmlForDBID(s, mode, kXmlElementTech, ref mTechID, DatabaseObjectKind.Tech);
-			db.StreamXmlForDBID(s, mode, kXmlElementCiv, ref mCivID, DatabaseObjectKind.Civ);
-			db.StreamXmlForDBID(s, mode, kXmlElementPower, ref mPowerID, DatabaseObjectKind.Power);
-			db.StreamXmlForStringID(s, mode, kXmlElementNameID, ref mNameID);
+			xs.StreamXmlForDBID(s, mode, kXmlElementTech, ref mTechID, DatabaseObjectKind.Tech);
+			xs.StreamXmlForDBID(s, mode, kXmlElementCiv, ref mCivID, DatabaseObjectKind.Civ);
+			xs.StreamXmlForDBID(s, mode, kXmlElementPower, ref mPowerID, DatabaseObjectKind.Power);
+			xs.StreamXmlForStringID(s, mode, kXmlElementNameID, ref mNameID);
 
-			Resources.StreamXml(s, mode, db);
-			if(ShouldStreamStartingUnit(s, mode)) StreamXmlStartingUnit(s, mode, db);
-			db.StreamXmlForDBID(s, mode, kXmlElementStartingSquad, ref mStartingSquadID, DatabaseObjectKind.Squad);
-			Populations.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Resources, BResource.kBListTypeValuesXmlParams);
+			if(ShouldStreamStartingUnit(s, mode)) StreamXmlStartingUnit(s, mode, xs);
+			XML.Util.Serialize(s, mode, xs, StartingSquads, kStartingSquadBListXmlParams);
+			XML.Util.Serialize(s, mode, xs, Populations, BPopulation.kBListXmlParams);
 		}
 		#endregion
 	};

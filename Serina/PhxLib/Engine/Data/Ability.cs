@@ -46,7 +46,7 @@ namespace PhxLib.Engine
 	public class BAbility : DatabaseNamedObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams
 		{
 			RootName = "Abilities",
 			ElementName = "Ability",
@@ -56,7 +56,7 @@ namespace PhxLib.Engine
 		{
 			Directory = GameDirectory.Data,
 			FileName = "Abilities.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		const string kXmlElementType = "Type";
@@ -106,9 +106,9 @@ namespace PhxLib.Engine
 		}
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			base.StreamXml(s, mode, db);
+			base.StreamXml(s, mode, xs);
 
 			s.StreamElementOpt(mode, kXmlElementType, ref mType, e => e != BAbilityType.Invalid);
 			s.StreamElementOpt(mode, kXmlElementSquadMode, ref mSquadMode, e => e != BSquadMode.Invalid);

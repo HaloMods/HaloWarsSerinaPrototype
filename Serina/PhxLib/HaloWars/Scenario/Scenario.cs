@@ -16,4 +16,14 @@ namespace PhxLib.HaloWars
 		/// <summary>Shield World Exterior</summary>
 		SWE,
 	};
+
+	public enum BScenarioTeam // Not really an official enum...just documentation as I've seen the TeamIDs used
+	{
+		None,
+
+		UNSC,
+		Covenant,
+		Flood,
+		Forerunner,
+	};
 }

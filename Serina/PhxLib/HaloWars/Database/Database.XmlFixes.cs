@@ -4,21 +4,21 @@ using PhxLib.Engine;
 
 namespace PhxLib.HaloWars
 {
-	partial class BDatabase
+	partial class BDatabase { partial class XmlSerializer
 	{
 		protected override void FixWeaponTypes()
 		{
-			WeaponTypes.DynamicAdd(new BWeaponType(), "Cannon");
-			WeaponTypes.DynamicAdd(new BWeaponType(), "needler");
-			WeaponTypes.DynamicAdd(new BWeaponType(), "HeavyNeedler");
-			WeaponTypes.DynamicAdd(new BWeaponType(), "Plasma");
-			WeaponTypes.DynamicAdd(new BWeaponType(), "HeavyPlasma");
+			Database.WeaponTypes.DynamicAdd(new BWeaponType(), "Cannon");
+			Database.WeaponTypes.DynamicAdd(new BWeaponType(), "needler");
+			Database.WeaponTypes.DynamicAdd(new BWeaponType(), "HeavyNeedler");
+			Database.WeaponTypes.DynamicAdd(new BWeaponType(), "Plasma");
+			Database.WeaponTypes.DynamicAdd(new BWeaponType(), "HeavyPlasma");
 		}
 
 		// Fix float values which are in an invalid format for .NET's parsing
 		static void FixObjectsXmlInvalidSingles(KSoft.IO.XmlElementStream s)
 		{
-			var node = XPathSelectNodeByName(s, BProtoObject.kBListParams, "unsc_veh_cobra_01");
+			var node = XPathSelectNodeByName(s, BProtoObject.kBListXmlParams, "unsc_veh_cobra_01");
 			if (node == null) return;
 
 			var element = node[BProtoObject.kXmlElementAttackGradeDPS] as XmlElement;
@@ -30,7 +30,7 @@ namespace PhxLib.HaloWars
 		}
 		static void FixObjectsXmlInvalidFlags(KSoft.IO.XmlElementStream s)
 		{
-			var node = XPathSelectNodeByName(s, BProtoObject.kBListParams, "fx_proj_fldbomb_01");
+			var node = XPathSelectNodeByName(s, BProtoObject.kBListXmlParams, "fx_proj_fldbomb_01");
 			if (node == null) return;
 
 			var nodes = node.ChildNodes;
@@ -67,7 +67,7 @@ namespace PhxLib.HaloWars
 			}
 		}
 		// Remove non-existent ProtoTechs that are referenced by effects
-		static void FixTechsXmlEffectsInvalid(KSoft.IO.XmlElementStream s, Collections.BListParams op)
+		static void FixTechsXmlEffectsInvalid(KSoft.IO.XmlElementStream s, XML.BListXmlParams op)
 		{
 			string xpath = string.Format(
 				"/{0}/{1}/Effects/Effect/Target",
@@ -85,13 +85,13 @@ namespace PhxLib.HaloWars
 		}
 		protected override void FixTechsXml(KSoft.IO.XmlElementStream s)
 		{
-			var node = XPathSelectNodeByName(s, BProtoTech.kBListParams, "unsc_scorpion_upgrade3");
+			var node = XPathSelectNodeByName(s, BProtoTech.kBListXmlParams, "unsc_scorpion_upgrade3");
 			if (node != null) FixTechsXmlEffectsDataSubType(s.Document, node);
 
-			node = XPathSelectNodeByName(s, BProtoTech.kBListParams, "unsc_grizzly_upgrade0");
+			node = XPathSelectNodeByName(s, BProtoTech.kBListXmlParams, "unsc_grizzly_upgrade0");
 			if (node != null) FixTechsXmlEffectsDataSubType(s.Document, node);
 
-			FixTechsXmlEffectsInvalid(s, BProtoTech.kBListParams);
+			FixTechsXmlEffectsInvalid(s, BProtoTech.kBListXmlParams);
 		}
 
 		static void FixTacticsXmlBadWeapons(KSoft.IO.XmlElementStream s, string name)
@@ -326,5 +326,5 @@ namespace PhxLib.HaloWars
 			FixTacticsXmlBadWeapons(s, name);
 			FixTacticsXmlBadActions(s, name);
 		}
-	};
+	}; };
 }

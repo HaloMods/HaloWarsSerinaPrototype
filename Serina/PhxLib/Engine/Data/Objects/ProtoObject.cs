@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml;
+using Contracts = System.Diagnostics.Contracts;
+using Contract = System.Diagnostics.Contracts.Contract;
 
 using FA = System.IO.FileAccess;
 using XmlIgnore = System.Xml.Serialization.XmlIgnoreAttribute;
@@ -243,6 +244,17 @@ namespace PhxLib.Engine
 		[Obsolete, XmlIgnore] RenderBelowDecals,
 	};
 
+	public enum BProtoObjectSelectType
+	{
+		None,
+
+		Unit,
+		Command,
+		Target,
+		SingleUnit,
+		SingleType,
+	};
+
 	//ChildObjectType
 	//ParkingLot
 	//Socket
@@ -264,7 +276,7 @@ namespace PhxLib.Engine
 	};
 	//BObjectSocket.AutoSocket bool
 
-	public struct BProtoObjectVeterancy : IO.IPhxXmlStreamable, IComparable<BProtoObjectVeterancy>, IEqualityComparer<BProtoObjectVeterancy>
+	public class BProtoObjectVeterancy : IO.IPhxXmlStreamable, IComparable<BProtoObjectVeterancy>, IEqualityComparer<BProtoObjectVeterancy>
 	{
 		class _EqualityComparer : IEqualityComparer<BProtoObjectVeterancy>
 		{
@@ -284,14 +296,47 @@ namespace PhxLib.Engine
 		};
 		public static readonly IEqualityComparer<BProtoObjectVeterancy> kEqualityComparer = new _EqualityComparer();
 
+		static readonly BProtoObjectVeterancy kInvalid = new BProtoObjectVeterancy(),
+			kDefaultLevel1 = new BProtoObjectVeterancy()
+			{
+				mDamage = 1.15f, mVelocity = 1, mAccuracy = 1.6f, mWorkRate = 1.2f, mWeaponRange = 1f, mDamageTaken = 0.87f
+			},
+			kDefaultLevel2 = new BProtoObjectVeterancy()
+			{
+				mDamage = 1.15f, mVelocity = 1, mAccuracy = 1.7f, mWorkRate = 1.2f, mWeaponRange = 1f, mDamageTaken = 0.80f
+			},
+			kDefaultLevel3 = new BProtoObjectVeterancy()
+			{
+				mDamage = 1.15f, mVelocity = 1, mAccuracy = 1.8f, mWorkRate = 1.2f, mWeaponRange = 1f, mDamageTaken = 0.74f
+			},
+			kDefaultLevel4 = new BProtoObjectVeterancy()
+			{
+				mDamage = 2.00f, mVelocity = 1, mAccuracy = 1.1f, mWorkRate = 2.0f, mWeaponRange = 1f, mDamageTaken = 0.50f
+			},
+			kDefaultLevel5 = new BProtoObjectVeterancy()
+			{
+				mDamage = 2.00f, mVelocity = 1, mAccuracy = 1.2f, mWorkRate = 2.0f, mWeaponRange = 1f, mDamageTaken = 0.50f
+			};
+
+		public static IEnumerable<BProtoObjectVeterancy> GetLevelDefaults()
+		{
+			yield return kDefaultLevel1;
+			yield return kDefaultLevel2;
+			yield return kDefaultLevel3;
+			yield return kDefaultLevel4;
+			yield return kDefaultLevel5;
+		}
+
 		#region Xml constants
 		public static readonly Collections.BListExplicitIndexParams<BProtoObjectVeterancy> kBListExplicitIndexParams = new
-			Collections.BListExplicitIndexParams<BProtoObjectVeterancy>("Veterancy", "Level", 5)
+			Collections.BListExplicitIndexParams<BProtoObjectVeterancy>(5)
 			{
 				// We use a zero'd instance as the invalid format
 				// Game considers Vets with XP = 0 as 'null' basically
-				kTypeGetInvalid = () => new BProtoObjectVeterancy()
+				kTypeGetInvalid = () => kInvalid
 			};
+		public static readonly XML.BListExplicitIndexXmlParams<BProtoObjectVeterancy> kBListExplicitIndexXmlParams = new
+			XML.BListExplicitIndexXmlParams<BProtoObjectVeterancy>("Veterancy", "Level");
 
 		const string kXmlAttrXP = "XP";
 		const string kXmlAttrDamage = "Damage";
@@ -317,6 +362,7 @@ namespace PhxLib.Engine
 		float mDamageTaken;
 		public float DamageTaken { get { return mDamageTaken; } }
 
+		public bool IsInvalid { get { return object.ReferenceEquals(this, kInvalid); } }
 		public bool IsNull { get { return mXP == 0.0f; } }
 
 		#region IComparable<BProtoObjectVeterancy> Members
@@ -330,7 +376,7 @@ namespace PhxLib.Engine
 		#endregion
 
 		#region IXmlElementStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttributeOpt(mode, kXmlAttrXP, ref mXP, Util.kNotZeroPredicateSingle);
 			s.StreamAttributeOpt(mode, kXmlAttrDamage, ref mDamage, Util.kNotZeroPredicateSingle);
@@ -358,41 +404,42 @@ namespace PhxLib.Engine
 	public class BProtoObject : DatabaseIdObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Object")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Object")
 		{
 			DataName = DatabaseNamedObject.kXmlAttrName,
-			Flags = Collections.BCollectionParamsFlags.ToLowerDataNames | 
-				Collections.BCollectionParamsFlags.RequiresDataNamePreloading | 
-				Collections.BCollectionParamsFlags.SupportsUpdating
+			Flags = XML.BCollectionXmlParamsFlags.ToLowerDataNames | 
+				XML.BCollectionXmlParamsFlags.RequiresDataNamePreloading | 
+				XML.BCollectionXmlParamsFlags.SupportsUpdating
 		};
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfo = new PhxEngine.XmlFileInfo
 		{
 			Location = ContentStorage.Game,
 			Directory = GameDirectory.Data,
 			FileName = "Objects.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfoUpdate = new PhxEngine.XmlFileInfo
 		{
 			Location = ContentStorage.Update,
 			Directory = GameDirectory.Data,
 			FileName = "Objects_Update.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		static readonly Collections.CodeEnum<BProtoObjectFlags> kFlagsProtoEnum = new Collections.CodeEnum<BProtoObjectFlags>();
-		static readonly Collections.BBitSetParams kFlagsParams = new Collections.BBitSetParams("Flag",
-			db => kFlagsProtoEnum);
+		static readonly Collections.BBitSetParams kFlagsParams = new Collections.BBitSetParams(() => kFlagsProtoEnum);
 
-		static readonly Collections.BBitSetParams kObjectTypesParams = new Collections.BBitSetParams("ObjectType",
-			db => db.ObjectTypes);
+		static readonly Collections.BBitSetParams kObjectTypesParams = new Collections.BBitSetParams(db => db.ObjectTypes);
+		static readonly XML.BBitSetXmlParams kObjectTypesXmlParams = new XML.BBitSetXmlParams("ObjectType");
 
+		const string kXmlAttrIs = "is"; // boolean int, only streamed when '0', only used by tools?
 		const string kXmlAttrId = "id";
 
 		const string kXmlElementObjectClass = "ObjectClass";
 
 		const string kXmlElementCostEscalation = "CostEscalation";
 		const string kXmlElementHitpoints = "Hitpoints";
+		const string kXmlElementShieldpoints = "Shieldpoints";
 		internal const string kXmlElementAttackGradeDPS = "AttackGradeDPS";
 		const string kXmlElementCombatValue = "CombatValue";
 		const string kXmlElementBounty = "Bounty";
@@ -420,6 +467,8 @@ namespace PhxLib.Engine
 
 		float mHitpoints = Util.kInvalidSingle;
 		public float Hitpoints { get { return mHitpoints; } }
+		float mShieldpoints = Util.kInvalidSingle;
+		public float Shieldpoints { get { return mShieldpoints; } }
 		float mAttackGradeDPS = Util.kInvalidSingle;
 		public float AttackGradeDPS { get { return mAttackGradeDPS; } }
 //		float mCombatValue = Util.kInvalidSingle;
@@ -432,55 +481,52 @@ namespace PhxLib.Engine
 		public Collections.BTypeValuesSingle PopulationsCapAddition { get; private set; }
 
 		internal bool mHasTactics;
-		//string mTactics;
-		//public string Tactics { get { return mTactics; } }
 
 		public Collections.BTypeValuesSingle Rates { get; private set; }
-		public Collections.BTypeValuesSingleAttrHack AddResource { get; private set; }
+		public Collections.BTypeValuesSingle AddResource { get; private set; }
 
 		public Collections.BBitSet Flags { get; private set; }
 		public Collections.BBitSet ObjectTypes { get; private set; }
 
-		public BProtoObject() : base(BResource.kBListTypeValuesParams_Cost)
+		public BProtoObject() : base(BResource.kBListTypeValuesParams, BResource.kBListTypeValuesXmlParams_Cost)
 		{
 			Veterancy = new Collections.BListExplicitIndex<BProtoObjectVeterancy>(BProtoObjectVeterancy.kBListExplicitIndexParams);
 
 			Populations = new Collections.BTypeValuesSingle(BPopulation.kBListParamsSingle);
-			PopulationsCapAddition = new Collections.BTypeValuesSingle(BPopulation.kBListParamsSingle_CapAddition);
+			PopulationsCapAddition = new Collections.BTypeValuesSingle(BPopulation.kBListParamsSingle);
 
 			Rates = new Collections.BTypeValuesSingle(BGameData.kRatesBListTypeValuesParams);
-			AddResource = new Collections.BTypeValuesSingleAttrHack(BResource.kBListTypeValuesParams_AddResource, kXmlElementAddRsrcAttrAmount);
+			AddResource = new Collections.BTypeValuesSingle(BResource.kBListTypeValuesParams);
 
 			Flags = new Collections.BBitSet(kFlagsParams);
 			ObjectTypes = new Collections.BBitSet(kObjectTypesParams);
 		}
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			base.StreamXml(s, mode, db);
+			base.StreamXml(s, mode, xs);
 
 			s.StreamAttributeOpt(mode, kXmlAttrId, KSoft.NumeralBase.Decimal, ref mId, Util.kNotInvalidPredicate);
 			s.StreamElementOpt(mode, kXmlElementObjectClass, ref mClassType, x => x != BProtoObjectClassType.Invalid);
 
-			Veterancy.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Veterancy, BProtoObjectVeterancy.kBListExplicitIndexXmlParams);
 
 			s.StreamElementOpt(mode, kXmlElementCostEscalation, ref mCostEscalation, Util.kNotInvalidPredicateSingle);
 			s.StreamElementOpt(mode, kXmlElementHitpoints, ref mHitpoints, Util.kNotInvalidPredicateSingle);
 			s.StreamElementOpt(mode, kXmlElementAttackGradeDPS, ref mAttackGradeDPS, Util.kNotInvalidPredicateSingle);
 //			s.StreamElementOpt(mode, kXmlElementCombatValue, ref mCombatValue, Util.kNotInvalidPredicateSingle);
 			s.StreamElementOpt(mode, kXmlElementBounty, ref mBounty, Util.kNotInvalidPredicateSingle);
-			Populations.StreamXml(s, mode, db);
-			PopulationsCapAddition.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Populations, BPopulation.kBListXmlParamsSingle);
+			XML.Util.Serialize(s, mode, xs, PopulationsCapAddition, BPopulation.kBListXmlParamsSingle_CapAddition);
 
-			//s.StreamElementOpt(mode, kXmlElementTactics, ref mTactics, Util.kNotNullOrEmpty);
-			db.StreamXmlTactic(s, mode, kXmlElementTactics, this, ref mHasTactics);
+			xs.StreamXmlTactic(s, mode, kXmlElementTactics, this, ref mHasTactics);
 
-			Rates.StreamXml(s, mode, db);
-			AddResource.StreamXml(s, mode,db );
+			XML.Util.Serialize(s, mode, xs, Rates, BGameData.kRatesBListTypeValuesXmlParams);
+			XML.Util.Serialize(s, mode, xs, AddResource, BResource.kBListTypeValuesXmlParams_AddResource, kXmlElementAddRsrcAttrAmount);
 
-			Flags.StreamXml(s, mode, db);
-			ObjectTypes.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Flags, XML.BBitSetXmlParams.kFlagsSansRoot);
+			XML.Util.Serialize(s, mode, xs, ObjectTypes, kObjectTypesXmlParams);
 		}
 		#endregion
 	};

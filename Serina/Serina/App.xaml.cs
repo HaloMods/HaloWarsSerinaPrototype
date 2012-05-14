@@ -29,7 +29,6 @@ namespace Serina
 		{
 			var hw = PhxLib.PhxEngine.CreateForHaloWars(game_root, update_root);
 			hw.Load();
-			hw.LoadUpdates();
 			return hw;
 		}
 
@@ -39,11 +38,11 @@ namespace Serina
 
 			const string kGameRoot = @"C:\Users\Sean\Downloads\HW\Release\";
 			const string kUpdateRoot = @"C:\Users\Sean\Downloads\HW\phx_tu6\";
-			const string kXmlPhxApp = @"C:\Users\Sean\Downloads\HW\_Serina\PhxLib.xml";
+			const string kXmlPhxApp = @"C:\Users\Sean\Downloads\HW\_Serina\";
 
 			const string kGameRoot2 = @"C:\Kornner\Phx\Release\";
 			const string kUpdateRoot2 = @"C:\Kornner\Phx\TU\phx_tu6\";
-			const string kXmlPhxApp2 = @"C:\Kornner\Phx\PhxLib.xml";
+			const string kXmlPhxApp2 = @"C:\Kornner\Phx\";
 
 			string game_root = null, update_root = null, app_xml = null;
 			if (!PathsAreGood(kGameRoot, kUpdateRoot, kXmlPhxApp, ref game_root, ref update_root, ref app_xml) &&
@@ -62,7 +61,7 @@ namespace Serina
 			{
 				s.InitializeAtRootElement();
 				hw.Database.StreamXml(s, System.IO.FileAccess.Write);
-				s.Document.Save(app_xml);
+				s.Document.Save(app_xml + "PhxLib.xml");
 			}
 			#endregion
 			#region Verify reading
@@ -70,6 +69,25 @@ namespace Serina
 			{
 				s.InitializeAtRootElement();
 				hw.Database.StreamXml(s, System.IO.FileAccess.Read);
+			}
+			#endregion
+			#region dump objects in sorted DBID order
+			if (false) using (var s = KSoft.IO.XmlElementStream.CreateForWrite("ObjectDBIDs"))
+			{
+				var objs = new List<PhxLib.Engine.BProtoObject>(hw.Database.Objects);
+				objs.Sort((x, y) => x.DbId - y.DbId);
+
+				s.InitializeAtRootElement();
+				foreach (var obj in objs)
+				{
+					using (s.EnterCursorBookmark("Object"))
+					{
+						s.WriteAttribute("dbid", KSoft.NumeralBase.Decimal, obj.DbId);
+						s.WriteAttribute("name", obj.Name);
+						s.WriteAttributeOptOnTrue("id", KSoft.NumeralBase.Decimal, obj.Id, PhxLib.Util.kNotInvalidPredicate);
+					}
+				}
+				s.Document.Save(app_xml + "ObjectDBIDs.xml");
 			}
 			#endregion
 		}

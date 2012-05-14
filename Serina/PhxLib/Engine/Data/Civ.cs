@@ -10,16 +10,16 @@ namespace PhxLib.Engine
 	public class BCiv : DatabaseNamedObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Civ")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Civ")
 		{
 			DataName = "Name",
-			Flags = Collections.BCollectionParamsFlags.UseElementForData
+			Flags = XML.BCollectionXmlParamsFlags.UseElementForData
 		};
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfo = new PhxEngine.XmlFileInfo
 		{
 			Directory = GameDirectory.Data,
 			FileName = "Civs.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		const string kXmlElementTech = "CivTech";
@@ -41,11 +41,11 @@ namespace PhxLib.Engine
 		}
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			base.StreamXml(s, mode, db);
+			base.StreamXml(s, mode, xs);
 
-			db.StreamXmlForDBID(s, mode, kXmlElementTech, ref mTechID, DatabaseObjectKind.Tech);
+			xs.StreamXmlForDBID(s, mode, kXmlElementTech, ref mTechID, DatabaseObjectKind.Tech);
 			s.StreamElementOpt(mode, kXmlElementPowerFromHero, ref mPowerFromHero, Util.kNotFalsePredicate);
 		}
 		#endregion

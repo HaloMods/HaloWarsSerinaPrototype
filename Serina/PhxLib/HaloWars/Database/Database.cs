@@ -37,12 +37,5 @@ namespace PhxLib.HaloWars
 			HookRepairPowerID = base.GetId(DatabaseObjectKind.Power, "HookRepair");
 			UnscOdstDropPowerID = base.GetId(DatabaseObjectKind.Power, "UnscOdstDrop");
 		}
-		protected override void PostStreamXml(FA mode)
-		{
-			if (mode == FA.Read)
-			{
-				SetupDBIDs();
-			}
-		}
 	};
 }

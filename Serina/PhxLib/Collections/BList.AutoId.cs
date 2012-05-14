@@ -36,7 +36,7 @@ namespace PhxLib.Collections
 			set { mName = value; }
 		}
 
-		public abstract void StreamXml(KSoft.IO.XmlElementStream s, FA mode, Engine.BDatabaseBase db);
+		public abstract void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs);
 		#endregion
 
 		public override string ToString() { return mName; }
@@ -49,18 +49,14 @@ namespace PhxLib.Collections
 	{
 		readonly string kUnregisteredMessage;
 
-		public BListAutoId(BListParams @params) : base(@params)
+		static string BuildUnRegisteredMsg()
 		{
-			Contract.Requires<ArgumentNullException>(@params != null);
-
-			kUnregisteredMessage = string.Format("Unregistered {0}!", Params.ElementName);
+			return string.Format("Unregistered {0}!", typeof(T).Name);
 		}
-
-		bool mIsPreloaded;
-		bool RequiresDataNamePreloading { get { return Params.RequiresDataNamePreloading; } }
-
-		int mCountBeforeUpdate;
-		bool mIsUpdating;
+		public BListAutoId()
+		{
+			kUnregisteredMessage = BuildUnRegisteredMsg();
+		}
 
 		#region Database interfaces
 		/// <remarks>Mainly a hack for adding new items dynamically</remarks>
@@ -69,53 +65,24 @@ namespace PhxLib.Collections
 			item.AutoID = id != Util.kInvalidInt32 ? id : Count;
 			if (item_name != null) item.Data = item_name;
 		}
-		internal void DynamicAdd(T item, string item_name)
+		internal int DynamicAdd(T item, string item_name, int id = Util.kInvalidInt32)
 		{
-			PreAdd(item, item_name);
+			PreAdd(item, item_name, id);
 			if (m_dbi != null) m_dbi.Add(item.Data, item);
 			base.Add(item);
+
+			return item.AutoID;
 		}
 
 		Dictionary<string, T> m_dbi;
 		internal void SetupDatabaseInterface(out Dictionary<string, T> dbi)
 		{
-			m_dbi = dbi = new Dictionary<string, T>(Params.InitialCapacity);
-		}
-		bool SetupItem(out T item, string item_name, int iteration)
-		{
-			bool stream_item = !RequiresDataNamePreloading ||(RequiresDataNamePreloading && mIsPreloaded);
-
-			if (mIsUpdating)
-			{
-				// The update system in HW is fucked...just because the "update" attribute is true or left out, doesn't mean the value existed before or is not a new value
-				// So just try
-				int idx = GetMemberIndexByName(item_name);
-				if (idx != -1)
-				{
-					item = base[idx];
-					return stream_item;
-				}
-
-				iteration += mCountBeforeUpdate;
-			}
-
-			if (RequiresDataNamePreloading && mIsPreloaded)
-			{
-				item = base[iteration];
-				return stream_item;
-			}
-
-			item = new T();
-			PreAdd(item, item_name, iteration);
-			if (m_dbi != null) m_dbi.Add(item.Data, item);
-
-			base.Add(item);
-			return stream_item;
+			m_dbi = dbi = new Dictionary<string, T>(Params != null ? Params.InitialCapacity : BCollectionParams.kDefaultCapacity);
 		}
 		#endregion
 
 		#region IProtoEnum Members
-		int GetMemberIndexByName(string member_name)
+		internal int GetMemberIndexByName(string member_name)
 		{
 			return FindIndex(n => Util.StrEqualsIgnoreCase(n.Data, member_name));
 		}
@@ -145,63 +112,6 @@ namespace PhxLib.Collections
 		}
 
 		public int MemberCount { get { return Count; } }
-		#endregion
-
-		#region IXmlElementStreamable Members
-		protected override void ReadXml(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db, int iteration)
-		{
-			const FA k_mode = FA.Read;
-
-			string item_name = null;
-			Params.StreamDataName(s, k_mode, ref item_name);
-
-			T item;
-			if(SetupItem(out item, item_name, iteration))
-				item.StreamXml(s, k_mode, db);
-		}
-		protected override void WriteXml(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db, T data)
-		{
-			const FA k_mode = FA.Write;
-
-			string item_name = data.Data;
-			if (item_name != null) Params.StreamDataName(s, k_mode, ref item_name);
-
-			data.StreamXml(s, k_mode, db);
-		}
-
-// 		protected override void ReadXmlNodes(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db)
-// 		{
-// 			base.ReadXmlNodes(s, db);
-// 		}
-
-		void PreloadXml(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db)
-		{
-			mIsPreloaded = false;
-
-			StreamXml(s, FA.Read, db);
-
-			mIsPreloaded = true;
-		}
-		public void StreamXmlPreload(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db)
-		{
-			Contract.Requires(Params.RequiresDataNamePreloading);
-
-			PreloadXml(s, db);
-		}
-		public void StreamXmlUpdate(KSoft.IO.XmlElementStream s, Engine.BDatabaseBase db)
-		{
-			Contract.Requires(Params.SupportsUpdating);
-
-			mIsUpdating = true;
-			mCountBeforeUpdate = Count;
-
-			if (RequiresDataNamePreloading)
-				PreloadXml(s, db);
-			StreamXml(s, FA.Read, db);
-
-			mIsUpdating = false;
-			//mCountBeforeUpdate = 0;
-		}
 		#endregion
 	};
 }

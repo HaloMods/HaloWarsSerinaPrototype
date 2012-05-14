@@ -85,7 +85,7 @@ namespace PhxLib.Engine
 	public struct BProtoTechPrereqTechStatus : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams
 		{
 			ElementName = "TechStatus",
 		};
@@ -98,10 +98,10 @@ namespace PhxLib.Engine
 		int mTechID;// = Util.kInvalidInt32;
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrOperator, ref mTechStatus);
-			db.StreamXmlForDBID(s, mode, null, ref mTechID, DatabaseObjectKind.Object, false, Util.kSourceCursor);
+			xs.StreamXmlForDBID(s, mode, null, ref mTechID, DatabaseObjectKind.Object, false, XML.Util.kSourceCursor);
 		}
 		#endregion
 	};
@@ -109,7 +109,7 @@ namespace PhxLib.Engine
 	public struct BProtoTechPrereqTypeCount : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams
 		{
 			ElementName = "TypeCount",
 		};
@@ -124,9 +124,9 @@ namespace PhxLib.Engine
 		short mCount;
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			db.StreamXmlForDBID(s, mode, kXmlAttrUnit, ref mUnitID, DatabaseObjectKind.Object, false, Util.kSourceAttr);
+			xs.StreamXmlForDBID(s, mode, kXmlAttrUnit, ref mUnitID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
 			if (!s.StreamAttributeOpt(mode, kXmlAttrOperator, ref mOperator, e => e != BProtoTechTypeCountOperator.None))
 				mOperator = BProtoTechTypeCountOperator.None;
 			if (!s.StreamAttributeOpt(mode, kXmlAttrCount, KSoft.NumeralBase.Decimal, ref mCount, Util.kNotInvalidPredicateInt16))
@@ -145,21 +145,22 @@ namespace PhxLib.Engine
 
 		public BProtoTechPrereqs()
 		{
-			TechStatus = new Collections.BListArray<BProtoTechPrereqTechStatus>(BProtoTechPrereqTechStatus.kBListParams);
-			TypeCounts = new Collections.BListArray<BProtoTechPrereqTypeCount>(BProtoTechPrereqTypeCount.kBListParams);
+			TechStatus = new Collections.BListArray<BProtoTechPrereqTechStatus>();
+			TypeCounts = new Collections.BListArray<BProtoTechPrereqTypeCount>();
 		}
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			TechStatus.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, TechStatus, BProtoTechPrereqTechStatus.kBListXmlParams);
+			XML.Util.Serialize(s, mode, xs, TypeCounts, BProtoTechPrereqTypeCount.kBListXmlParams);
 		}
 		#endregion
 	};
 	public struct BProtoTechEffectTarget : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Target")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Target")
 		{
 			RootName = null,
 			Flags = 0
@@ -185,17 +186,17 @@ namespace PhxLib.Engine
 		} }
 
 		#region IXmlElementStreamable Members
-		void StreamXmlValueID(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		void StreamXmlValueID(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			DatabaseObjectKind kind = ObjectKind;
 
 			if (kind != DatabaseObjectKind.None)
-				db.StreamXmlForDBID(s, mode, null, ref mValueID, kind, false, Util.kSourceCursor);
+				xs.StreamXmlForDBID(s, mode, null, ref mValueID, kind, false, XML.Util.kSourceCursor);
 		}
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrType, ref mType);
-			StreamXmlValueID(s, mode, db);
+			StreamXmlValueID(s, mode, xs);
 		}
 		#endregion
 	};
@@ -203,7 +204,7 @@ namespace PhxLib.Engine
 	public class BProtoTechEffect : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Effect")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Effect")
 		{
 			Flags = 0
 		};
@@ -308,13 +309,13 @@ namespace PhxLib.Engine
 			return mType == BProtoTechEffectType.TransformProtoUnit ? DatabaseObjectKind.Object : DatabaseObjectKind.Squad;
 		} }
 
-		void StreamXmlTargets(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		void StreamXmlTargets(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			if (mode == FA.Read) Targets = new Collections.BListArray<BProtoTechEffectTarget>(BProtoTechEffectTarget.kBListParams);
+			if (mode == FA.Read) Targets = new Collections.BListArray<BProtoTechEffectTarget>();
 
-			Targets.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Targets, BProtoTechEffectTarget.kBListXmlParams);
 		}
-		void StreamXmlObjectData(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		void StreamXmlObjectData(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			switch (mSubType)
 			{
@@ -389,7 +390,7 @@ namespace PhxLib.Engine
 					break;
 			}
 		}
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrType, ref mType);
 
@@ -403,17 +404,17 @@ namespace PhxLib.Engine
 					// e.g., SubType==Icon and these won't be used...TODO: is Icon the only one?
 					s.StreamAttributeOpt(mode, kXmlAttrAmount, ref mAmount, Util.kNotInvalidPredicateSingleNaN);
 					s.StreamAttributeOpt(mode, kXmlAttrRelativity, ref mRelativity, x => x != BObjectDataRelative.Invalid);
-					StreamXmlObjectData(s, mode, db);
+					StreamXmlObjectData(s, mode, xs);
 					stream_targets = true;
 					break;
 				case BProtoTechEffectType.TransformUnit:
 				case BProtoTechEffectType.Build:
-					db.StreamXmlForDBID(s, mode, null, ref mID, DatabaseObjectKind.Object, false, Util.kSourceCursor);
+					xs.StreamXmlForDBID(s, mode, null, ref mID, DatabaseObjectKind.Object, false, XML.Util.kSourceCursor);
 					break;
 				case BProtoTechEffectType.TransformProtoUnit:
 				case BProtoTechEffectType.TransformProtoSquad:
-					db.StreamXmlForDBID(s, mode, kXmlTransformProto_AttrFromType, ref mTransformProtoFromID, TransformProtoObjectKind, false, Util.kSourceAttr);
-					db.StreamXmlForDBID(s, mode, kXmlTransformProto_AttrToType, ref mID, TransformProtoObjectKind, false, Util.kSourceAttr);
+					xs.StreamXmlForDBID(s, mode, kXmlTransformProto_AttrFromType, ref mTransformProtoFromID, TransformProtoObjectKind, false, XML.Util.kSourceAttr);
+					xs.StreamXmlForDBID(s, mode, kXmlTransformProto_AttrToType, ref mID, TransformProtoObjectKind, false, XML.Util.kSourceAttr);
 					break;
 				#region Unused
 				case BProtoTechEffectType.SetAge:
@@ -421,53 +422,53 @@ namespace PhxLib.Engine
 					break;
 				#endregion
 				case BProtoTechEffectType.GodPower:
-					db.StreamXmlForDBID(s, mode, null, ref mID, DatabaseObjectKind.Power, false, Util.kSourceCursor);
+					xs.StreamXmlForDBID(s, mode, null, ref mID, DatabaseObjectKind.Power, false, XML.Util.kSourceCursor);
 					s.StreamAttribute(mode, kXmlAttrAmount, ref mAmount);
 					break;
 				#region Unused
 				case BProtoTechEffectType.TechStatus:
-					db.StreamXmlForDBID(s, mode, null, ref mID, DatabaseObjectKind.Tech, false, Util.kSourceCursor);
+					xs.StreamXmlForDBID(s, mode, null, ref mID, DatabaseObjectKind.Tech, false, XML.Util.kSourceCursor);
 					break;
 				case BProtoTechEffectType.Ability:
-					db.StreamXmlForDBID(s, mode, null, ref mID, DatabaseObjectKind.Ability, false, Util.kSourceCursor);
+					xs.StreamXmlForDBID(s, mode, null, ref mID, DatabaseObjectKind.Ability, false, XML.Util.kSourceCursor);
 					break;
 // 				case BProtoTechEffectType.SharedLOS:
 // 					break;
 				case BProtoTechEffectType.AttachSquad:
-					db.StreamXmlForDBID(s, mode, kXmlAttachSquadAttrType, ref mID, TransformProtoObjectKind, false, Util.kSourceAttr);
+					xs.StreamXmlForDBID(s, mode, kXmlAttachSquadAttrType, ref mID, TransformProtoObjectKind, false, XML.Util.kSourceAttr);
 					stream_targets = true;
 					break;
 				#endregion
 			}
 
-			if (stream_targets) StreamXmlTargets(s, mode, db);
+			if (stream_targets) StreamXmlTargets(s, mode, xs);
 		}
 		#endregion
 	};
 	public class BProtoTech : DatabaseIdObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams("Tech")
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Tech")
 		{
 			RootName = "TechTree",
 			DataName = "name",
-			Flags = Collections.BCollectionParamsFlags.ToLowerDataNames |
-				Collections.BCollectionParamsFlags.RequiresDataNamePreloading |
-				Collections.BCollectionParamsFlags.SupportsUpdating
+			Flags = XML.BCollectionXmlParamsFlags.ToLowerDataNames |
+				XML.BCollectionXmlParamsFlags.RequiresDataNamePreloading |
+				XML.BCollectionXmlParamsFlags.SupportsUpdating
 		};
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfo = new PhxEngine.XmlFileInfo
 		{
 			Location = ContentStorage.Game,
 			Directory = GameDirectory.Data,
 			FileName = "Techs.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfoUpdate = new PhxEngine.XmlFileInfo
 		{
 			Location = ContentStorage.Update,
 			Directory = GameDirectory.Data,
 			FileName = "Techs_Update.xml",
-			RootName = kBListParams.RootName
+			RootName = kBListXmlParams.RootName
 		};
 
 		const string kXmlElementFlag = "Flag";
@@ -487,13 +488,13 @@ namespace PhxLib.Engine
 
 		public Collections.BListArray<BProtoTechEffect> Effects { get; private set; }
 
-		public BProtoTech() : base(BResource.kBListTypeValuesParams_CostLowercaseType)
+		public BProtoTech() : base(BResource.kBListTypeValuesParams, BResource.kBListTypeValuesXmlParams_CostLowercaseType)
 		{
-			Effects = new Collections.BListArray<BProtoTechEffect>(BProtoTechEffect.kBListParams);
+			Effects = new Collections.BListArray<BProtoTechEffect>();
 		}
 
 		#region IXmlElementStreamable Members
-		protected override void StreamXmlDbId(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		protected override void StreamXmlDbId(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamElementOpt(mode, kXmlElementDbId, KSoft.NumeralBase.Decimal, ref mDbId, Util.kNotInvalidPredicate);
 		}
@@ -511,16 +512,16 @@ namespace PhxLib.Engine
 
 			return false;
 		}
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			base.StreamXml(s, mode, db);
+			base.StreamXml(s, mode, xs);
 
 			s.StreamElement(mode, kXmlElementStatus, ref mStatus);
 
 			if (ShouldStreamPrereqs(s, mode))
-				Prereqs.StreamXml(s, mode, db);
+				Prereqs.StreamXml(s, mode, xs);
 
-			Effects.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Effects, BProtoTechEffect.kBListXmlParams);
 		}
 		#endregion
 	};

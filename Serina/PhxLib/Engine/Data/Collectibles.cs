@@ -52,7 +52,7 @@ namespace PhxLib.Engine
 	public class BCollectibleSkullEffect : IO.IPhxXmlStreamable
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams
 		{
 			ElementName = "Effect",
 		};
@@ -66,7 +66,7 @@ namespace PhxLib.Engine
 		float mValue = Util.kInvalidSingle;
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamCursor(mode, ref mType);
 			s.StreamAttributeOpt(mode, kXmlAttrTarget, ref mTarget, e => e != BCollectibleSkullTarget.None);
@@ -77,7 +77,7 @@ namespace PhxLib.Engine
 	public class BCollectibleSkull : DatabaseNamedObject
 	{
 		#region Xml constants
-		public static readonly Collections.BListParams kBListParams = new Collections.BListParams
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams
 		{
 			ElementName = "Skull",
 			DataName = DatabaseIdObject.kXmlAttrName,
@@ -96,16 +96,16 @@ namespace PhxLib.Engine
 
 		public BCollectibleSkull()
 		{
-			Effects = new Collections.BListArray<BCollectibleSkullEffect>(BCollectibleSkullEffect.kBListParams);
+			Effects = new Collections.BListArray<BCollectibleSkullEffect>();
 		}
 
 		#region IPhxXmlStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrObjectDBID, ref mObjectDBID);
-			Effects.StreamXml(s, mode, db);
-			db.StreamXmlForStringID(s, mode, kXmlElementDescriptionID, ref mDescriptionID);
-			Util.StreamElementNamedFlag(s, mode, kXmlElementHidden, ref mHidden);
+			XML.Util.Serialize(s, mode, xs, Effects, BCollectibleSkullEffect.kBListXmlParams);
+			xs.StreamXmlForStringID(s, mode, kXmlElementDescriptionID, ref mDescriptionID);
+			XML.Util.StreamElementNamedFlag(s, mode, kXmlElementHidden, ref mHidden);
 		}
 		#endregion
 	};
@@ -119,13 +119,13 @@ namespace PhxLib.Engine
 
 		public BCollectiblesSkullManager()
 		{
-			Skulls = new Collections.BListAutoId<BCollectibleSkull>(BCollectibleSkull.kBListParams);
+			Skulls = new Collections.BListAutoId<BCollectibleSkull>();
 		}
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
-			Skulls.StreamXml(s, mode, db);
+			XML.Util.Serialize(s, mode, xs, Skulls, BCollectibleSkull.kBListXmlParams);
 		}
 		#endregion
 	};
@@ -154,10 +154,10 @@ namespace PhxLib.Engine
 		}
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseBase db)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
 		{
 			s.StreamElementOpt(mode, null, ref mXmlVersion, Util.kNotInvalidPredicate);
-			SkullManager.StreamXml(s, mode, db);
+			SkullManager.StreamXml(s, mode, xs);
 		}
 		#endregion
 	};
