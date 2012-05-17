@@ -7,18 +7,26 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.Engine
 {
+	/// <summary></summary>
+	/// <remarks>Most or all of these are defined in GameData, so we may want to rename to GameDataType?</remarks>
+	public enum DatabaseTypeKind
+	{
+		None,
+
+		Cost,
+		Pop,
+		Rate,
+	};
 	public enum DatabaseObjectKind
 	{
 		None,
 
 		Ability,
 		Civ,
-		Cost,
 		DamageType,
 		Leader,
 		Object,
 		ObjectType,
-		Pop,
 		Power,
 		Squad,
 		Tech,

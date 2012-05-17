@@ -8,8 +8,36 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.XML
 {
+	partial class BDatabaseXmlSerializerBase
+	{
+#if !NO_TLS_STREAMING
+		internal class _BListAutoId<T>
+			where T : class, Collections.IListAutoIdObject, new()
+		{
+			internal static System.Threading.ThreadLocal<BListAutoIdXmlSerializer<T>> sXmlSerializer =
+				new System.Threading.ThreadLocal<BListAutoIdXmlSerializer<T>>(BListAutoIdXmlSerializer<T>.kNewFactory);
+		};
+#endif
+	};
+
 	partial class Util
 	{
+		public static IBListAutoIdXmlSerializer CreateXmlSerializer<T>(Collections.BListAutoId<T> list, BListXmlParams @params)
+			where T : class, Collections.IListAutoIdObject, new()
+		{
+			Contract.Requires(list != null);
+			Contract.Requires(@params != null);
+
+			var xs = 
+#if NO_TLS_STREAMING
+				new BListAutoIdXmlSerializer<T>(@params, list);
+#else
+				BDatabaseXmlSerializerBase._BListAutoId<T>.sXmlSerializer.Value.Reset(@params, list);
+#endif
+
+			return xs;
+		}
+
 		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase db,
 			Collections.BListAutoId<T> list, BListXmlParams @params, bool force_no_root_element_streaming = false)
 			where T : class, Collections.IListAutoIdObject, new()
@@ -20,23 +48,13 @@ namespace PhxLib.XML
 			Contract.Requires(@params != null);
 
 			if (force_no_root_element_streaming) @params.SetForceNoRootElementStreaming(true);
-			var xs = new BListAutoIdXmlSerializer<T>(@params, list);
+			using(var xs = CreateXmlSerializer(list, @params))
 			{
 				xs.StreamXml(s, mode, db);
 			}
 			if (force_no_root_element_streaming) @params.SetForceNoRootElementStreaming(false);
 		}
 
-		public static IBListAutoIdXmlSerializer CreateXmlSerializer<T>(Collections.BListAutoId<T> list, BListXmlParams @params)
-			where T : class, Collections.IListAutoIdObject, new()
-		{
-			Contract.Requires(list != null);
-			Contract.Requires(@params != null);
-
-			var xs = new BListAutoIdXmlSerializer<T>(@params, list);
-
-			return xs;
-		}
 		public static void SerializePreload(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase db,
 			IBListAutoIdXmlSerializer xs, bool force_no_root_element_streaming = false)
 		{
@@ -75,6 +93,7 @@ namespace PhxLib.XML
 		}
 	};
 
+	[Contracts.ContractClass(typeof(IBListAutoIdXmlSerializerContract))]
 	public interface IBListAutoIdXmlSerializer : IDisposable, IO.IPhxXmlStreamable
 	{
 		BListXmlParams Params { get; }
@@ -83,6 +102,36 @@ namespace PhxLib.XML
 
 		void StreamXmlPreload(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs);
 		void StreamXmlUpdate(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs);
+	};
+	[Contracts.ContractClassFor(typeof(IBListAutoIdXmlSerializer))]
+	abstract class IBListAutoIdXmlSerializerContract : IBListAutoIdXmlSerializer
+	{
+		#region IBListAutoIdXmlSerializer Members
+		public abstract BListXmlParams Params { get; }
+		public abstract bool IsDisposed { get; }
+
+		public void StreamXmlPreload(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		{
+			Contract.Requires(Params.RequiresDataNamePreloading);
+
+			throw new NotImplementedException();
+		}
+
+		public void StreamXmlUpdate(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		{
+			Contract.Requires(Params.SupportsUpdating);
+
+			throw new NotImplementedException();
+		}
+		#endregion
+
+		#region IDisposable Members
+		public abstract void Dispose();
+		#endregion
+
+		#region IPhxXmlStreamable Members
+		public abstract void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs);
+		#endregion
 	};
 
 	internal sealed class BListAutoIdXmlSerializer<T> : BListXmlSerializerBase<T>,
@@ -95,6 +144,7 @@ namespace PhxLib.XML
 		public override BListXmlParams Params { get { return mParams; } }
 		public override Collections.BListBase<T> List { get { return mList; } }
 
+#if NO_TLS_STREAMING
 		public BListAutoIdXmlSerializer(BListXmlParams @params, Collections.BListAutoId<T> list)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
@@ -103,15 +153,30 @@ namespace PhxLib.XML
 			mParams = @params;
 			mList = list;
 		}
+#endif
 
-		#region IDisposable Members
-		public bool IsDisposed { get { return mList == null; } }
+		#region TLS & re-use interface
+#if !NO_TLS_STREAMING
+		public static readonly Func<BListAutoIdXmlSerializer<T>> kNewFactory = () => new BListAutoIdXmlSerializer<T>();
+		BListAutoIdXmlSerializer() { }
 
-		public void Dispose()
+		public BListAutoIdXmlSerializer<T> Reset(BListXmlParams @params, Collections.BListAutoId<T> list)
+		{
+			Contract.Requires<ArgumentNullException>(@params != null);
+			Contract.Requires<ArgumentNullException>(list != null);
+
+			mParams = @params;
+			mList = list;
+
+			return this;
+		}
+
+		protected override void FinishTlsStreaming()
 		{
 			mParams = null;
 			mList = null;
 		}
+#endif
 		#endregion
 
 		bool mIsPreloaded;
@@ -183,14 +248,10 @@ namespace PhxLib.XML
 		}
 		public void StreamXmlPreload(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs)
 		{
-			Contract.Requires(Params.RequiresDataNamePreloading);
-
 			PreloadXml(s, xs);
 		}
 		public void StreamXmlUpdate(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs)
 		{
-			Contract.Requires(Params.SupportsUpdating);
-
 			mIsUpdating = true;
 			mCountBeforeUpdate = mList.Count;
 

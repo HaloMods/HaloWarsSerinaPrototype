@@ -8,6 +8,18 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.XML
 {
+	partial class BDatabaseXmlSerializerBase
+	{
+#if !NO_TLS_STREAMING
+		internal class _BListArray<T>
+			where T : IO.IPhxXmlStreamable, new()
+		{
+			internal static System.Threading.ThreadLocal<BListArrayXmlSerializer<T>> sXmlSerializer =
+				new System.Threading.ThreadLocal<BListArrayXmlSerializer<T>>(BListArrayXmlSerializer<T>.kNewFactory);
+		};
+#endif
+	};
+
 	partial class Util
 	{
 		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase db,
@@ -19,7 +31,13 @@ namespace PhxLib.XML
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
-			var xs = new BListArrayXmlSerializer<T>(@params, list);
+			using(var xs = 
+#if NO_TLS_STREAMING
+				new BListArrayXmlSerializer<T>(@params, list)
+#else
+				BDatabaseXmlSerializerBase._BListArray<T>.sXmlSerializer.Value.Reset(@params, list)
+#endif
+			)
 			{
 				xs.StreamXml(s, mode, db);
 			}
@@ -65,10 +83,16 @@ namespace PhxLib.XML
 		}
 	};
 
-	internal abstract class BListXmlSerializerBase<T>
+	internal abstract class BListXmlSerializerBase<T> : IDisposable, IO.IPhxXmlStreamable
 	{
 		public abstract BListXmlParams Params { get; }
 		public abstract Collections.BListBase<T> List { get; }
+
+		#region TLS & re-use interface
+#if !NO_TLS_STREAMING
+		protected abstract void FinishTlsStreaming();
+#endif
+		#endregion
 
 		#region IXmlElementStreamable Members
 		protected abstract void ReadXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, int iteration);
@@ -111,6 +135,17 @@ namespace PhxLib.XML
 			}
 		}
 		#endregion
+
+		#region IDisposable Members
+		public bool IsDisposed { get { return List == null; } }
+
+		public virtual void Dispose()
+		{
+#if !NO_TLS_STREAMING
+			FinishTlsStreaming();
+#endif
+		}
+		#endregion
 	};
 
 	internal class BListArrayXmlSerializer<T> : BListXmlSerializerBase<T>
@@ -122,6 +157,7 @@ namespace PhxLib.XML
 		public override BListXmlParams Params { get { return mParams; } }
 		public override Collections.BListBase<T> List { get { return mList; } }
 
+#if NO_TLS_STREAMING
 		public BListArrayXmlSerializer(BListXmlParams @params, Collections.BListArray<T> list)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
@@ -130,6 +166,31 @@ namespace PhxLib.XML
 			mParams = @params;
 			mList = list;
 		}
+#endif
+
+		#region TLS & re-use interface
+#if !NO_TLS_STREAMING
+		public static readonly Func<BListArrayXmlSerializer<T>> kNewFactory = () => new BListArrayXmlSerializer<T>();
+		BListArrayXmlSerializer() { }
+
+		public BListArrayXmlSerializer<T> Reset(BListXmlParams @params, Collections.BListArray<T> list)
+		{
+			Contract.Requires<ArgumentNullException>(@params != null);
+			Contract.Requires<ArgumentNullException>(list != null);
+
+			mParams = @params;
+			mList = list;
+
+			return this;
+		}
+
+		protected override void FinishTlsStreaming()
+		{
+			mParams = null;
+			mList = null;
+		}
+#endif
+		#endregion
 
 		#region IXmlElementStreamable Members
 		protected override void ReadXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, int iteration)

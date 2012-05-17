@@ -156,7 +156,7 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <seealso cref="ReadCursor{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteCursor(string, Enum, bool)"/>
-		public void StreamCursor<TEnum>(FA mode, ref TEnum value, bool is_flags = false) where TEnum : struct
+		public void StreamCursor<TEnum>(FA mode, ref TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 				 if (mode == FA.Read) ReadCursor(ref value);
 			else if (mode == FA.Write) WriteCursor(value);
@@ -364,7 +364,7 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <seealso cref="ReadElement{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteElement(string, Enum, bool)"/>
-		public void StreamElement<TEnum>(FA mode, string name, ref TEnum value, bool is_flags = false) where TEnum : struct
+		public void StreamElement<TEnum>(FA mode, string name, ref TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -640,7 +640,7 @@ namespace KSoft.IO
 		/// <seealso cref="ReadElementOpt{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteElementOptOnTrue{TEnum}(string, Enum, Predicate{TEnum}, bool)"/>
 		public bool StreamElementOpt<TEnum>(FA mode, string name, ref TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
-			where TEnum : struct
+			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -839,7 +839,7 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <seealso cref="ReadElement{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteAttribute(string, Enum, bool)"/>
-		public void StreamAttribute<TEnum>(FA mode, string name, ref TEnum value, bool is_flags = false) where TEnum : struct
+		public void StreamAttribute<TEnum>(FA mode, string name, ref TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1115,7 +1115,7 @@ namespace KSoft.IO
 		/// <seealso cref="ReadAttributeOpt{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue{TEnum}(string, Enum, Predicate{TEnum}, bool)"/>
 		public bool StreamAttributeOpt<TEnum>(FA mode, string name, ref TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
-			where TEnum : struct
+			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
