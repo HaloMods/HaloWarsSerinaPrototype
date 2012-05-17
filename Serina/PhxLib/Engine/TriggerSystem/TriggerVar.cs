@@ -225,109 +225,6 @@ namespace PhxLib.Engine
 		Divide,
 		Modulus,
 	};
-	public enum BObjectDataType
-	{
-		#region 0x00
-		Enable,
-		Hitpoints,
-		Shieldpoints,
-		AmmoMax,
-		LOS,
-		MaximumVelocity,
-		MaximumRange,
-		ResearchPoints,
-		ResourceTrickleRate,
-		MaximumResourceTrickleRate,
-		RateAmount,
-		RateMultiplier,
-		Resource,
-		Projectile,
-		Damage,
-		MinRange,
-		#endregion
-		#region 0x10
-		AOERadius,
-		AOEPrimaryTargetFactor,
-		AOEDistanceFactor,
-		AOEDamageFactor,
-		Accuracy,
-		MovingAccuracy,
-		MaxDeviation,
-		MovingMaxDeviation,
-		DataAccuracyDistanceFactor,
-		AccuracyDeviationFactor,
-		MaxVelocityLead,
-		WorkRate,
-		BuildPoints,
-		Cost,
-		AutoCloak,
-		MoveWhileCloaked,
-		#endregion
-		#region 0x20
-		AttackWhileCloaked,
-		ActionEnable,
-		CommandEnable,
-		BountyResource,
-		TributeCost,
-		ShieldRegenRate,
-		ShieldRegenDelay,
-		DamageModifier,
-		PopCap,
-		PopMax,
-		UnitTrainLimit,
-		SquadTrainLimit,
-		RepairCost,
-		RepairTime,
-		PowerRechargeTime,
-		PowerUseLimit,
-		#endregion
-		#region 0x30
-		Level,
-		Bounty,
-		MaxContained,
-		MaxDamagePerRam,
-		ReflectDamageFactor,
-		AirBurstSpan,
-		AbilityDisabled,
-		DOTrate,
-		DOTduration,
-		ImpactEffect,
-		AmmoRegenRate,
-		CommandSelectable,
-		DisplayNameID,
-		Icon,
-		AltIcon,
-		Stasis,
-		#endregion
-		#region 0x40
-		TurretYawRate,
-		TurretPitchRate,
-		PowerLevel,
-		BoardTime,
-		AbilityRecoverTime,
-		TechLevel,
-		HPBar,
-		WeaponPhysicsMultiplier,
-		DeathSpawn,
-		
-
-
-
-
-
-
-		#endregion
-	};
-	public enum BObjectDataRelative
-	{
-		Absolute,
-		BasePercent,
-		Percent,
-		Assign,
-		BasePercentAssign,
-
-		Invalid,
-	};
 	#endregion
 
 	#region 0x30
@@ -361,7 +258,9 @@ namespace PhxLib.Engine
 	};
 	public enum BSquadMode
 	{
-		Normal,
+		Invalid = -1,
+
+		Normal = 0,
 		StandGround,
 		Lockdown,
 		Sniper,
@@ -374,8 +273,6 @@ namespace PhxLib.Engine
 		ScarabScan,
 		ScarabTarget,
 		ScarabKill,
-
-		Invalid,
 	};
 	public enum BDataScalar
 	{

@@ -136,7 +136,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <param name="is_flags">Is <paramref name="enum_value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
-		void WriteElement<TEnum>(XmlElement n, TEnum value, bool is_flags = false) where TEnum : struct
+		void WriteElement<TEnum>(XmlElement n, TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			WriteElement(n, is_flags ?
 				Text.Util.EnumToFlagsString(value) :
@@ -236,7 +236,7 @@ namespace KSoft.IO
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
 		/// <param name="is_flags">Is <paramref name="enum_value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
-		public void WriteCursor<TEnum>(TEnum value, bool is_flags = false) where TEnum : struct
+		public void WriteCursor<TEnum>(TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			WriteElement(Cursor, value, is_flags);
 		}
@@ -433,7 +433,7 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <param name="is_flags">Is <paramref name="enum_value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement<TEnum>(string name, TEnum value, bool is_flags = false) where TEnum : struct
+		public void WriteElement<TEnum>(string name, TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -597,7 +597,7 @@ namespace KSoft.IO
 		/// <param name="name">Name of the <see cref="XmlAttribute"/></param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <param name="is_flags">Is <paramref name="enum_value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
-		public void WriteAttribute<TEnum>(string name, TEnum value, bool is_flags = false) where TEnum : struct
+		public void WriteAttribute<TEnum>(string name, TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -1095,7 +1095,7 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
 		public bool WriteElementOptOnTrue<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
-			where TEnum : struct
+			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -1115,7 +1115,7 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
 		public bool WriteElementOptOnFalse<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
-			where TEnum : struct
+			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -1612,7 +1612,7 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
 		public bool WriteAttributeOptOnTrue<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
-			where TEnum : struct
+			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -1632,7 +1632,7 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
 		public bool WriteAttributeOptOnFalse<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
-			where TEnum : struct
+			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);

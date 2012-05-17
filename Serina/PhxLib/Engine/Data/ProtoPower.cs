@@ -57,7 +57,7 @@ namespace PhxLib.Engine
 		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Power")
 		{
 			DataName = DatabaseNamedObject.kXmlAttrName,
-			Flags = 0
+			Flags = XML.BCollectionXmlParamsFlags.RequiresDataNamePreloading
 		};
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfo = new PhxEngine.XmlFileInfo
 		{
@@ -111,77 +111,6 @@ namespace PhxLib.Engine
 
 		const string kXmlElementTriggerScript = "TriggerScript";
 		const string kXmlElementCommandTriggerScript = "CommandTriggerScript";
-
-		class BCostTypeValuesSingleAttrHackXmlSerializer : XML.BListExplicitIndexXmlSerializerBase<float>
-		{
-			// Just an alias for less typing and code
-			static readonly XML.BTypeValuesXmlParams<float> kParams = BResource.kBListTypeValuesXmlParams_Cost;
-
-			Collections.BTypeValuesSingle mList;
-
-			public override Collections.BListExplicitIndexBase<float> ListExplicitIndex { get { return mList; } }
-
-			public BCostTypeValuesSingleAttrHackXmlSerializer(Collections.BTypeValuesSingle list) : base(kParams)
-			{
-				mList = list;
-			}
-
-			#region IXmlElementStreamable Members
-			protected override void ReadXml(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs, int iteration) { throw new NotImplementedException(); }
-			protected override void WriteXml(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs, float data) { throw new NotImplementedException(); }
-			protected override int ReadExplicitIndex(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs) { throw new NotImplementedException(); }
-			protected override void WriteExplicitIndex(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs, int index) { throw new NotImplementedException(); }
-
-			protected override void ReadXmlNodes(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs)
-			{
-				var penum = mList.TypeValuesParams.kGetProtoEnumFromDB(xs.Database);
-
-				foreach (XmlAttribute attr in s.Cursor.Attributes)
-				{
-					// The only attributes in this are actual member names so we don't waste time calling
-					// penum.IsValidMemberName only to call GetMemberId when we can just compare id to -1
-					int index = penum.GetMemberId(attr.Name);
-					if (index == Util.kInvalidInt32) continue;
-
-					mList.InitializeItem(index);
-					float value = Util.kInvalidSingle;
-					s.ReadAttribute(attr.Name, ref value);
-					mList[index] = value;
-				}
-			}
-			protected override void WriteXmlNodes(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs)
-			{
-				var tvp = mList.TypeValuesParams;
-
-				var penum = tvp.kGetProtoEnumFromDB(xs.Database);
-				float k_invalid = tvp.kTypeGetInvalid();
-
-				for (int x = 0; x < mList.Count; x++)
-				{
-					float data = mList[x];
-
-					if (tvp.kComparer.Compare(data, k_invalid) != 0)
-					{
-						string name = penum.GetMemberName(x);
-						s.WriteAttribute(name, data);
-					}
-				}
-			}
-			#endregion
-
-			public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase db,
-				Collections.BTypeValuesSingle list)
-			{
-				Contract.Requires(s != null);
-				Contract.Requires(db != null);
-				Contract.Requires(list != null);
-
-				var xs = new BCostTypeValuesSingleAttrHackXmlSerializer(list);
-				{
-					xs.StreamXml(s, mode, db);
-				}
-			}
-		};
 		#endregion
 
 		public Collections.BTypeValuesSingle Cost { get; private set; }
@@ -212,7 +141,7 @@ namespace PhxLib.Engine
 			{
 				base.StreamXml(s, mode, xs);
 
-				BCostTypeValuesSingleAttrHackXmlSerializer.Serialize(s, mode, xs, Cost);
+				XML.Util.SerializeCostHack(s, mode, xs, Cost);
 				// DynamicCost
 				// TargetEffectiveness
 				XML.Util.Serialize(s, mode, xs, Populations, BPopulation.kBListXmlParamsSingle_LowerCase);

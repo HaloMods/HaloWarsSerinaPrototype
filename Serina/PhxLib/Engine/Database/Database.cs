@@ -49,7 +49,6 @@ namespace PhxLib.Engine
 		public Collections.BListAutoId<BLeader> Leaders { get; private set; }
 
 		public Dictionary<int, BTacticData> ObjectTacticsMap { get; private set; }
-		//public Dictionary<string, BTacticData> TacticsMap { get; private set; }
 
 		protected BDatabaseBase(PhxEngine engine, Collections.IProtoEnum game_object_types)
 		{
@@ -118,6 +117,21 @@ namespace PhxLib.Engine
 			Leaders.SetupDatabaseInterface(out m_dbiLeaders);
 		}
 
+		bool DataStoreIsReady(DatabaseTypeKind kind)
+		{
+			System.Collections.ICollection coll = null;
+
+			switch (kind)
+			{
+				case DatabaseTypeKind.Cost:		coll = GameData.Resources; break;
+				case DatabaseTypeKind.Pop:		coll = GameData.Populations; break;
+				case DatabaseTypeKind.Rate:		coll = GameData.Rates; break;
+
+				default: throw new Debug.UnreachableException(kind.ToString());
+			}
+
+			return coll.Count != 0;
+		}
 		bool DataStoreIsReady(DatabaseObjectKind kind)
 		{
 			System.Collections.ICollection coll = null;
@@ -126,12 +140,10 @@ namespace PhxLib.Engine
 			{
 				case DatabaseObjectKind.Ability:	coll = m_dbiAbilities; break;
 				case DatabaseObjectKind.Civ:		coll = m_dbiCivs; break;
-				case DatabaseObjectKind.Cost:		coll = GameData.Resources; break;
 				case DatabaseObjectKind.DamageType:	coll = m_dbiDamageTypes; break;
 				case DatabaseObjectKind.Leader:		coll = m_dbiLeaders; break;
 				case DatabaseObjectKind.Object:		coll = m_dbiObjects; break;
 				case DatabaseObjectKind.ObjectType:	coll = ObjectTypes; break;
-				case DatabaseObjectKind.Pop:		coll = GameData.Populations; break;
 				case DatabaseObjectKind.Power:		coll = m_dbiPowers; break;
 				case DatabaseObjectKind.Squad:		coll = m_dbiSquads; break;
 				case DatabaseObjectKind.Tech:		coll = m_dbiTechs; break;
@@ -211,18 +223,27 @@ namespace PhxLib.Engine
 			return TryGetName(Objects, id);
 		}
 
+		public int GetId(DatabaseTypeKind kind, string name)
+		{
+			switch (kind)
+			{
+				case DatabaseTypeKind.Cost:	return TryGetId(GameData.Resources, name);
+				case DatabaseTypeKind.Pop:	return TryGetId(GameData.Populations, name);
+				case DatabaseTypeKind.Rate:	return TryGetId(GameData.Rates, name);
+
+				default: throw new Debug.UnreachableException(kind.ToString());
+			}
+		}
 		public int GetId(DatabaseObjectKind kind, string name)
 		{
 			switch (kind)
 			{
 				case DatabaseObjectKind.Ability:	return TryGetId(m_dbiAbilities, name);
 				case DatabaseObjectKind.Civ:		return TryGetId(m_dbiCivs, name);
-				case DatabaseObjectKind.Cost:		return TryGetId(GameData.Resources, name);
 				case DatabaseObjectKind.DamageType:	return TryGetId(m_dbiDamageTypes, name);
 				case DatabaseObjectKind.Leader:		return TryGetId(m_dbiLeaders, name);
 				case DatabaseObjectKind.Object:		return TryGetId(m_dbiObjects, name);
 				case DatabaseObjectKind.ObjectType:	return TryGetId(ObjectTypes, name);
-				case DatabaseObjectKind.Pop:		return TryGetId(GameData.Populations, name);
 				case DatabaseObjectKind.Power:		return TryGetId(m_dbiPowers, name);
 				case DatabaseObjectKind.Squad:		return TryGetId(m_dbiSquads, name);
 				case DatabaseObjectKind.Tech:		return TryGetId(m_dbiTechs, name);
@@ -234,18 +255,27 @@ namespace PhxLib.Engine
 				default: throw new Debug.UnreachableException(kind.ToString());
 			}
 		}
+		public string GetName(DatabaseTypeKind kind, int id)
+		{
+			switch (kind)
+			{
+				case DatabaseTypeKind.Cost:	return TryGetName(GameData.Resources, id);
+				case DatabaseTypeKind.Pop:	return TryGetName(GameData.Populations, id);
+				case DatabaseTypeKind.Rate:	return TryGetName(GameData.Rates, id);
+
+				default: throw new Debug.UnreachableException(kind.ToString());
+			}
+		}
 		public string GetName(DatabaseObjectKind kind, int id)
 		{
 			switch (kind)
 			{
 				case DatabaseObjectKind.Ability:	return TryGetName(Abilities, id);
 				case DatabaseObjectKind.Civ:		return TryGetName(Civs, id);
-				case DatabaseObjectKind.Cost:		return TryGetName(GameData.Resources, id);
 				case DatabaseObjectKind.DamageType:	return TryGetName(DamageTypes, id);
 				case DatabaseObjectKind.Leader:		return TryGetName(Leaders, id);
 				case DatabaseObjectKind.Object:		return TryGetName(Objects, id);
 				case DatabaseObjectKind.ObjectType:	return TryGetName(ObjectTypes, id);
-				case DatabaseObjectKind.Pop:		return TryGetName(GameData.Populations, id);
 				case DatabaseObjectKind.Power:		return TryGetName(Powers, id);
 				case DatabaseObjectKind.Squad:		return TryGetName(Squads, id);
 				case DatabaseObjectKind.Tech:		return TryGetName(Techs, id);

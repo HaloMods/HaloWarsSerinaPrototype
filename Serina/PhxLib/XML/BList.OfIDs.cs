@@ -8,6 +8,20 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.XML
 {
+	partial class BDatabaseXmlSerializerBase
+	{
+#if !NO_TLS_STREAMING
+		internal class _BListOfIDs<TContext>
+			where TContext : class
+		{
+			internal static System.Threading.ThreadLocal<BListOfIDsXmlSerializer<TContext>> sXmlSerializer =
+				new System.Threading.ThreadLocal<BListOfIDsXmlSerializer<TContext>>(BListOfIDsXmlSerializer<TContext>.kNewFactory);
+		};
+		internal static System.Threading.ThreadLocal<BListOfIDsXmlSerializer> sBListOfIDsXmlSerializer =
+			new System.Threading.ThreadLocal<BListOfIDsXmlSerializer>(BListOfIDsXmlSerializer.kNewFactory);
+#endif
+	};
+
 	partial class Util
 	{
 		public static void Serialize<TContext>(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase db,
@@ -19,7 +33,13 @@ namespace PhxLib.XML
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
-			var xs = new BListOfIDsXmlSerializer<TContext>(@params, list);
+			using(var xs = 
+#if NO_TLS_STREAMING
+				new BListOfIDsXmlSerializer<TContext>(@params, list)
+#else
+				BDatabaseXmlSerializerBase._BListOfIDs<TContext>.sXmlSerializer.Value.Reset(@params, list)
+#endif
+			)
 			{
 				xs.StreamXml(s, mode, db);
 			}
@@ -33,7 +53,13 @@ namespace PhxLib.XML
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
-			var xs = new BListOfIDsXmlSerializer(@params, list);
+			using(var xs = 
+#if NO_TLS_STREAMING
+				new BListOfIDsXmlSerializer(@params, list)
+#else
+				BDatabaseXmlSerializerBase.sBListOfIDsXmlSerializer.Value.Reset(@params, list)
+#endif
+			)
 			{
 				xs.StreamXml(s, mode, db);
 			}
@@ -80,6 +106,7 @@ namespace PhxLib.XML
 		public override BListXmlParams Params { get { return mParams; } }
 		public override Collections.BListBase<int> List { get { return mList; } }
 
+#if NO_TLS_STREAMING
 		public BListOfIDsXmlSerializer(BListOfIDsXmlParams<TContext> @params, Collections.BListOfIDs<TContext> list)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
@@ -88,6 +115,31 @@ namespace PhxLib.XML
 			mParams = @params;
 			mList = list;
 		}
+#endif
+
+		#region TLS & re-use interface
+#if !NO_TLS_STREAMING
+		public static readonly Func<BListOfIDsXmlSerializer<TContext>> kNewFactory = () => new BListOfIDsXmlSerializer<TContext>();
+		protected BListOfIDsXmlSerializer() { }
+
+		public BListOfIDsXmlSerializer<TContext> Reset(BListOfIDsXmlParams<TContext> @params, Collections.BListOfIDs<TContext> list)
+		{
+			Contract.Requires<ArgumentNullException>(@params != null);
+			Contract.Requires<ArgumentNullException>(list != null);
+
+			mParams = @params;
+			mList = list;
+
+			return this;
+		}
+
+		protected override void FinishTlsStreaming()
+		{
+			mParams = null;
+			mList = null;
+		}
+#endif
+		#endregion
 
 		#region IXmlElementStreamable Members
 		TContext mStreamCtxt;
@@ -133,10 +185,29 @@ namespace PhxLib.XML
 	};
 	internal class BListOfIDsXmlSerializer : BListOfIDsXmlSerializer<object>
 	{
+#if NO_TLS_STREAMING
 		public BListOfIDsXmlSerializer(BListOfIDsXmlParams @params, Collections.BListOfIDs list) : base(@params, list)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
 			Contract.Requires<ArgumentNullException>(list != null);
 		}
+#endif
+
+		#region TLS & re-use interface
+#if !NO_TLS_STREAMING
+		public new static readonly Func<BListOfIDsXmlSerializer> kNewFactory = () => new BListOfIDsXmlSerializer();
+		BListOfIDsXmlSerializer() { }
+
+		public BListOfIDsXmlSerializer Reset(BListOfIDsXmlParams @params, Collections.BListOfIDs list)
+		{
+			Contract.Requires<ArgumentNullException>(@params != null);
+			Contract.Requires<ArgumentNullException>(list != null);
+
+			base.Reset(@params, list);
+
+			return this;
+		}
+#endif
+		#endregion
 	};
 }

@@ -8,6 +8,14 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.XML
 {
+	partial class BDatabaseXmlSerializerBase
+	{
+#if !NO_TLS_STREAMING
+		internal static System.Threading.ThreadLocal<BBitSetXmlSerializer> sBBitSetXmlSerializer =
+			new System.Threading.ThreadLocal<BBitSetXmlSerializer>(BBitSetXmlSerializer.kNewFactory);
+#endif
+	};
+
 	partial class Util
 	{
 		public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase db,
@@ -18,7 +26,13 @@ namespace PhxLib.XML
 			Contract.Requires(bits != null);
 			Contract.Requires(@params != null);
 
-			var xs = new BBitSetXmlSerializer(@params, bits);
+			using(var xs = 
+#if NO_TLS_STREAMING
+				new BBitSetXmlSerializer(@params, bits)
+#else
+				BDatabaseXmlSerializerBase.sBBitSetXmlSerializer.Value.Reset(@params, bits)
+#endif
+			)
 			{
 				xs.StreamXml(s, mode, db);
 			}
@@ -41,11 +55,12 @@ namespace PhxLib.XML
 		public static readonly BBitSetXmlParams kFlagsSansRoot = new BBitSetXmlParams("Flag");
 	};
 
-	internal class BBitSetXmlSerializer
+	internal class BBitSetXmlSerializer : IDisposable
 	{
 		public BListXmlParams Params { get; private set; }
 		public Collections.BBitSet Bits { get; private set; }
 
+#if NO_TLS_STREAMING
 		public BBitSetXmlSerializer(BListXmlParams @params, Collections.BBitSet bits)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
@@ -54,6 +69,30 @@ namespace PhxLib.XML
 			Params = @params;
 			Bits = bits;
 		}
+#endif
+
+		#region TLS & re-use interface
+#if !NO_TLS_STREAMING
+		public static readonly Func<BBitSetXmlSerializer> kNewFactory = () => new BBitSetXmlSerializer();
+		BBitSetXmlSerializer() { }
+
+		public BBitSetXmlSerializer Reset(BListXmlParams @params, Collections.BBitSet bits)
+		{
+			Contract.Requires<ArgumentNullException>(@params != null);
+			Contract.Requires<ArgumentNullException>(bits != null);
+
+			Params = @params;
+			Bits = bits;
+
+			return this;
+		}
+		void FinishTlsStreaming()
+		{
+			Params = null;
+			Bits = null;
+		}
+#endif
+		#endregion
 
 		#region IXmlElementStreamable Members
 		Collections.IProtoEnum GetProtoEnum(Engine.BDatabaseBase db)
@@ -106,6 +145,19 @@ namespace PhxLib.XML
 					 if (mode == FA.Read)	ReadXmlNodes(s, xs);
 				else if (mode == FA.Write)	WriteXmlNodes(s, xs);
 			}
+
+#if !NO_TLS_STREAMING
+			FinishTlsStreaming();
+#endif
+		}
+		#endregion
+
+		#region IDisposable Members
+		public void Dispose()
+		{
+#if !NO_TLS_STREAMING
+			FinishTlsStreaming();
+#endif
 		}
 		#endregion
 	};

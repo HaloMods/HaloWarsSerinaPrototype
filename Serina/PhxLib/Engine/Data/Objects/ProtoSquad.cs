@@ -8,6 +8,17 @@ using XmlIgnore = System.Xml.Serialization.XmlIgnoreAttribute;
 
 namespace PhxLib.Engine
 {
+	[Obsolete("Only for documentation purposes, don't use")]
+	public enum BProtoSquadDataType
+	{
+		Invalid = BObjectDataType.Invalid,
+
+		Enable = BObjectDataType.Enable,
+		BuildPoints = BObjectDataType.BuildPoints,
+		Cost = BObjectDataType.Cost,
+		Level = BObjectDataType.Level,
+	};
+
 	public enum BProtoSquadFormationType
 	{
 		Invalid,

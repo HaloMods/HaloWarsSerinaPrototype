@@ -19,7 +19,7 @@ namespace PhxLib.XML
 		public Dictionary<int, string/*BTacticData*/> ObjectIdToTacticsMap { get; private set; }
 		public Dictionary<string, Engine.BTacticData> TacticsMap { get; private set; }
 
-		PhxEngine.XmlFileInfo StreamTacticsGetFileInfo(FA mode)
+		PhxEngine.XmlFileInfo StreamTacticsGetFileInfo(FA mode, string filename = null)
 		{
 			return new PhxEngine.XmlFileInfo()
 			{
@@ -27,6 +27,7 @@ namespace PhxLib.XML
 				Directory = Engine.GameDirectory.Tactics,
 
 				RootName = Engine.BTacticData.kXmlRoot,
+				FileName = filename,
 
 				Writable = mode == FA.Write,
 			};
@@ -46,10 +47,14 @@ namespace PhxLib.XML
 		{
 			xs.Database.GameData.StreamGameXml(s, mode, xs);
 		}
+		static void PreloadDamageTypes(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		{
+			XML.Util.SerializePreload(s, xs, xs.mDamageTypesSerializer, true);
+		}
 		/// <remarks>For streaming directly from damagetypes.xml</remarks>
 		static void StreamXmlDamageTypes(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.Database.DamageTypes, Engine.BDamageType.kBListXmlParams, true);
+			XML.Util.Serialize(s, mode, xs, xs.mDamageTypesSerializer, true);
 		}
 		/// <remarks>For streaming directly from weapontypes.xml</remarks>
 		static void StreamXmlWeaponTypes(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
@@ -93,10 +98,15 @@ namespace PhxLib.XML
 		{
 			XML.Util.Serialize(s, mode, xs, xs.mSquadsSerializer, true);
 		}
+
+		static void PreloadPowers(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		{
+			XML.Util.SerializePreload(s, xs, xs.mPowersSerializer, true);
+		}
 		/// <remarks>For streaming directly from powers.xml</remarks>
 		static void StreamXmlPowers(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.Database.Powers, Engine.BProtoPower.kBListXmlParams, true);
+			XML.Util.Serialize(s, mode, xs, xs.mPowersSerializer, true);
 		}
 
 		static void PreloadTechs(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)

@@ -8,6 +8,18 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.XML
 {
+	partial class BDatabaseXmlSerializerBase
+	{
+#if !NO_TLS_STREAMING
+		internal class _BListExplicitIndex<T>
+			where T : IEqualityComparer<T>, IO.IPhxXmlStreamable, new()
+		{
+			internal static System.Threading.ThreadLocal<BListExplicitIndexXmlSerializer<T>> sXmlSerializer =
+				new System.Threading.ThreadLocal<BListExplicitIndexXmlSerializer<T>>(BListExplicitIndexXmlSerializer<T>.kNewFactory);
+		};
+#endif
+	};
+
 	partial class Util
 	{
 		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase db,
@@ -19,7 +31,13 @@ namespace PhxLib.XML
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
-			var xs = new BListExplicitIndexXmlSerializer<T>(@params, list);
+			using(var xs =
+#if NO_TLS_STREAMING
+				new BListExplicitIndexXmlSerializer<T>(@params, list)
+#else
+				BDatabaseXmlSerializerBase._BListExplicitIndex<T>.sXmlSerializer.Value.Reset(@params, list)
+#endif
+			)
 			{
 				xs.StreamXml(s, mode, db);
 			}
@@ -66,12 +84,32 @@ namespace PhxLib.XML
 		public override BListXmlParams Params { get { return mParams; } }
 		public override Collections.BListBase<T> List { get { return ListExplicitIndex; } }
 
-		public BListExplicitIndexXmlSerializerBase(BListExplicitIndexXmlParams<T> @params)
+#if NO_TLS_STREAMING
+		protected BListExplicitIndexXmlSerializerBase(BListExplicitIndexXmlParams<T> @params)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
 
 			mParams = @params;
 		}
+#endif
+
+		#region TLS & re-use interface
+#if !NO_TLS_STREAMING
+		protected BListExplicitIndexXmlSerializerBase() { }
+
+		protected void Reset(BListExplicitIndexXmlParams<T> @params)
+		{
+			Contract.Requires<ArgumentNullException>(@params != null);
+
+			mParams = @params;
+		}
+
+		protected override void FinishTlsStreaming()
+		{
+			mParams = null;
+		}
+#endif
+		#endregion
 
 		#region IXmlElementStreamable Members
 		protected virtual int ReadExplicitIndex(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
@@ -116,6 +154,7 @@ namespace PhxLib.XML
 
 		public override Collections.BListExplicitIndexBase<T> ListExplicitIndex { get { return mList; } }
 
+#if NO_TLS_STREAMING
 		public BListExplicitIndexXmlSerializer(BListExplicitIndexXmlParams<T> @params, Collections.BListExplicitIndex<T> list) : base(@params)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
@@ -123,6 +162,31 @@ namespace PhxLib.XML
 
 			mList = list;
 		}
+#endif
+
+		#region TLS & re-use interface
+#if !NO_TLS_STREAMING
+		public static readonly Func<BListExplicitIndexXmlSerializer<T>> kNewFactory = () => new BListExplicitIndexXmlSerializer<T>();
+		BListExplicitIndexXmlSerializer() { }
+
+		public BListExplicitIndexXmlSerializer<T> Reset(BListExplicitIndexXmlParams<T> @params, Collections.BListExplicitIndex<T> list)
+		{
+			Contract.Requires<ArgumentNullException>(@params != null);
+			Contract.Requires<ArgumentNullException>(list != null);
+
+			base.Reset(@params);
+			mList = list;
+
+			return this;
+		}
+
+		protected override void FinishTlsStreaming()
+		{
+			base.FinishTlsStreaming();
+			mList = null;
+		}
+#endif
+		#endregion
 
 		#region IXmlElementStreamable Members
 		protected override void ReadXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, int iteration)

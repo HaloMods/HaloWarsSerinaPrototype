@@ -22,12 +22,34 @@ namespace KSoft.IO
 
 			return result;
 		}
+		bool ParseEnum<TEnum>(string str, out int int_value) where TEnum : struct, IConvertible
+		{
+			int_value = 0;
+
+			TEnum value;
+			bool result = ParseEnum(str, out value);
+
+			if (result) int_value = value.ToInt32(null);
+
+			return result;
+		}
 		bool ParseEnumOpt<TEnum>(string str, out TEnum value) where TEnum : struct
 		{
 			bool result = Enum.TryParse<TEnum>(str, IgnoreCaseOnEnums, out value);
 
 			//if (!result && ExceptionOnEnumParseFail)
 			//	throw new ArgumentException("Parameter is not a member of " + typeof(TEnum), str);
+
+			return result;
+		}
+		bool ParseEnumOpt<TEnum>(string str, out int int_value) where TEnum : struct, IConvertible
+		{
+			int_value = 0;
+
+			TEnum value;
+			bool result = ParseEnumOpt(str, out value);
+
+			if (result) int_value = value.ToInt32(null);
 
 			return result;
 		}
@@ -185,6 +207,14 @@ namespace KSoft.IO
 		{
 			ParseEnum<TEnum>(GetInnerText(n), out enum_value);
 		}
+		/// <summary>Stream out the InnerText of element <paramref name="name"/> into the enum <paramref name="value"/></summary>
+		/// <typeparam name="TEnum">Enumeration type</typeparam>
+		/// <param name="n">Node element to read</param>
+		/// <param name="enum_value">value to receive the data</param>
+		void ReadElement<TEnum>(XmlElement n, ref int enum_value) where TEnum : struct, IConvertible
+		{
+			ParseEnum<TEnum>(GetInnerText(n), out enum_value);
+		}
 		#endregion
 
 		#region ReadCursor
@@ -310,6 +340,13 @@ namespace KSoft.IO
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="enum_value">value to receive the data</param>
 		public void ReadCursor<TEnum>(ref TEnum enum_value) where TEnum : struct
+		{
+			ReadElement(Cursor, ref enum_value);
+		}
+		/// <summary>Stream out the Value of element <paramref name="name"/> into the enum <paramref name="value"/></summary>
+		/// <typeparam name="TEnum">Enumeration type</typeparam>
+		/// <param name="enum_value">value to receive the data</param>
+		public void ReadCursor<TEnum>(ref int enum_value) where TEnum : struct, IConvertible
 		{
 			ReadElement(Cursor, ref enum_value);
 		}
@@ -511,6 +548,16 @@ namespace KSoft.IO
 
 			ReadElement(GetElement(name), ref enum_value);
 		}
+		/// <summary>Stream out the InnerText of element <paramref name="name"/> into the enum <paramref name="value"/></summary>
+		/// <typeparam name="TEnum">Enumeration type</typeparam>
+		/// <param name="name">Element name</param>
+		/// <param name="enum_value">value to receive the data</param>
+		public void ReadElement<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
+		{
+			Contract.Requires(!string.IsNullOrEmpty(name));
+
+			ReadElement(GetElement(name), ref enum_value);
+		}
 		#endregion
 
 		#region ReadAttribute
@@ -689,6 +736,16 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="enum_value">enum value to receive the data</param>
 		public void ReadAttribute<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
+		{
+			Contract.Requires(!string.IsNullOrEmpty(name));
+
+			ParseEnum(ReadAttribute(name), out enum_value);
+		}
+		/// <summary>Stream out the attribute data of <paramref name="name"/> into enum <paramref name="value"/></summary>
+		/// <typeparam name="TEnum">Enumeration type</typeparam>
+		/// <param name="name">Attribute name</param>
+		/// <param name="enum_value">enum value to receive the data</param>
+		public void ReadAttribute<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -935,6 +992,19 @@ namespace KSoft.IO
 			string str = ReadElementOpt(name); if (string.IsNullOrEmpty(str)) return false;
 			return ParseEnumOpt(str, out enum_value);
 		}
+		/// <summary>Stream out the InnerText of element <paramref name="name"/> into enum <paramref name="value"/></summary>
+		/// <typeparam name="TEnum">Enumeration type</typeparam>
+		/// <param name="name">Element name</param>
+		/// <param name="enum_value">enum value to receive the data</param>
+		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <returns>true if the value exists</returns>
+		public bool ReadElementOpt<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
+		{
+			Contract.Requires(!string.IsNullOrEmpty(name));
+
+			string str = ReadElementOpt(name); if (string.IsNullOrEmpty(str)) return false;
+			return ParseEnumOpt(str, out enum_value);
+		}
 		#endregion
 
 		#region ReadAttributeOpt
@@ -1152,6 +1222,18 @@ namespace KSoft.IO
 		/// <param name="enum_value">enum value to receive the data</param>
 		/// <returns>true if the value exists</returns>
 		public bool ReadAttributeOpt<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
+		{
+			Contract.Requires(!string.IsNullOrEmpty(name));
+
+			string str = ReadAttributeOpt(name); if (string.IsNullOrEmpty(str)) return false;
+			return ParseEnumOpt(str, out enum_value);
+		}
+		/// <summary>Stream out the attribute data of <paramref name="name"/> into enum <paramref name="value"/></summary>
+		/// <typeparam name="TEnum">Enumeration type</typeparam>
+		/// <param name="name">Attribute name</param>
+		/// <param name="enum_value">enum value to receive the data</param>
+		/// <returns>true if the value exists</returns>
+		public bool ReadAttributeOpt<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 

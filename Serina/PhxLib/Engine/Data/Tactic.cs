@@ -583,7 +583,9 @@ namespace PhxLib.Engine
 
 		BSquadMode mSquadMode = BSquadMode.Invalid;
 		BSquadMode mNewSquadMode = BSquadMode.Invalid;
-		//NewTacticState
+#if false
+		int mNewTacticStateID = Util.kInvalidInt32;
+#endif
 
 		float mWorkRate = Util.kInvalidSingle;
 		float mWorkRateVariance = Util.kInvalidSingle;
@@ -611,7 +613,9 @@ namespace PhxLib.Engine
 
 		int mProtoObjectID = Util.kInvalidInt32;
 		bool mProtoObjectIsSquad;
+#if false
 		int mCountStringID = Util.kInvalidInt32;
+#endif
 		int mMaxNumUnitsPerformAction = Util.kInvalidInt32;
 		float mDamageCharge = Util.kInvalidSingle;
 		#endregion
@@ -625,12 +629,14 @@ namespace PhxLib.Engine
 			s.StreamElementOpt(mode, kXmlElementProjectileSpread, ref mProjectileSpread, Util.kNotInvalidPredicateSingle);
 
 			xs.StreamXmlForDBID(s, mode, kXmlElementSquadType, ref mSquadTypeID, DatabaseObjectKind.Squad);
-			td.StreamXmlForDBID(s, mode, kXmlElementWeapon, ref mWeaponID, BTacticData.ObjectKind.Weapon);
-			td.StreamXmlForDBID(s, mode, kXmlElementLinkedAction, ref mLinkedActionID, BTacticData.ObjectKind.Action);
+			td.StreamXmlForID(s, mode, kXmlElementWeapon, ref mWeaponID, BTacticData.ObjectKind.Weapon);
+			td.StreamXmlForID(s, mode, kXmlElementLinkedAction, ref mLinkedActionID, BTacticData.ObjectKind.Action);
 
 			s.StreamElementOpt(mode, kXmlElementSquadMode, ref mSquadMode, kNotInvalidSquadMode);
 			s.StreamElementOpt(mode, kXmlElementNewSquadMode, ref mNewSquadMode, kNotInvalidSquadMode);
-			//td.StreamXmlForDBID(s, mode, kXmlElementNewTacticState, ref mNewTacticStateID, BTacticData.ObjectKind.TacticState);
+#if false
+			td.StreamXmlForID(s, mode, kXmlElementNewTacticState, ref mNewTacticStateID, BTacticData.ObjectKind.TacticState);
+#endif
 
 			#region Work
 			s.StreamElementOpt(mode, kXmlElementWorkRate, ref mWorkRate, Util.kNotInvalidPredicateSingle);
@@ -647,11 +653,11 @@ namespace PhxLib.Engine
 			}
 			#endregion
 
-			xs.StreamXmlForDBID(s, mode, kXmlElementResource, ref mResourceID, DatabaseObjectKind.Cost);
+			xs.StreamXmlForTypeName(s, mode, kXmlElementResource, ref mResourceID, DatabaseTypeKind.Cost);
 			s.StreamElementOpt(mode, kXmlElementDefault, ref mDefault, Util.kNotFalsePredicate);
 
-			td.StreamXmlForDBID(s, mode, kXmlElementSlaveAttackAction, ref mSlaveAttackActionID, BTacticData.ObjectKind.Action);
-			td.StreamXmlForDBID(s, mode, kXmlElementBaseDPSWeapon, ref mBaseDPSWeaponID, BTacticData.ObjectKind.Weapon);
+			td.StreamXmlForID(s, mode, kXmlElementSlaveAttackAction, ref mSlaveAttackActionID, BTacticData.ObjectKind.Action);
+			td.StreamXmlForID(s, mode, kXmlElementBaseDPSWeapon, ref mBaseDPSWeaponID, BTacticData.ObjectKind.Weapon);
 
 			s.StreamElementOpt(mode, kXmlElementPersistentActionType, ref mPersistentActionType, kNotInvalidActionType);
 
@@ -682,7 +688,9 @@ namespace PhxLib.Engine
 					mProtoObjectIsSquad ? DatabaseObjectKind.Squad : DatabaseObjectKind.Object, false, XML.Util.kSourceCursor);
 			}
 			#endregion
-			//xs.StreamXmlForStringID(s, mode, kXmlElementCount, ref mCountStringID);
+#if false
+			xs.StreamXmlForStringID(s, mode, kXmlElementCount, ref mCountStringID);
+#endif
 			s.StreamElementOpt(mode, kXmlElementMaxNumUnitsPerformAction, KSoft.NumeralBase.Decimal, ref mMaxNumUnitsPerformAction, Util.kNotInvalidPredicate);
 			s.StreamElementOpt(mode, kXmlElementDamageCharge, ref mDamageCharge, Util.kNotInvalidPredicateSingle);
 		}
@@ -772,7 +780,7 @@ namespace PhxLib.Engine
 			XML.Util.Serialize(s, mode, xs, DamageTypes, kDamageTypeBListXmlParams);
 			XML.Util.Serialize(s, mode, xs, TargetTypes, kTargetTypeBListXmlParams);
 
-			td.StreamXmlForDBID(s, mode, kXmlElementAction, ref mProtoActionID, BTacticData.ObjectKind.Action);
+			td.StreamXmlForID(s, mode, kXmlElementAction, ref mProtoActionID, BTacticData.ObjectKind.Action);
 
 			if (!xs.StreamXmlForDBID(s, mode, kXmlElementAbility, ref mAbilityID, DatabaseObjectKind.Ability))
 				IsOptionalAbility = xs.StreamXmlForDBID(s, mode, kXmlElementOptionalAbility, ref mAbilityID, DatabaseObjectKind.Ability);
@@ -833,12 +841,12 @@ namespace PhxLib.Engine
 		internal static void StreamWeaponID(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs,
 			XML.BListOfIDsXmlParams<BTacticData> @params, BTacticData ctxt, ref int id)
 		{
-			ctxt.StreamXmlForDBID(s, mode, null, ref id, ObjectKind.Weapon, false, XML.Util.kSourceCursor);
+			ctxt.StreamXmlForID(s, mode, null, ref id, ObjectKind.Weapon, false, XML.Util.kSourceCursor);
 		}
 		internal static void StreamProtoActionID(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs,
 			XML.BListOfIDsXmlParams<BTacticData> @params, BTacticData ctxt, ref int id)
 		{
-			ctxt.StreamXmlForDBID(s, mode, null, ref id, ObjectKind.Action, false, XML.Util.kSourceCursor);
+			ctxt.StreamXmlForID(s, mode, null, ref id, ObjectKind.Action, false, XML.Util.kSourceCursor);
 		}
 		#endregion
 
@@ -900,7 +908,7 @@ namespace PhxLib.Engine
 		#endregion
 
 		#region IPhxXmlStreamable Members
-		public bool StreamXmlForDBID(KSoft.IO.XmlElementStream s, FA mode, string xml_name, ref int dbid, 
+		internal bool StreamXmlForID(KSoft.IO.XmlElementStream s, FA mode, string xml_name, ref int dbid, 
 			ObjectKind kind,
 			bool is_optional = true, XmlNodeType xml_source = XML.Util.kSourceElement)
 		{

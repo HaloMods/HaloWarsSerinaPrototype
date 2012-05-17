@@ -10,7 +10,8 @@ namespace PhxLib.Engine
 	public class BDamageType : Collections.BListAutoIdObject
 	{
 		#region Xml constants
-		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("DamageType");
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("DamageType", 
+			XML.BCollectionXmlParamsFlags.RequiresDataNamePreloading);
 		public static readonly PhxEngine.XmlFileInfo kXmlFileInfo = new PhxEngine.XmlFileInfo
 		{
 			Directory = GameDirectory.Data,
