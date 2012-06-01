@@ -79,7 +79,7 @@ namespace PhxLib.Engine
 		{
 			return (mode == FA.Write && mStartingUnitID != Util.kInvalidInt32) || s.ElementsExists(kXmlElementStartingUnit);
 		}
-		void StreamXmlStartingUnit(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		void StreamXmlStartingUnit(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			using (s.EnterCursorBookmark(mode, kXmlElementStartingUnit))
 			{
@@ -87,7 +87,7 @@ namespace PhxLib.Engine
 				xs.StreamXmlForDBID(s, mode, kXmlElementStartingUnitAttrBuildOther, ref mStartingUnitBuildOtherID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
 			}
 		}
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			base.StreamXml(s, mode, xs);
 

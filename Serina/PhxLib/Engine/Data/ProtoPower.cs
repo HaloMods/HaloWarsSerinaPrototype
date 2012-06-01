@@ -35,12 +35,16 @@ namespace PhxLib.Engine
 		InfiniteUses,// = 1<<6,
 
 		// 0xCD, camera flags
-		CameraEnableUserYaw,// = 1<<0,
-		CameraEnableUserZoom,// = 1<<1,
-		CameraEnableUserScroll,// = 1<<2,
+		//CameraEnableUserYaw,// = 1<<0,
+		//CameraEnableUserZoom,// = 1<<1,
+		//CameraEnableUserScroll,// = 1<<2,
+		//CameraEnableAutoZoomInstant, // 6?
 		
 		// 0xCE
+		//CameraEnableAutoZoom, // 0
 		NotDisruptable,// = 1<<4, // actually "Disruptable" in code
+		//ShowTransportArrows, // 5
+		//ShowInPowerMenu, // 6
 	};
 	public enum BMinigameType
 	{
@@ -135,7 +139,7 @@ namespace PhxLib.Engine
 		void StreamXmlFlags(KSoft.IO.XmlElementStream s, FA mode)
 		{
 		}
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			using (s.EnterCursorBookmark(mode, kXmlElementAttributes))
 			{

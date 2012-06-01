@@ -40,6 +40,9 @@ namespace PhxLib.XML
 		/// <summary>Name of the elements, that appear under the root element, and host our values</summary>
 		public /*readonly*/ string ElementName;
 
+		/// <summary>Do we explicitly filter the XML tags to match <see cref="ElementName"/>?</summary>
+		public bool UseElementName { get { return ElementName != null; } }
+
 		#region Flags
 		public /*readonly*/ BCollectionXmlParamsFlags Flags;
 

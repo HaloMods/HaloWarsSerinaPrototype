@@ -15,6 +15,9 @@ namespace PhxLib.XML
 			return s.Document.SelectSingleNode(xpath);
 		}
 
+		protected virtual void FixGameDataXml(KSoft.IO.XmlElementStream s) { }
+		protected virtual void FixGameData() { }
+
 		protected virtual void FixObjectsXml(KSoft.IO.XmlElementStream s) {}
 
 		protected virtual void FixTechsXml(KSoft.IO.XmlElementStream s) {}

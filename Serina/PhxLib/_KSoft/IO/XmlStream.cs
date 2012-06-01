@@ -93,30 +93,17 @@ namespace KSoft.IO
 				m_cursor = value;
 			}
 		}
+		/// <summary>Element's qualified name, or null if <see cref="Cursor"/> is null</summary>
+		public string CursorName { get { return m_cursor != null ? m_cursor.Name : null; } }
 
-//		System.Collections.Generic.Stack<XmlElement> m_nodeStack;
 		/// <summary>
 		/// Initializes the <see cref="Cursor"/> to the underlying <see cref="XmlDocument"/>'s 
 		/// <see cref="XmlDocument.DocumentElement"/>
 		/// </summary>
 		public void InitializeAtRootElement()
 		{
-//			if(m_nodeStack != null) m_nodeStack.Clear();
-//			m_nodeStack = new System.Collections.Generic.Stack<XmlElement>();
-
 			Cursor = m_root.DocumentElement;
 		}
-
-		/// <summary>Saves the current stream cursor so a new one can be specified, but then later restored to the saved cursor</summary>
-// 		[Obsolete]
-// 		public void SaveCursor()
-// 		{
-// 			if (m_nodeStack == null) m_nodeStack = new System.Collections.Generic.Stack<XmlElement>();
-// 			if (m_nodeStack.Count > 0 && m_nodeStack.Peek() == m_node)
-// 				Debug.Trace.IO.TraceInformation("Saving the cursor more than once! {0} in {1}/{2}", m_node, Owner, StreamName);
-// 			
-// 			m_nodeStack.Push(m_node);
-// 		}
 
 		/// <summary>
 		/// Saves the current stream cursor in <paramref name="old_cursor"/> and sets <paramref name="new_cursor"/> to be the new cursor for the stream
@@ -255,38 +242,6 @@ namespace KSoft.IO
 			return @this;
 		}
 		#endregion
-
-		/// <summary>
-		/// Create a new <see cref="XmlElementStream"/> based on the current stream state
-		/// </summary>
-		/// <param name="restore_cursor">Should *this* stream's cursor be retored afterwords?</param>
-		/// <param name="owner">Owner value to use for the new stream</param>
-		/// <returns>
-		/// A new <see cref="XmlElementStream"/> with the same root document, same cursor (before the restore, if performed), 
-		/// and same permissions
-		/// </returns>
-		[Obsolete]
-		public XmlElementStream BranchStreamAtCursor(bool restore_cursor, object owner)
-		{
-			XmlElement cursor = m_cursor;
-
-//			if (restore_cursor) RestoreCursor();
-
-			return new XmlElementStream(m_root, cursor, AccessPermissions, owner);
-		}
-		/// <summary>
-		/// Create a new <see cref="XmlElementStream"/> based on the current stream state
-		/// </summary>
-		/// <param name="restore_cursor">Should *this* stream's cursor be retored afterwords?</param>
-		/// <returns>
-		/// A new <see cref="XmlElementStream"/> with the same root document, same cursor (before the restore, if performed), 
-		/// same permissions, and same owner
-		/// </returns>
-		[Obsolete]
-		public XmlElementStream BranchStreamAtCursor(bool restore_cursor = false)
-		{
-			return BranchStreamAtCursor(restore_cursor, Owner);
-		}
 
 		#region Util
 		/// <summary>Checks to see if the current scope has a fully defined attribute named <paramref name="name"/></summary>

@@ -22,12 +22,12 @@ namespace PhxLib.XML
 
 	partial class Util
 	{
-		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase db,
+		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
 			Collections.BListArray<T> list, BListXmlParams @params)
 			where T : IO.IPhxXmlStreamable, new()
 		{
 			Contract.Requires(s != null);
-			Contract.Requires(db != null);
+			Contract.Requires(xsi != null);
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
@@ -39,7 +39,7 @@ namespace PhxLib.XML
 #endif
 			)
 			{
-				xs.StreamXml(s, mode, db);
+				xs.StreamXml(s, mode, xsi);
 			}
 		}
 	};
@@ -55,6 +55,8 @@ namespace PhxLib.XML
 		public bool UseInnerTextForData { get { return HasFlag(BCollectionXmlParamsFlags.UseInnerTextForData); } }
 		[Contracts.Pure]
 		public bool UseElementForData { get { return HasFlag(BCollectionXmlParamsFlags.UseElementForData); } }
+		[Contracts.Pure]
+		public bool ToLowerDataNames { get { return HasFlag(BCollectionXmlParamsFlags.ToLowerDataNames); } }
 		[Contracts.Pure]
 		public bool RequiresDataNamePreloading { get { return HasFlag(BCollectionXmlParamsFlags.RequiresDataNamePreloading); } }
 		[Contracts.Pure]
@@ -75,7 +77,7 @@ namespace PhxLib.XML
 		{
 			BCollectionXmlParams.StreamValue(s, mode, DataName, ref name,
 				UseInnerTextForData, UseElementForData, InternDataNames,
-				HasFlag(BCollectionXmlParamsFlags.ToLowerDataNames));
+				ToLowerDataNames);
 		}
 		public void StreamIsUpdateAttr(KSoft.IO.XmlElementStream s, FA mode, ref bool is_update)
 		{
@@ -95,23 +97,30 @@ namespace PhxLib.XML
 		#endregion
 
 		#region IXmlElementStreamable Members
-		protected abstract void ReadXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, int iteration);
-		protected abstract void WriteXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, T data);
+		protected abstract void ReadXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, int iteration);
+		protected abstract void WriteXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, T data);
 
-		protected virtual void ReadXmlDetermineListSize(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		protected virtual void ReadXmlDetermineListSize(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			int xml_node_count = s.Cursor.ChildNodes.Count;
 			if (List.Capacity < xml_node_count)
 				List.Capacity = xml_node_count;
 		}
-		protected virtual void ReadXmlNodes(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		protected virtual bool ReadXmlShouldSkipNode(XmlNode n)
+		{
+			if (Params.UseElementName)
+				return n.Name != Params.ElementName;
+
+			return false;
+		}
+		protected virtual void ReadXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			ReadXmlDetermineListSize(s, xs);
 
 			int x = 0;
 			foreach (XmlNode n in s.Cursor.ChildNodes)
 			{
-				if (n.Name != Params.ElementName) continue;
+				if (ReadXmlShouldSkipNode(n)) continue;
 
 				using (s.EnterCursorBookmark(n as XmlElement))
 					ReadXml(s, xs, x++);
@@ -119,14 +128,18 @@ namespace PhxLib.XML
 
 			List.OptimizeStorage();
 		}
-		protected virtual void WriteXmlNodes(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		protected virtual string WriteXmlGetElementName(T data)
+		{
+			return Params.ElementName;
+		}
+		protected virtual void WriteXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			foreach (T data in List)
-				using (s.EnterCursorBookmark(Params.ElementName))
+				using (s.EnterCursorBookmark(WriteXmlGetElementName(data)))
 					WriteXml(s, xs, data);
 		}
 
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xs)
 		{
 			using (s.EnterCursorBookmark(mode, Params.GetOptionalRootName()))
 			{
@@ -193,7 +206,7 @@ namespace PhxLib.XML
 		#endregion
 
 		#region IXmlElementStreamable Members
-		protected override void ReadXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, int iteration)
+		protected override void ReadXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, int iteration)
 		{
 			T item = new T();
 			item.StreamXml(s, FA.Read, xs);
@@ -201,7 +214,7 @@ namespace PhxLib.XML
 			List.Add(item);
 		}
 
-		protected override void WriteXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, T data)
+		protected override void WriteXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, T data)
 		{
 			data.StreamXml(s, FA.Write, xs);
 		}

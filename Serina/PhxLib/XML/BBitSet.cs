@@ -18,11 +18,11 @@ namespace PhxLib.XML
 
 	partial class Util
 	{
-		public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase db,
+		public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
 			Collections.BBitSet bits, BBitSetXmlParams @params)
 		{
 			Contract.Requires(s != null);
-			Contract.Requires(db != null);
+			Contract.Requires(xsi != null);
 			Contract.Requires(bits != null);
 			Contract.Requires(@params != null);
 
@@ -34,7 +34,7 @@ namespace PhxLib.XML
 #endif
 			)
 			{
-				xs.StreamXml(s, mode, db);
+				xs.StreamXml(s, mode, xsi);
 			}
 		}
 	};
@@ -65,6 +65,7 @@ namespace PhxLib.XML
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
 			Contract.Requires<ArgumentNullException>(bits != null);
+			Contract.Requires(@Params.UseElementName, "Collection only supports element name filtering");
 
 			Params = @params;
 			Bits = bits;
@@ -80,6 +81,7 @@ namespace PhxLib.XML
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
 			Contract.Requires<ArgumentNullException>(bits != null);
+			Contract.Requires(@params.UseElementName, "Collection only supports element name filtering");
 
 			Params = @params;
 			Bits = bits;
@@ -103,7 +105,7 @@ namespace PhxLib.XML
 			return Bits.Params.kGetProtoEnumFromDB(db);
 		}
 
-		void ReadXmlNodes(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		void ReadXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			Collections.IProtoEnum penum = Bits.InitializeFromEnum(xs.Database);
 
@@ -123,7 +125,7 @@ namespace PhxLib.XML
 
 			Bits.OptimizeStorage();
 		}
-		void WriteXmlNodes(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		void WriteXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			if (Bits.EnabledCount == 0) return;
 
@@ -138,7 +140,7 @@ namespace PhxLib.XML
 					}
 		}
 
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xs)
 		{
 			using (s.EnterCursorBookmark(mode, Params.GetOptionalRootName()))
 			{

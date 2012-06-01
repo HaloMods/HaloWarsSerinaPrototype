@@ -43,8 +43,11 @@ namespace PhxLib.Engine
 		bool mDeductable;
 		public bool Deductable { get { return mDeductable; } }
 
+		public BResource() { }
+		internal BResource(bool deductable) { mDeductable = deductable; }
+
 		#region BListAutoIdObject Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrDeductable, ref mDeductable);
 		}
@@ -104,7 +107,7 @@ namespace PhxLib.Engine
 		BPopulation(float max, float count) { mMax = max; mCount = count; }
 
 		#region IXmlElementStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrMax, ref mMax);
 			s.StreamCursor(mode, ref mCount);
@@ -153,7 +156,7 @@ namespace PhxLib.Engine
 		int mInfectedSquadID = Util.kInvalidInt32;
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			xs.StreamXmlForDBID(s, mode, kXmlAttrBase, ref mBaseObjectID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
 			xs.StreamXmlForDBID(s, mode, kXmlAttrInfected, ref mInfectedObjectID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
@@ -180,8 +183,14 @@ namespace PhxLib.Engine
 		public static readonly XML.BTypeValuesXmlParams<float> kRatesBListTypeValuesXmlParams = new
 			XML.BTypeValuesXmlParams<float>("Rate", "Rate"); // oiy, really? name the 'type' attribute with the same name as the element?
 
-		static readonly XML.BListXmlParams kPopsXmlParams = new XML.BListXmlParams("Pop");
-		static readonly XML.BListXmlParams kRefCountsXmlParams = new XML.BListXmlParams("RefCount");
+		const string kXmlElementDifficultyEasy = "DifficultyEasy";					// 59A0
+		const string kXmlElementDifficultyNormal = "DifficultyNormal";				// 59A4
+		const string kXmlElementDifficultyHard = "DifficultyHard";					// 59A8
+		const string kXmlElementDifficultyLegendary = "DifficultyLegendary";		// 59AC
+		const string kXmlElementDifficultyDefault = "DifficultyDefault";			// 59B0
+		const string kXmlElementDifficultySPCAIDefault = "DifficultySPCAIDefault";	// 59B4
+		static readonly XML.BListXmlParams kPopsXmlParams = new XML.BListXmlParams("Pop");			// 28D8
+		static readonly XML.BListXmlParams kRefCountsXmlParams = new XML.BListXmlParams("RefCount");// 30F8
 		static readonly XML.BListXmlParams kHUDItemsXmlParams = new XML.BListXmlParams("HUDItem");
 		static readonly XML.BListXmlParams kFlashableItemsXmlParams = new XML.BListXmlParams
 		{
@@ -220,8 +229,19 @@ namespace PhxLib.Engine
 		const string kXmlElementTributeCost = "TributeCost";
 		//
 		const string kXmlElementDamageReceivedXPFactor = "DamageReceivedXPFactor";
+		//
+		const string kXmlElementHeroDownedLOS = "HeroDownedLOS";// 59B8
+		const string kXmlElementHeroHPRegenTime = "HeroHPRegenTime";// 59BC
+		const string kXmlElementHeroRevivalDistance = "HeroRevivalDistance";// 59C0
+		const string kXmlElementHeroPercentHPRevivalThreshhold = "HeroPercentHPRevivalThreshhold";// 59C4
+		const string kXmlElementMaxDeadHeroTransportDist = "MaxDeadHeroTransportDist";// 59C8
+		const string kXmlElementTransportClearRadiusScale = "TransportClearRadiusScale";// 59CC
+		const string kXmlElementTransportMaxSearchRadiusScale = "TransportMaxSearchRadiusScale";// 59D0
+		const string kXmlElementTransportMaxSearchLocations = "TransportMaxSearchLocations";// 59D4
+		const string kXmlElementTransportBlockTime = "TransportBlockTime";// 59D8
+		const string kXmlElementTransportLoadBlockTime = "TransportLoadBlockTime";// 59DC
 
-		static readonly XML.BListXmlParams kPlayerStatesXmlParams = new XML.BListXmlParams("PlayerState");
+		static readonly XML.BListXmlParams kPlayerStatesXmlParams = new XML.BListXmlParams("PlayerState"); // 3918
 		#endregion
 
 		public Collections.BListAutoId<BResource> Resources { get; private set; }
@@ -300,7 +320,7 @@ namespace PhxLib.Engine
 
 		#region IXmlElementStreamable Members
 		/// <remarks>For streaming directly from gamedata.xml</remarks>
-		internal void StreamGameXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		internal void StreamGameXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			XML.Util.Serialize(s, mode, xs, Resources, BResource.kBListXmlParams);
 			XML.Util.Serialize(s, mode, xs, Rates, kRatesXmlParams);
@@ -339,7 +359,7 @@ namespace PhxLib.Engine
 			XML.Util.Serialize(s, mode, xs, PlayerStates, kPlayerStatesXmlParams);
 		}
 
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			using (s.EnterCursorBookmark(mode, kXmlRoot))
 				StreamGameXml(s, mode, xs);

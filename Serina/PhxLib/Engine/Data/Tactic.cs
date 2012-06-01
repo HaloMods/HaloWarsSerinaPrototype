@@ -12,6 +12,8 @@ namespace PhxLib.Engine
 {
 	public enum BActionType
 	{
+		Invalid = -1,
+
 		#region 0x00
 		[XmlIgnore] Idle, // entity
 		[XmlIgnore] Listen, // entity
@@ -78,8 +80,8 @@ namespace PhxLib.Engine
 		PointBlankAttack,
 		Roar,
 		EnergyShield,
-		[XmlIgnore] _Unknown3B, // ScaleLOS or ChargedRangedAttack?
-		Charge,
+		[XmlIgnore] ScaleLOS,
+		Charge, // ChargedRangedAttack
 		TowerWall,
 		AoeHeal,
 		[XmlIgnore] Attack, // squad
@@ -120,8 +122,6 @@ namespace PhxLib.Engine
 		CloakDetector, // ?
 		//
 		#endregion
-
-		Invalid
 	};
 
 	public enum BWeaponFlags
@@ -259,7 +259,7 @@ namespace PhxLib.Engine
 		public float Rating { get { return mRating; } }
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamCursor(mode, ref mRating);
 		}
@@ -294,7 +294,7 @@ namespace PhxLib.Engine
 		public float Priority { get { return mPriority; } }
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			xs.StreamXmlForDBID(s, mode, kXmlAttrType, ref mUnitTypeID, DatabaseObjectKind.Unit, false, XML.Util.kSourceAttr);
 			s.StreamCursor(mode, ref mPriority);
@@ -424,7 +424,7 @@ namespace PhxLib.Engine
 		}
 
 		#region BListAutoIdObject Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamElementOpt(mode, kXmlElementDamagePerSecond, ref mDamagePerSecond, Util.kNotInvalidPredicateSingle);
 			s.StreamElementOpt(mode, kXmlElementDOTRate, ref mDOTRate, Util.kNotInvalidPredicateSingle);
@@ -621,7 +621,7 @@ namespace PhxLib.Engine
 		#endregion
 
 		#region BListAutoIdObject Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			var td = s.Owner as BTacticData;
 
@@ -769,7 +769,7 @@ namespace PhxLib.Engine
 		}
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			var td = s.Owner as BTacticData;
 
@@ -810,7 +810,7 @@ namespace PhxLib.Engine
 		}
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			XML.Util.Serialize(s, mode, xs, TargetRules, BTacticTargetRule.kBListXmlParams);
 			XML.Util.Serialize(s, mode, xs, PersistentActions, kPersistentActionBListParams);
@@ -833,17 +833,17 @@ namespace PhxLib.Engine
 		#region Xml constants
 		public const string kXmlRoot = "TacticData";
 
-		internal static BTacticData GetContext(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		internal static BTacticData GetContext(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			return s.Owner as BTacticData;
 		}
 
-		internal static void StreamWeaponID(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs,
+		internal static void StreamWeaponID(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs,
 			XML.BListOfIDsXmlParams<BTacticData> @params, BTacticData ctxt, ref int id)
 		{
 			ctxt.StreamXmlForID(s, mode, null, ref id, ObjectKind.Weapon, false, XML.Util.kSourceCursor);
 		}
-		internal static void StreamProtoActionID(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs,
+		internal static void StreamProtoActionID(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs,
 			XML.BListOfIDsXmlParams<BTacticData> @params, BTacticData ctxt, ref int id)
 		{
 			ctxt.StreamXmlForID(s, mode, null, ref id, ObjectKind.Action, false, XML.Util.kSourceCursor);
@@ -948,7 +948,7 @@ namespace PhxLib.Engine
 			return was_streamed;
 		}
 
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			using (s.EnterOwnerBookmark(this))
 			{

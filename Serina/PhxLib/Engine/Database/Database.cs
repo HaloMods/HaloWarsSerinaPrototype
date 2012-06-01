@@ -9,7 +9,7 @@ using FA = System.IO.FileAccess;
 
 namespace PhxLib.Engine
 {
-	public abstract partial class BDatabaseBase
+	public abstract partial class BDatabaseBase : IDisposable
 	{
 		public const string kInvalidString = "BORK BORK BORK";
 
@@ -71,6 +71,39 @@ namespace PhxLib.Engine
 
 			InitializeDatabaseInterfaces();
 		}
+
+		XML.BTriggerScriptSerializer mTriggerSerializer;
+		internal void InitializeTriggerScriptSerializer()
+		{
+			mTriggerSerializer = new XML.BTriggerScriptSerializer(Engine);
+		}
+		public BTriggerSystem LoadScript(string script_name)
+		{
+			var ctxt = mTriggerSerializer.StreamTriggerScriptGetContext(FA.Read, BTriggerScriptType.TriggerScript, script_name);
+			var task = System.Threading.Tasks.Task<bool>.Factory.StartNew((state) => {
+				var _ctxt = state as XML.BTriggerScriptSerializer.StreamTriggerScriptContext;
+				return Engine.TryStreamData(_ctxt.FileInfo, FA.Read, mTriggerSerializer.StreamTriggerScript, _ctxt);
+			}, ctxt);
+
+			return task.Result ? ctxt.Script : null;
+		}
+		public bool LoadScenarioScripts(string scnr_path)
+		{
+			var ctxt = mTriggerSerializer.StreamTriggerScriptGetContext(FA.Read, BTriggerScriptType.Scenario, scnr_path);
+			var task = System.Threading.Tasks.Task<bool>.Factory.StartNew((state) => {
+				var _ctxt = state as XML.BTriggerScriptSerializer.StreamTriggerScriptContext;
+				return Engine.TryStreamData(_ctxt.FileInfo, FA.Read, mTriggerSerializer.LoadScenarioScripts, _ctxt);
+			}, ctxt);
+
+			return task.Result;
+		}
+
+		#region IDisposable Members
+		public virtual void Dispose()
+		{
+			Util.DisposeAndNull(ref mTriggerSerializer);
+		}
+		#endregion
 
 		internal void BuildObjectTacticsMap(Dictionary<int, string> id_to_tactic_map, Dictionary<string, BTacticData> tactic_name_to_tactic)
 		{
@@ -293,7 +326,7 @@ namespace PhxLib.Engine
 		{
 			using (var xs = NewXmlSerializer())
 			{
-				xs.Load(XML.BDatabaseXmlSerializerLoadFlags.LoadUpdates);
+				xs.Load(XML.BDatabaseXmlSerializerLoadFlags.LoadUpdates | XML.BDatabaseXmlSerializerLoadFlags.UseSynchronousLoading);
 			}
 		}
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode)

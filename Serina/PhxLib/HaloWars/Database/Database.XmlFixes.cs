@@ -15,6 +15,62 @@ namespace PhxLib.HaloWars
 			Database.WeaponTypes.DynamicAdd(new BWeaponType(), "HeavyPlasma");
 		}
 
+		static void FixGameDataXmlInfectionMapEntryInfected(KSoft.IO.XmlElementStream s, string infected)
+		{
+			string xpath = string.Format("InfectionMap/InfectionMapEntry[contains(@infected, '{0}')]", infected);
+			var elements = s.Cursor.SelectNodes(xpath);
+			if (elements.Count > 0) foreach (XmlElement e in elements)
+			{
+				var attr = e.Attributes["infected"];
+				attr.Value = attr.Value.Replace("_Inf", "_inf");
+			}
+		}
+		static void FixGameDataXmlInfectionMap(KSoft.IO.XmlElementStream s)
+		{
+			string xpath;
+			XmlNodeList elements;
+
+			if (!ToLowerName(PhxLib.Engine.DatabaseObjectKind.Object))
+			{
+				xpath = "InfectionMap/InfectionMapEntry[contains(@base, 'needlergrunt')]";
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+				{
+					var attr = e.Attributes["base"];
+					attr.Value = attr.Value.Replace("needlergrunt", "needlerGrunt");
+				}
+
+				FixGameDataXmlInfectionMapEntryInfected(s, "fld_inf_InfectedBrute_01");
+				FixGameDataXmlInfectionMapEntryInfected(s, "fld_inf_InfectedJackal_01");
+				FixGameDataXmlInfectionMapEntryInfected(s, "fld_inf_InfectedGrunt_01");
+			}
+
+			if (!ToLowerName(PhxLib.Engine.DatabaseObjectKind.Squad))
+			{
+				xpath = "InfectionMap/InfectionMapEntry[contains(@infectedSquad, '_Inf')]";
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+				{
+					var attr = e.Attributes["infectedSquad"];
+					attr.Value = attr.Value.Replace("_Inf", "_inf");
+				}
+			}
+		}
+		protected override void FixGameDataXml(KSoft.IO.XmlElementStream s)
+		{
+			FixGameDataXmlInfectionMap(s);
+		}
+		static void FixGameDataResources(BGameData gd)
+		{
+			gd.Resources.DynamicAdd(new BResource(true), "Favor"); // [2]
+			gd.Resources.DynamicAdd(new BResource(true), "Relics");// [3]
+			gd.Resources.DynamicAdd(new BResource(true), "Honor"); // [4]
+		}
+		protected override void FixGameData()
+		{
+			//FixGameDataResources(Database.GameData);
+		}
+
 		// Fix float values which are in an invalid format for .NET's parsing
 		static void FixObjectsXmlInvalidSingles(KSoft.IO.XmlElementStream s)
 		{
@@ -47,6 +103,83 @@ namespace PhxLib.HaloWars
 			FixObjectsXmlInvalidFlags(s);
 		}
 
+		static void FixTechsXmlBadNames(KSoft.IO.XmlElementStream s, XML.BListXmlParams op)
+		{
+			const string k_attr_command_data = "CommandData";
+			const string k_element_target = "Target";
+
+			string invalid_command_data_format = string.Format(
+				"/{0}/{1}/Effects/Effect[@{2}='",
+				op.RootName, op.ElementName, k_attr_command_data) + "{0}']";
+			string invalid_target_format = string.Format(
+				"/{0}/{1}/Effects/Effect[Target='",
+				op.RootName, op.ElementName) + "{0}']";
+
+			string xpath;
+			XmlNodeList elements;
+
+			if (!ToLowerName(PhxLib.Engine.DatabaseObjectKind.Tech))
+			{
+				#region unsc_MAC_upgrade
+				xpath = string.Format(invalid_command_data_format, "unsc_mac_upgrade1");
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+						e.Attributes[k_attr_command_data].Value = "unsc_MAC_upgrade1";
+
+				xpath = string.Format(invalid_command_data_format, "unsc_mac_upgrade2");
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+						e.Attributes[k_attr_command_data].Value = "unsc_MAC_upgrade2";
+
+				xpath = string.Format(invalid_command_data_format, "unsc_mac_upgrade3");
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+						e.Attributes[k_attr_command_data].Value = "unsc_MAC_upgrade3";
+				#endregion
+
+				#region unsc_flameMarine_upgrade
+				xpath = string.Format(invalid_target_format, "unsc_flamemarine_upgrade1");
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+				{
+					var fc = e[k_element_target].FirstChild;
+					fc.Value = "unsc_flameMarine_upgrade1";
+				}
+				xpath = string.Format(invalid_target_format, "unsc_flamemarine_upgrade2");
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+				{
+					var fc = e[k_element_target].FirstChild;
+					fc.Value = "unsc_flameMarine_upgrade2";
+				}
+				xpath = string.Format(invalid_target_format, "unsc_flamemarine_upgrade3");
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+				{
+					var fc = e[k_element_target].FirstChild;
+					fc.Value = "unsc_flameMarine_upgrade3";
+				}
+				#endregion
+			}
+
+			if (!ToLowerName(PhxLib.Engine.DatabaseObjectKind.Squad))
+			{
+				xpath = string.Format(invalid_target_format, "unsc_inf_flamemarine_01");
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+				{
+					var fc = e[k_element_target].FirstChild;
+					fc.Value = "unsc_inf_flameMarine_01";
+				}
+				xpath = string.Format(invalid_target_format, "unsc_inf_Marine_01");
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0) foreach (XmlElement e in elements)
+				{
+					var fc = e[k_element_target].FirstChild;
+					fc.Value = "unsc_inf_marine_01";
+				}
+			}
+		}
 		// Rename the SubType attribute to be all lowercase (subType is only uppercase for 'TurretYawRate'...)
 		static void FixTechsXmlEffectsDataSubType(XmlDocument doc, XmlNode n)
 		{
@@ -92,6 +225,7 @@ namespace PhxLib.HaloWars
 			if (node != null) FixTechsXmlEffectsDataSubType(s.Document, node);
 
 			FixTechsXmlEffectsInvalid(s, BProtoTech.kBListXmlParams);
+			FixTechsXmlBadNames(s, BProtoTech.kBListXmlParams);
 		}
 
 		static void FixTacticsXmlBadWeapons(KSoft.IO.XmlElementStream s, string name)
@@ -319,6 +453,23 @@ namespace PhxLib.HaloWars
 				}
 				FixTacticsTraceFixEvent(name, xpath);
 				return;
+			}
+
+			// see: fx_proj_fldbomb_01
+			if (!ToLowerName(PhxLib.Engine.DatabaseObjectKind.Squad))
+			{
+				xpath = "Action[ProtoObject='fld_inf_InfectionForm_02']";
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0)
+				{
+					foreach (XmlElement e in elements)
+					{
+						var fc = e["ProtoObject"].FirstChild;
+						fc.Value = "fld_inf_infectionForm_02";
+					}
+					FixTacticsTraceFixEvent(name, xpath);
+					return;
+				}
 			}
 		}
 		protected override void FixTacticsXml(KSoft.IO.XmlElementStream s, string name)

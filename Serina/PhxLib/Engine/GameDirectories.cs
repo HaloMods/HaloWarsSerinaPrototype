@@ -52,13 +52,18 @@ namespace PhxLib.Engine
 
 		/*public*/ string RootDirectory { get; /*private*/ set; }
 		/*public*/ string UpdateDirectory { get; /*private*/ set; }
+		bool UpdateDirectoryIsValid { get { return UpdateDirectory != null; } }
 		public bool UseTitleUpdates { get; set; }
 
-		public GameDirectories(string root, string update_root)
+		public GameDirectories(string root, string update_root = null)
 		{
 			RootDirectory = root;
 			UpdateDirectory = update_root;
 			UseTitleUpdates = true;
+
+			// Leave some breadcrumbs for the programmer in the event that they're confused as why an update file isn't loading.
+			if (!UpdateDirectoryIsValid)
+				Debug.Trace.Engine.TraceInformation("GameDirectories: No matching update directory for '{0}'", update_root);
 
 			Art = kArtPath;//Path.Combine(RootDirectory, kArtPath);
 
@@ -68,6 +73,9 @@ namespace PhxLib.Engine
 			Powers = Path.Combine(Data, kPowersPath);
 			Tactics = Path.Combine(Data, kTacticsPath);
 			TriggerScripts = Path.Combine(Data, kTriggerScriptsPath);
+
+			Scenario = kScenariosPath;
+			Sound = kSoundPath;
 		}
 
 		#region Art
@@ -81,13 +89,16 @@ namespace PhxLib.Engine
 		public virtual string Tactics { get; protected set; }
 		public virtual string TriggerScripts { get; protected set; }
 		#endregion
+		public virtual string Scenario { get; protected set; }
+		public virtual string Sound { get; protected set; }
 
 		public string GetContentLocation(ContentStorage location)
 		{
 			switch (location)
 			{
 				case ContentStorage.Game: return RootDirectory;
-				case ContentStorage.Update: return UpdateDirectory;
+				case ContentStorage.Update:
+					return UpdateDirectoryIsValid ? UpdateDirectory : RootDirectory;
 
 				default: throw new NotImplementedException();
 			}
@@ -107,9 +118,17 @@ namespace PhxLib.Engine
 				case GameDirectory.Tactics: return Tactics;
 				case GameDirectory.TriggerScripts: return TriggerScripts;
 				#endregion
+				case GameDirectory.Scenario: return Scenario;
+				case GameDirectory.Sound: return Sound;
 
 				default: throw new NotImplementedException();
 			}
+		}
+		public string GetAbsoluteDirectory(ContentStorage loc, GameDirectory game_dir)
+		{
+			string root = GetContentLocation(loc);
+			string dir = GetDirectory(game_dir);
+			return Path.Combine(root, dir);
 		}
 
 		bool TryGetFileImpl(ContentStorage loc, GameDirectory game_dir, string filename, out FileInfo file, string ext = null)
@@ -136,12 +155,17 @@ namespace PhxLib.Engine
 			string file_path = Path.Combine(dir, filename);
 			if (!string.IsNullOrEmpty(ext)) file_path += ext;
 
-			string full_path = Path.Combine(UpdateDirectory, file_path);
-			file = new FileInfo(full_path);
+			string full_path;
+
+			if (UpdateDirectoryIsValid)
+			{
+				full_path = Path.Combine(UpdateDirectory, file_path);
+				file = new FileInfo(full_path);
+			}
 
 			//////////////////////////////////////////////////////////////////////////
 			// No update file exists, fall back to regular game storage
-			if (!file.Exists)
+			if (file == null || !file.Exists)
 			{
 				full_path = Path.Combine(RootDirectory, file_path);
 				file = new FileInfo(full_path);

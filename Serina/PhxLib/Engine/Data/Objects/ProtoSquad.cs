@@ -76,7 +76,7 @@ namespace PhxLib.Engine
 		public int UnitID { get { return mUnitID; } }
 
 		#region IXmlElementStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrCount, KSoft.NumeralBase.Decimal, ref mCount);
 			xs.StreamXmlForDBID(s, mode, null, ref mUnitID, DatabaseObjectKind.Object, false, XML.Util.kSourceCursor);
@@ -89,7 +89,7 @@ namespace PhxLib.Engine
 		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("Squad")
 		{
 			DataName = DatabaseNamedObject.kXmlAttrName,
-			Flags = XML.BCollectionXmlParamsFlags.ToLowerDataNames |
+			Flags = //XML.BCollectionXmlParamsFlags.ToLowerDataNames |
 				XML.BCollectionXmlParamsFlags.RequiresDataNamePreloading |
 				XML.BCollectionXmlParamsFlags.SupportsUpdating
 		};
@@ -139,7 +139,7 @@ namespace PhxLib.Engine
 			return false;
 		}
 
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			base.StreamXml(s, mode, xs);
 

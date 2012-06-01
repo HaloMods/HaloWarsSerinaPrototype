@@ -24,12 +24,12 @@ namespace PhxLib.XML
 
 	partial class Util
 	{
-		public static void Serialize<TContext>(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase db,
+		public static void Serialize<TContext>(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
 			Collections.BListOfIDs<TContext> list, BListOfIDsXmlParams<TContext> @params)
 			where TContext : class
 		{
 			Contract.Requires(s != null);
-			Contract.Requires(db != null);
+			Contract.Requires(xsi != null);
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
@@ -41,15 +41,15 @@ namespace PhxLib.XML
 #endif
 			)
 			{
-				xs.StreamXml(s, mode, db);
+				xs.StreamXml(s, mode, xsi);
 			}
 		}
 
-		public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase db,
+		public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
 			Collections.BListOfIDs list, BListOfIDsXmlParams @params)
 		{
 			Contract.Requires(s != null);
-			Contract.Requires(db != null);
+			Contract.Requires(xsi != null);
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
@@ -61,7 +61,7 @@ namespace PhxLib.XML
 #endif
 			)
 			{
-				xs.StreamXml(s, mode, db);
+				xs.StreamXml(s, mode, xsi);
 			}
 		}
 	};
@@ -69,9 +69,9 @@ namespace PhxLib.XML
 	public class BListOfIDsXmlParams<TContext> : BListXmlParams
 		where TContext : class
 	{
-		public delegate void StreamDelegate(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs,
+		public delegate void StreamDelegate(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xs,
 			BListOfIDsXmlParams<TContext> @params, TContext ctxt, ref int id);
-		public delegate TContext GetContextDelegate(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs);
+		public delegate TContext GetContextDelegate(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xs);
 
 		/// <summary>Method for streaming an ID based on a cursor's value</summary>
 		public readonly StreamDelegate kStreamID;
@@ -144,13 +144,13 @@ namespace PhxLib.XML
 		#region IXmlElementStreamable Members
 		TContext mStreamCtxt;
 
-		void SetupContext(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void SetupContext(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xs)
 		{
 			if (mParams.kGetContext == null) return;
 
 			mStreamCtxt = mParams.kGetContext(s, mode, xs);
 		}
-		protected override void ReadXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, int iteration)
+		protected override void ReadXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, int iteration)
 		{
 			int id = PhxLib.Util.kInvalidInt32;
 
@@ -159,7 +159,7 @@ namespace PhxLib.XML
 			mList.Add(id);
 		}
 
-		protected override void ReadXmlNodes(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		protected override void ReadXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			SetupContext(s, FA.Read, xs);
 
@@ -168,12 +168,12 @@ namespace PhxLib.XML
 			mStreamCtxt = null;
 		}
 
-		protected override void WriteXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, int id)
+		protected override void WriteXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, int id)
 		{
 			mParams.kStreamID(s, FA.Write, xs, mParams, mStreamCtxt, ref id);
 		}
 
-		protected override void WriteXmlNodes(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		protected override void WriteXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			SetupContext(s, FA.Write, xs);
 

@@ -342,7 +342,7 @@ namespace PhxLib.Engine
 		NoStickyCam,// = 1<<3, actually "StickyCam" in code
 		// 4?
 		CheckLOSAgainstBase,// = 1<<5,
-		// 6?
+		//CheckPos, // 6, see: DeathSpawnSquad
 		KillOnDetach,// = 1<<7,
 
 		//[Obsolete] NonCollidable = NonCollideable, // Fixed in HW's XmlFiles.cs
@@ -402,6 +402,7 @@ namespace PhxLib.Engine
 		};
 		public static readonly IEqualityComparer<BProtoObjectVeterancy> kEqualityComparer = new _EqualityComparer();
 
+		#region Constants
 		static readonly BProtoObjectVeterancy kInvalid = new BProtoObjectVeterancy(),
 			kDefaultLevel1 = new BProtoObjectVeterancy()
 			{
@@ -432,6 +433,7 @@ namespace PhxLib.Engine
 			yield return kDefaultLevel4;
 			yield return kDefaultLevel5;
 		}
+		#endregion
 
 		#region Xml constants
 		public static readonly Collections.BListExplicitIndexParams<BProtoObjectVeterancy> kBListExplicitIndexParams = new
@@ -453,6 +455,7 @@ namespace PhxLib.Engine
 		const string kXmlAttrDamageTaken = "DamageTaken";
 		#endregion
 
+		#region Properties
 		float mXP;
 		public float XP { get { return mXP; } }
 		float mDamage;
@@ -467,6 +470,7 @@ namespace PhxLib.Engine
 		public float WeaponRange { get { return mWeaponRange; } }
 		float mDamageTaken;
 		public float DamageTaken { get { return mDamageTaken; } }
+		#endregion
 
 		public bool IsInvalid { get { return object.ReferenceEquals(this, kInvalid); } }
 		public bool IsNull { get { return mXP == 0.0f; } }
@@ -482,7 +486,7 @@ namespace PhxLib.Engine
 		#endregion
 
 		#region IXmlElementStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttributeOpt(mode, kXmlAttrXP, ref mXP, Util.kNotZeroPredicateSingle);
 			s.StreamAttributeOpt(mode, kXmlAttrDamage, ref mDamage, Util.kNotZeroPredicateSingle);
@@ -609,7 +613,7 @@ namespace PhxLib.Engine
 		}
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			base.StreamXml(s, mode, xs);
 
@@ -626,7 +630,7 @@ namespace PhxLib.Engine
 			XML.Util.Serialize(s, mode, xs, Populations, BPopulation.kBListXmlParamsSingle);
 			XML.Util.Serialize(s, mode, xs, PopulationsCapAddition, BPopulation.kBListXmlParamsSingle_CapAddition);
 
-			xs.StreamXmlTactic(s, mode, kXmlElementTactics, this, ref mHasTactics);
+			(xs as XML.BDatabaseXmlSerializerBase).StreamXmlTactic(s, mode, kXmlElementTactics, this, ref mHasTactics);
 
 			XML.Util.Serialize(s, mode, xs, Rates, BGameData.kRatesBListTypeValuesXmlParams);
 			XML.Util.Serialize(s, mode, xs, AddResource, BResource.kBListTypeValuesXmlParams_AddResource, kXmlElementAddRsrcAttrAmount);

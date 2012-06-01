@@ -16,8 +16,8 @@ namespace PhxLib.XML
 			}
 		}
 
-		public Dictionary<int, string/*BTacticData*/> ObjectIdToTacticsMap { get; private set; }
-		public Dictionary<string, Engine.BTacticData> TacticsMap { get; private set; }
+		Dictionary<int, string> ObjectIdToTacticsMap;
+		Dictionary<string, Engine.BTacticData> TacticsMap;
 
 		PhxEngine.XmlFileInfo StreamTacticsGetFileInfo(FA mode, string filename = null)
 		{
@@ -32,124 +32,125 @@ namespace PhxLib.XML
 				Writable = mode == FA.Write,
 			};
 		}
-		static void StreamTactic(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs, string name)
+		void StreamTactic(KSoft.IO.XmlElementStream s, FA mode, string name)
 		{
 			var td = new Engine.BTacticData(name);
 
-			if (mode == FA.Read) xs.FixTacticsXml(s, name);
-			td.StreamXml(s, mode, xs);
+			if (mode == FA.Read && !DontPerformXmlFixups) FixTacticsXml(s, name);
+			td.StreamXml(s, mode, this);
 
-			xs.TacticsMap[name] = td;
+			TacticsMap[name] = td;
 		}
 
 		/// <remarks>For streaming directly from gamedata.xml</remarks>
-		static void StreamXmlGameData(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlGameData(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			xs.Database.GameData.StreamGameXml(s, mode, xs);
+			if(!DontPerformXmlFixups) FixGameDataXml(s);
+			Database.GameData.StreamGameXml(s, mode, this);
 		}
-		static void PreloadDamageTypes(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void PreloadDamageTypes(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.SerializePreload(s, xs, xs.mDamageTypesSerializer, true);
+			XML.Util.SerializePreload(s, this, mDamageTypesSerializer, true);
 		}
 		/// <remarks>For streaming directly from damagetypes.xml</remarks>
-		static void StreamXmlDamageTypes(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlDamageTypes(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.mDamageTypesSerializer, true);
+			XML.Util.Serialize(s, mode, this, mDamageTypesSerializer, true);
 		}
 		/// <remarks>For streaming directly from weapontypes.xml</remarks>
-		static void StreamXmlWeaponTypes(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlWeaponTypes(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.Database.WeaponTypes, Engine.BWeaponType.kBListXmlParams, true);
-			if (mode == FA.Read) xs.FixWeaponTypes();
+			XML.Util.Serialize(s, mode, this, Database.WeaponTypes, Engine.BWeaponType.kBListXmlParams, true);
+			if (mode == FA.Read && !DontPerformXmlFixups) FixWeaponTypes();
 		}
 		/// <remarks>For streaming directly from UserClasses.xml</remarks>
-		static void StreamXmlUserClasses(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlUserClasses(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.Database.UserClasses, Engine.BUserClass.kBListXmlParams, true);
+			XML.Util.Serialize(s, mode, this, Database.UserClasses, Engine.BUserClass.kBListXmlParams, true);
 		}
 		/// <remarks>For streaming directly from objecttypes.xml</remarks>
-		static void StreamXmlObjectTypes(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlObjectTypes(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.Database.ObjectTypes, Engine.BDatabaseBase.kObjectTypesXmlParams, true);
+			XML.Util.Serialize(s, mode, this, Database.ObjectTypes, Engine.BDatabaseBase.kObjectTypesXmlParams, true);
 		}
 		/// <remarks>For streaming directly from abilities.xml</remarks>
-		static void StreamXmlAbilities(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlAbilities(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.Database.Abilities, Engine.BAbility.kBListXmlParams, true);
+			XML.Util.Serialize(s, mode, this, Database.Abilities, Engine.BAbility.kBListXmlParams, true);
 		}
 
-		static void PreloadObjects(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void PreloadObjects(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.SerializePreload(s, xs, xs.mObjectsSerializer, true);
+			XML.Util.SerializePreload(s, this, mObjectsSerializer, true);
 		}
 		/// <remarks>For streaming directly from objects.xml</remarks>
-		static void StreamXmlObjects(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlObjects(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			if (mode == FA.Read) xs.FixObjectsXml(s);
-			XML.Util.Serialize(s, mode, xs, xs.mObjectsSerializer, true);
+			if (mode == FA.Read && !DontPerformXmlFixups) FixObjectsXml(s);
+			XML.Util.Serialize(s, mode, this, mObjectsSerializer, true);
 		}
 
-		static void PreloadSquads(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void PreloadSquads(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.SerializePreload(s, xs, xs.mSquadsSerializer, true);
+			XML.Util.SerializePreload(s, this, mSquadsSerializer, true);
 		}
 		/// <remarks>For streaming directly from squads.xml</remarks>
-		static void StreamXmlSquads(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlSquads(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.mSquadsSerializer, true);
+			XML.Util.Serialize(s, mode, this, mSquadsSerializer, true);
 		}
 
-		static void PreloadPowers(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void PreloadPowers(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.SerializePreload(s, xs, xs.mPowersSerializer, true);
+			XML.Util.SerializePreload(s, this, mPowersSerializer, true);
 		}
 		/// <remarks>For streaming directly from powers.xml</remarks>
-		static void StreamXmlPowers(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlPowers(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.mPowersSerializer, true);
+			XML.Util.Serialize(s, mode, this, mPowersSerializer, true);
 		}
 
-		static void PreloadTechs(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void PreloadTechs(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.SerializePreload(s, xs, xs.mTechsSerializer, true);
+			XML.Util.SerializePreload(s, this, mTechsSerializer, true);
 		}
 		/// <remarks>For streaming directly from techs.xml</remarks>
-		static void StreamXmlTechs(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlTechs(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			if (mode == FA.Read) xs.FixTechsXml(s);
-			XML.Util.Serialize(s, mode, xs, xs.mTechsSerializer, true);
+			if (mode == FA.Read && !DontPerformXmlFixups) FixTechsXml(s);
+			XML.Util.Serialize(s, mode, this, mTechsSerializer, true);
 		}
 
 		/// <remarks>For streaming directly from civs.xml</remarks>
-		static void StreamXmlCivs(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlCivs(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.Database.Civs, Engine.BCiv.kBListXmlParams, true);
+			XML.Util.Serialize(s, mode, this, Database.Civs, Engine.BCiv.kBListXmlParams, true);
 		}
 		/// <remarks>For streaming directly from leaders.xml</remarks>
-		static void StreamXmlLeaders(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlLeaders(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.Serialize(s, mode, xs, xs.Database.Leaders, Engine.BLeader.kBListXmlParams, true);
+			XML.Util.Serialize(s, mode, this, Database.Leaders, Engine.BLeader.kBListXmlParams, true);
 		}
 
 		#region Update
 		/// <remarks>For streaming directly from objects_update.xml</remarks>
-		static void StreamXmlObjectsUpdate(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlObjectsUpdate(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			//if(mode == FA.Read) xs.FixObjectsXml(s);
-			XML.Util.SerializeUpdate(s, xs, xs.mObjectsSerializer, true);
+			//if(mode == FA.Read && !DontPerformXmlFixups) FixObjectsXml(s);
+			XML.Util.SerializeUpdate(s, this, mObjectsSerializer, true);
 		}
 
 		/// <remarks>For streaming directly from squads_update.xml</remarks>
-		static void StreamXmlSquadsUpdate(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlSquadsUpdate(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			XML.Util.SerializeUpdate(s, xs, xs.mSquadsSerializer, true);
+			XML.Util.SerializeUpdate(s, this, mSquadsSerializer, true);
 		}
 
 		/// <remarks>For streaming directly from techs_update.xml</remarks>
-		static void StreamXmlTechsUpdate(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs)
+		void StreamXmlTechsUpdate(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			if (mode == FA.Read) xs.FixTechsXml(s);
-			XML.Util.SerializeUpdate(s, xs, xs.mTechsSerializer, true);
+			if (mode == FA.Read && !DontPerformXmlFixups) FixTechsXml(s);
+			XML.Util.SerializeUpdate(s, this, mTechsSerializer, true);
 		}
 		#endregion
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using FA = System.IO.FileAccess;
 
 namespace PhxLib.Engine
 {
@@ -511,4 +511,34 @@ namespace PhxLib.Engine
 		GameTime,
 	};
 	#endregion
+
+	public class BTriggerVar : TriggerScriptIdObject
+	{
+		#region Xml constants
+		public static readonly XML.BListXmlParams kBListXmlParams = new XML.BListXmlParams("TriggerVar")
+		{
+			DataName = DatabaseNamedObject.kXmlAttrNameN,
+		};
+
+		const string kXmlAttrType = "Type";
+		const string kXmlAttrIsNull = "IsNull";
+		#endregion
+
+		BTriggerVarType mType = BTriggerVarType.None;
+		public BTriggerVarType Type { get { return mType; } }
+
+		bool mIsNull;
+		public bool IsNull { get { return mIsNull; } }
+
+		//string mValue;
+
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
+		{
+			base.StreamXml(s, mode, xs);
+
+			s.StreamAttribute(mode, kXmlAttrType, ref mType);
+			s.StreamAttribute(mode, kXmlAttrIsNull, ref mIsNull);
+			//s.StreamCursor(mode, ref mValue);
+		}
+	};
 }
