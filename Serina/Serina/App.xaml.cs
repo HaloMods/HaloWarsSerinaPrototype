@@ -31,6 +31,45 @@ namespace Serina
 			hw.Load();
 			return hw;
 		}
+		static void LoadTriggerScripts(PhxLib.Engine.BDatabaseBase db, string[] files)
+		{
+			foreach (var filename in files)
+			{
+				if (filename.EndsWith("skirmishai.triggerscript"))
+					continue;
+				var script_name = IO.Path.GetFileName(filename);
+				db.LoadScript(script_name);
+			}
+		}
+		static void LoadScenarioScripts(PhxLib.Engine.BDatabaseBase db, string[] files, string scnr_dir)
+		{
+			foreach (var filename in files)
+			{
+ 				var scnr_name = IO.Path.GetFileName(filename);
+				db.LoadScenarioScripts(filename.Replace(scnr_dir, ""));
+			}
+		}
+		static void LoadTriggerScripts(PhxLib.PhxEngine hw)
+		{
+			var db = hw.Database;
+			string[] files;
+
+			files = IO.Directory.GetFiles(hw.Directories.GetAbsoluteDirectory(
+				PhxLib.Engine.ContentStorage.Game,
+				PhxLib.Engine.GameDirectory.TriggerScripts));
+			LoadTriggerScripts(db, files);
+
+			files = IO.Directory.GetFiles(hw.Directories.GetAbsoluteDirectory(
+				PhxLib.Engine.ContentStorage.Update,
+				PhxLib.Engine.GameDirectory.TriggerScripts));
+			LoadTriggerScripts(db, files);
+
+			string scnr_dir = hw.Directories.GetAbsoluteDirectory(
+				PhxLib.Engine.ContentStorage.Game,
+				PhxLib.Engine.GameDirectory.Scenario);
+			files = IO.Directory.GetFiles(scnr_dir, "*.scn", IO.SearchOption.AllDirectories);
+			LoadScenarioScripts(db, files, scnr_dir);
+		}
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -90,6 +129,8 @@ namespace Serina
 				s.Document.Save(app_xml + "ObjectDBIDs.xml");
 			}
 			#endregion
+			LoadTriggerScripts(hw);
+			if (true) hw.TriggerDb.Save(app_xml + "TriggerDatabase.xml", hw.Database);
 		}
 	};
 }

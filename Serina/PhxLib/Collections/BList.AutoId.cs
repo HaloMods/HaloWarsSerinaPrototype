@@ -36,7 +36,7 @@ namespace PhxLib.Collections
 			set { mName = value; }
 		}
 
-		public abstract void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs);
+		public abstract void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs);
 		#endregion
 
 		public override string ToString() { return mName; }

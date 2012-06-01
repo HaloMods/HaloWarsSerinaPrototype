@@ -27,7 +27,7 @@ namespace PhxLib.XML
 			foreach (var name in keys_copy)
 			{
 				xfi.FileName = name;
-				r &= e.TryStreamData(xfi, mode, this, StreamTactic, xfi.FileName, BTacticData.kFileExt);
+				r &= e.TryStreamData(xfi, mode, StreamTactic, xfi.FileName, BTacticData.kFileExt);
 			}
 		}
 		void StreamTacticsAsync(ref bool r, FA mode)
@@ -41,7 +41,7 @@ namespace PhxLib.XML
 			{
 				var xfi = StreamTacticsGetFileInfo(mode, name);
 				tasks[task_index++] = Task<bool>.Factory.StartNew((state) =>
-					e.TryStreamData(xfi, mode, this, StreamTactic, (state as PhxEngine.XmlFileInfo).FileName, BTacticData.kFileExt), xfi);
+					e.TryStreamData(xfi, mode, StreamTactic, (state as PhxEngine.XmlFileInfo).FileName, BTacticData.kFileExt), xfi);
 			}
 
 			UpdateResultWithTaskResults(ref r, tasks);
@@ -58,40 +58,40 @@ namespace PhxLib.XML
 		{
 			var e = Database.Engine;
 
-			r &= e.TryStreamData(BGameData.kXmlFileInfo, mode, this, StreamXmlGameData);
-			r &= e.TryStreamData(BDamageType.kXmlFileInfo, mode, this, StreamXmlDamageTypes);
-			r &= e.TryStreamData(BWeaponType.kXmlFileInfo, mode, this, StreamXmlWeaponTypes);
-			r &= e.TryStreamData(BUserClass.kXmlFileInfo, mode, this, StreamXmlUserClasses);
-			r &= e.TryStreamData(BDatabaseBase.kObjectTypesXmlFileInfo, mode, this, StreamXmlObjectTypes);
-			r &= e.TryStreamData(BAbility.kXmlFileInfo, mode, this, StreamXmlAbilities);
-			r &= e.TryStreamData(BProtoObject.kXmlFileInfo, mode, this, StreamXmlObjects);
-			r &= e.TryStreamData(BProtoSquad.kXmlFileInfo, mode, this, StreamXmlSquads);
-			r &= e.TryStreamData(BProtoPower.kXmlFileInfo, mode, this, StreamXmlPowers);
-			r &= e.TryStreamData(BProtoTech.kXmlFileInfo, mode, this, StreamXmlTechs);
-			r &= e.TryStreamData(BCiv.kXmlFileInfo, mode, this, StreamXmlCivs);
-			r &= e.TryStreamData(BLeader.kXmlFileInfo, mode, this, StreamXmlLeaders);
+			r &= e.TryStreamData(BGameData.kXmlFileInfo, mode, StreamXmlGameData);
+			r &= e.TryStreamData(BDamageType.kXmlFileInfo, mode,  StreamXmlDamageTypes);
+			r &= e.TryStreamData(BWeaponType.kXmlFileInfo, mode, StreamXmlWeaponTypes);
+			r &= e.TryStreamData(BUserClass.kXmlFileInfo, mode, StreamXmlUserClasses);
+			r &= e.TryStreamData(BDatabaseBase.kObjectTypesXmlFileInfo, mode, StreamXmlObjectTypes);
+			r &= e.TryStreamData(BAbility.kXmlFileInfo, mode, StreamXmlAbilities);
+			r &= e.TryStreamData(BProtoObject.kXmlFileInfo, mode, StreamXmlObjects);
+			r &= e.TryStreamData(BProtoSquad.kXmlFileInfo, mode, StreamXmlSquads);
+			r &= e.TryStreamData(BProtoPower.kXmlFileInfo, mode, StreamXmlPowers);
+			r &= e.TryStreamData(BProtoTech.kXmlFileInfo, mode, StreamXmlTechs);
+			r &= e.TryStreamData(BCiv.kXmlFileInfo, mode, StreamXmlCivs);
+			r &= e.TryStreamData(BLeader.kXmlFileInfo, mode, StreamXmlLeaders);
 		}
 		void StreamDataAsync(ref bool r, FA mode)
 		{
 			var e = Database.Engine;
 
 			Task<bool>[] tasks1 = {
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BGameData.kXmlFileInfo, mode, this, StreamXmlGameData)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BDamageType.kXmlFileInfo, mode, this, StreamXmlDamageTypes)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BWeaponType.kXmlFileInfo, mode, this, StreamXmlWeaponTypes)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BUserClass.kXmlFileInfo, mode, this, StreamXmlUserClasses)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BDatabaseBase.kObjectTypesXmlFileInfo, mode, this, StreamXmlObjectTypes)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BAbility.kXmlFileInfo, mode, this, StreamXmlAbilities)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BGameData.kXmlFileInfo, mode, StreamXmlGameData)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BDamageType.kXmlFileInfo, mode, StreamXmlDamageTypes)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BWeaponType.kXmlFileInfo, mode, StreamXmlWeaponTypes)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BUserClass.kXmlFileInfo, mode, StreamXmlUserClasses)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BDatabaseBase.kObjectTypesXmlFileInfo, mode, StreamXmlObjectTypes)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BAbility.kXmlFileInfo, mode, StreamXmlAbilities)),
 			};
 			UpdateResultWithTaskResults(ref r, tasks1);
 
 			Task<bool>[] tasks2 = {
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoObject.kXmlFileInfo, mode, this, StreamXmlObjects)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoSquad.kXmlFileInfo, mode, this, StreamXmlSquads)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoPower.kXmlFileInfo, mode, this, StreamXmlPowers)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoTech.kXmlFileInfo, mode, this, StreamXmlTechs)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BCiv.kXmlFileInfo, mode, this, StreamXmlCivs)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BLeader.kXmlFileInfo, mode, this, StreamXmlLeaders)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoObject.kXmlFileInfo, mode, StreamXmlObjects)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoSquad.kXmlFileInfo, mode, StreamXmlSquads)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoPower.kXmlFileInfo, mode, StreamXmlPowers)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoTech.kXmlFileInfo, mode, StreamXmlTechs)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BCiv.kXmlFileInfo, mode, StreamXmlCivs)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BLeader.kXmlFileInfo, mode, StreamXmlLeaders)),
 			};
 			UpdateResultWithTaskResults(ref r, tasks2);
 		}
@@ -108,10 +108,10 @@ namespace PhxLib.XML
 			var e = Database.Engine;
 			const FA k_mode = FA.Read;
 
-			r &= e.TryStreamData(BProtoObject.kXmlFileInfo, k_mode, this, PreloadObjects);
-			r &= e.TryStreamData(BProtoSquad.kXmlFileInfo, k_mode, this, PreloadSquads);
+			r &= e.TryStreamData(BProtoObject.kXmlFileInfo, k_mode, PreloadObjects);
+			r &= e.TryStreamData(BProtoSquad.kXmlFileInfo, k_mode, PreloadSquads);
 
-			r &= e.TryStreamData(BProtoTech.kXmlFileInfo, k_mode, this, PreloadTechs);
+			r &= e.TryStreamData(BProtoTech.kXmlFileInfo, k_mode, PreloadTechs);
 		}
 		void PreloadAsync(ref bool r)
 		{
@@ -120,13 +120,13 @@ namespace PhxLib.XML
 
 			Task<bool>[] preload_tasks = {
 				// only need to preload damage types when async loading
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BDamageType.kXmlFileInfo, k_mode, this, PreloadDamageTypes)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BDamageType.kXmlFileInfo, k_mode, PreloadDamageTypes)),
 
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoObject.kXmlFileInfo, k_mode, this, PreloadObjects)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoSquad.kXmlFileInfo, k_mode, this, PreloadSquads)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoObject.kXmlFileInfo, k_mode, PreloadObjects)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoSquad.kXmlFileInfo, k_mode, PreloadSquads)),
 				// only need to preload powers when async loading
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoPower.kXmlFileInfo, k_mode, this, PreloadPowers)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoTech.kXmlFileInfo, k_mode, this, PreloadTechs)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoPower.kXmlFileInfo, k_mode, PreloadPowers)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoTech.kXmlFileInfo, k_mode, PreloadTechs)),
 			};
 			UpdateResultWithTaskResults(ref r, preload_tasks);
 		}
@@ -145,10 +145,10 @@ namespace PhxLib.XML
 			const FA k_mode = FA.Read;
 
 			// In serial mode, we don't need to preload, so don't waste CPU
-			r &= e.TryStreamData(BProtoObject.kXmlFileInfoUpdate, k_mode, this, StreamXmlObjectsUpdate);
-			r &= e.TryStreamData(BProtoSquad.kXmlFileInfoUpdate, k_mode, this, StreamXmlSquadsUpdate);
+			r &= e.TryStreamData(BProtoObject.kXmlFileInfoUpdate, k_mode, StreamXmlObjectsUpdate);
+			r &= e.TryStreamData(BProtoSquad.kXmlFileInfoUpdate, k_mode, StreamXmlSquadsUpdate);
 
-			r &= e.TryStreamData(BProtoTech.kXmlFileInfoUpdate, k_mode, this, StreamXmlTechsUpdate);
+			r &= e.TryStreamData(BProtoTech.kXmlFileInfoUpdate, k_mode, StreamXmlTechsUpdate);
 		}
 		void StreamDataUpdatesAsync(ref bool r)
 		{
@@ -156,18 +156,18 @@ namespace PhxLib.XML
 			const FA k_mode = FA.Read;
 
 			Task<bool>[] preload_tasks = {
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoObject.kXmlFileInfoUpdate, k_mode, this, PreloadObjects)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoSquad.kXmlFileInfoUpdate, k_mode, this, PreloadSquads)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoObject.kXmlFileInfoUpdate, k_mode, PreloadObjects)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoSquad.kXmlFileInfoUpdate, k_mode, PreloadSquads)),
 
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoTech.kXmlFileInfoUpdate, k_mode, this, PreloadTechs)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoTech.kXmlFileInfoUpdate, k_mode, PreloadTechs)),
 			};
 			UpdateResultWithTaskResults(ref r, preload_tasks);
 
 			Task<bool>[] update_tasks = {
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoObject.kXmlFileInfoUpdate, k_mode, this, StreamXmlObjectsUpdate)),
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoSquad.kXmlFileInfoUpdate, k_mode, this, StreamXmlSquadsUpdate)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoObject.kXmlFileInfoUpdate, k_mode, StreamXmlObjectsUpdate)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoSquad.kXmlFileInfoUpdate, k_mode, StreamXmlSquadsUpdate)),
 
-				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoTech.kXmlFileInfoUpdate, k_mode, this, StreamXmlTechsUpdate)),
+				Task<bool>.Factory.StartNew(() => e.TryStreamData(BProtoTech.kXmlFileInfoUpdate, k_mode, StreamXmlTechsUpdate)),
 			};
 			UpdateResultWithTaskResults(ref r, update_tasks);
 		}
@@ -202,10 +202,11 @@ namespace PhxLib.XML
 
 			PostStreamXml(k_mode);
 		}
-		public void Load(BDatabaseXmlSerializerLoadFlags flags = 0)
+		public virtual void Load(BDatabaseXmlSerializerLoadFlags flags = 0)
 		{
 			AutoIdSerializersInitialize();
 
+			DontPerformXmlFixups = (flags & BDatabaseXmlSerializerLoadFlags.DontPerformXmlFixups) != 0;
 			bool synchronous = (flags & BDatabaseXmlSerializerLoadFlags.UseSynchronousLoading) != 0;
 			LoadImpl(synchronous);
 			if ((flags & BDatabaseXmlSerializerLoadFlags.LoadUpdates) != 0) LoadUpdates(synchronous);

@@ -38,57 +38,57 @@ namespace PhxLib.XML
 			return xs;
 		}
 
-		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase db,
+		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
 			Collections.BListAutoId<T> list, BListXmlParams @params, bool force_no_root_element_streaming = false)
 			where T : class, Collections.IListAutoIdObject, new()
 		{
 			Contract.Requires(s != null);
-			Contract.Requires(db != null);
+			Contract.Requires(xsi != null);
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
 			if (force_no_root_element_streaming) @params.SetForceNoRootElementStreaming(true);
 			using(var xs = CreateXmlSerializer(list, @params))
 			{
-				xs.StreamXml(s, mode, db);
+				xs.StreamXml(s, mode, xsi);
 			}
 			if (force_no_root_element_streaming) @params.SetForceNoRootElementStreaming(false);
 		}
 
-		public static void SerializePreload(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase db,
+		public static void SerializePreload(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xsi,
 			IBListAutoIdXmlSerializer xs, bool force_no_root_element_streaming = false)
 		{
 			Contract.Requires(s != null);
-			Contract.Requires(db != null);
+			Contract.Requires(xsi != null);
 			Contract.Requires(xs != null);
 			Contract.Requires(!xs.IsDisposed);
 
 			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(true);
-			xs.StreamXmlPreload(s, db);
+			xs.StreamXmlPreload(s, xsi);
 			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(false);
 		}
-		public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase db,
+		public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
 			IBListAutoIdXmlSerializer xs, bool force_no_root_element_streaming = false)
 		{
 			Contract.Requires(s != null);
-			Contract.Requires(db != null);
+			Contract.Requires(xsi != null);
 			Contract.Requires(xs != null);
 			Contract.Requires(!xs.IsDisposed);
 
 			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(true);
-			xs.StreamXml(s, mode, db);
+			xs.StreamXml(s, mode, xsi);
 			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(false);
 		}
-		public static void SerializeUpdate(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase db,
+		public static void SerializeUpdate(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xsi,
 			IBListAutoIdXmlSerializer xs, bool force_no_root_element_streaming = false)
 		{
 			Contract.Requires(s != null);
-			Contract.Requires(db != null);
+			Contract.Requires(xsi != null);
 			Contract.Requires(xs != null);
 			Contract.Requires(!xs.IsDisposed);
 
 			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(true);
-			xs.StreamXmlUpdate(s, db);
+			xs.StreamXmlUpdate(s, xsi);
 			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(false);
 		}
 	};
@@ -100,8 +100,8 @@ namespace PhxLib.XML
 
 		bool IsDisposed { get; }
 
-		void StreamXmlPreload(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs);
-		void StreamXmlUpdate(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs);
+		void StreamXmlPreload(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs);
+		void StreamXmlUpdate(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs);
 	};
 	[Contracts.ContractClassFor(typeof(IBListAutoIdXmlSerializer))]
 	abstract class IBListAutoIdXmlSerializerContract : IBListAutoIdXmlSerializer
@@ -110,14 +110,14 @@ namespace PhxLib.XML
 		public abstract BListXmlParams Params { get; }
 		public abstract bool IsDisposed { get; }
 
-		public void StreamXmlPreload(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		public void StreamXmlPreload(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			Contract.Requires(Params.RequiresDataNamePreloading);
 
 			throw new NotImplementedException();
 		}
 
-		public void StreamXmlUpdate(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		public void StreamXmlUpdate(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			Contract.Requires(Params.SupportsUpdating);
 
@@ -130,7 +130,7 @@ namespace PhxLib.XML
 		#endregion
 
 		#region IPhxXmlStreamable Members
-		public abstract void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase xs);
+		public abstract void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xs);
 		#endregion
 	};
 
@@ -217,7 +217,7 @@ namespace PhxLib.XML
 		#endregion
 
 		#region IXmlElementStreamable Members
-		protected override void ReadXml(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs, int iteration)
+		protected override void ReadXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, int iteration)
 		{
 			const FA k_mode = FA.Read;
 
@@ -228,7 +228,7 @@ namespace PhxLib.XML
 			if(SetupItem(out item, item_name, iteration))
 				item.StreamXml(s, k_mode, xs);
 		}
-		protected override void WriteXml(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs, T data)
+		protected override void WriteXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, T data)
 		{
 			const FA k_mode = FA.Write;
 
@@ -238,7 +238,7 @@ namespace PhxLib.XML
 			data.StreamXml(s, k_mode, xs);
 		}
 
-		void PreloadXml(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs)
+		void PreloadXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			mIsPreloaded = false;
 
@@ -246,11 +246,11 @@ namespace PhxLib.XML
 
 			mIsPreloaded = true;
 		}
-		public void StreamXmlPreload(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXmlPreload(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			PreloadXml(s, xs);
 		}
-		public void StreamXmlUpdate(KSoft.IO.XmlElementStream s, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXmlUpdate(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			mIsUpdating = true;
 			mCountBeforeUpdate = mList.Count;

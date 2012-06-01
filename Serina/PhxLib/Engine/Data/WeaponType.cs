@@ -26,7 +26,7 @@ namespace PhxLib.Engine
 		public float Value { get { return mValue; } }
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrRating, ref mRating);
 			s.StreamCursor(mode, ref mValue);
@@ -71,7 +71,7 @@ namespace PhxLib.Engine
 		}
 
 		#region BListObjectBase Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			XML.Util.Serialize(s, mode, xs, DamageModifiers, BDamageModifier.kBListXmlParams);
 		}

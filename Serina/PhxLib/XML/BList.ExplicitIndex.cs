@@ -22,12 +22,12 @@ namespace PhxLib.XML
 
 	partial class Util
 	{
-		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, BDatabaseXmlSerializerBase db,
+		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
 			Collections.BListExplicitIndex<T> list, BListExplicitIndexXmlParams<T> @params)
 			where T : IEqualityComparer<T>, IO.IPhxXmlStreamable, new()
 		{
 			Contract.Requires(s != null);
-			Contract.Requires(db != null);
+			Contract.Requires(xsi != null);
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
@@ -39,7 +39,7 @@ namespace PhxLib.XML
 #endif
 			)
 			{
-				xs.StreamXml(s, mode, db);
+				xs.StreamXml(s, mode, xsi);
 			}
 		}
 	};
@@ -112,19 +112,19 @@ namespace PhxLib.XML
 		#endregion
 
 		#region IXmlElementStreamable Members
-		protected virtual int ReadExplicitIndex(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		protected virtual int ReadExplicitIndex(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			int index = -1;
 			mParams.StreamExplicitIndex(s, FA.Read, ref index);
 
 			return index;
 		}
-		protected virtual void WriteExplicitIndex(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, int index)
+		protected virtual void WriteExplicitIndex(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, int index)
 		{
 			mParams.StreamExplicitIndex(s, FA.Write, ref index);
 		}
 
-		protected override void WriteXmlNodes(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs)
+		protected override void WriteXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
 		{
 			var eip = ListExplicitIndex.ExplicitIndexParams;
 			T k_invalid = eip.kTypeGetInvalid();
@@ -134,7 +134,7 @@ namespace PhxLib.XML
 			{
 				if (eip.kComparer.Compare(data, k_invalid) != 0)
 				{
-					using (s.EnterCursorBookmark(Params.ElementName))
+					using (s.EnterCursorBookmark(WriteXmlGetElementName(data)))
 					{
 						WriteExplicitIndex(s, xs, index);
 						WriteXml(s, xs, data);
@@ -189,16 +189,17 @@ namespace PhxLib.XML
 		#endregion
 
 		#region IXmlElementStreamable Members
-		protected override void ReadXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, int iteration)
+		protected override void ReadXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, int iteration)
 		{
 			int index = ReadExplicitIndex(s, xs);
+			Contract.Assert(index != PhxLib.Util.kInvalidInt32);
 
 			mList.InitializeItem(index);
 			T data = new T();
 			data.StreamXml(s, FA.Read, xs);
 			mList[index] = data;
 		}
-		protected override void WriteXml(KSoft.IO.XmlElementStream s, BDatabaseXmlSerializerBase xs, T data)
+		protected override void WriteXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, T data)
 		{
 			data.StreamXml(s, FA.Write, xs);
 		}

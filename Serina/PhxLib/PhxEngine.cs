@@ -8,6 +8,11 @@ using PhxLib.Engine;
 
 namespace PhxLib
 {
+	public enum PhxEngineBuild
+	{
+		Alpha,
+		Release,
+	};
 	public partial class PhxEngine
 	{
 		public sealed class XmlFileInfo
@@ -21,9 +26,13 @@ namespace PhxLib
 			public bool NonrequiredFile { get; set; }
 		};
 
+		public PhxEngineBuild Build { get; private set; }
+
 		public GameDirectories Directories { get; private set; }
 
 		public BDatabaseBase Database { get; private set; }
+
+		public TriggerDatabase TriggerDb { get; private set; }
 
 		public virtual void Load()
 		{
@@ -37,8 +46,7 @@ namespace PhxLib
 			s.InitializeAtRootElement();
 		}
 		public bool TryStreamData<TContext>(XmlFileInfo xfi, FA mode,
-			XML.BDatabaseXmlSerializerBase xs,
-			Action<KSoft.IO.XmlElementStream, FA, XML.BDatabaseXmlSerializerBase, TContext> stream_proc, TContext ctxt,
+			Action<KSoft.IO.XmlElementStream, FA, TContext> stream_proc, TContext ctxt,
 			string ext = null)
 		{
 			Contract.Requires(xfi != null);
@@ -54,7 +62,7 @@ namespace PhxLib
 				using (var s = new KSoft.IO.XmlElementStream(file.FullName, mode, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, xs, ctxt);
+					stream_proc(s, mode, ctxt);
 				}
 			}
 			else if (mode == FA.Write)
@@ -62,7 +70,7 @@ namespace PhxLib
 				if(xfi.Writable) using (var s = KSoft.IO.XmlElementStream.CreateForWrite(xfi.RootName, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, xs, ctxt);
+					stream_proc(s, mode, ctxt);
 					s.Document.Save(file.FullName);
 				}
 			}
@@ -70,8 +78,7 @@ namespace PhxLib
 			return true;
 		}
 		public bool TryStreamData(XmlFileInfo xfi, FA mode,
-			XML.BDatabaseXmlSerializerBase xs,
-			Action<KSoft.IO.XmlElementStream, FA, XML.BDatabaseXmlSerializerBase> stream_proc, string ext = null)
+			Action<KSoft.IO.XmlElementStream, FA> stream_proc, string ext = null)
 		{
 			Contract.Requires(xfi != null);
 			Contract.Requires(stream_proc != null);
@@ -86,7 +93,7 @@ namespace PhxLib
 				using (var s = new KSoft.IO.XmlElementStream(file.FullName, mode, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, xs);
+					stream_proc(s, mode);
 				}
 			}
 			else if (mode == FA.Write)
@@ -94,7 +101,7 @@ namespace PhxLib
 				if(xfi.Writable) using (var s = KSoft.IO.XmlElementStream.CreateForWrite(xfi.RootName, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, xs);
+					stream_proc(s, mode);
 					s.Document.Save(file.FullName);
 				}
 			}

@@ -41,7 +41,7 @@ namespace PhxLib.Engine
 		}
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			base.StreamXml(s, mode, xs);
 

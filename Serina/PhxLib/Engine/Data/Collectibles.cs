@@ -66,7 +66,7 @@ namespace PhxLib.Engine
 		float mValue = Util.kInvalidSingle;
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamCursor(mode, ref mType);
 			s.StreamAttributeOpt(mode, kXmlAttrTarget, ref mTarget, e => e != BCollectibleSkullTarget.None);
@@ -100,7 +100,7 @@ namespace PhxLib.Engine
 		}
 
 		#region IPhxXmlStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrObjectDBID, ref mObjectDBID);
 			XML.Util.Serialize(s, mode, xs, Effects, BCollectibleSkullEffect.kBListXmlParams);
@@ -123,7 +123,7 @@ namespace PhxLib.Engine
 		}
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			XML.Util.Serialize(s, mode, xs, Skulls, BCollectibleSkull.kBListXmlParams);
 		}
@@ -154,7 +154,7 @@ namespace PhxLib.Engine
 		}
 
 		#region IPhxXmlStreamable Members
-		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamElementOpt(mode, null, ref mXmlVersion, Util.kNotInvalidPredicate);
 			SkullManager.StreamXml(s, mode, xs);

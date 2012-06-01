@@ -34,7 +34,7 @@ namespace PhxLib.Engine
 		public bool Shielded { get { return m_shielded; } }
 
 		#region BListAutoIdObject Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttributeOpt(mode, kXmlAttrAttackRating, ref m_attackRating, Util.kNotFalsePredicate);
 			s.StreamAttributeOpt(mode, kXmlAttrBaseType, ref m_baseType, Util.kNotFalsePredicate);

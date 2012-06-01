@@ -217,6 +217,14 @@ namespace KSoft.IO
 		}
 		#endregion
 
+		/// <summary>Interpret the Name of <see cref="Cursor"/> as a member of <typeparamref name="TEnum"/></summary>
+		/// <typeparam name="TEnum">Enumeration type</typeparam>
+		/// <param name="enum_value">value to receive the data</param>
+		public void ReadCursorName<TEnum>(ref TEnum enum_value) where TEnum : struct
+		{
+			ParseEnum<TEnum>(CursorName, out enum_value);
+		}
+
 		#region ReadCursor
 		/// <summary>Stream out the Value of <see cref="Cursor"/> into <paramref name="value"/></summary>
 		/// <param name="value">value to receive the data</param>
@@ -224,22 +232,21 @@ namespace KSoft.IO
 		{
 			ReadElement(Cursor, ref value);
 		}
-		/// <summary>Stream out the Value of element <paramref name="name"/> into <paramref name="value"/></summary>
+		/// <summary>Stream out the Value of <see cref="Cursor"/> into <paramref name="value"/></summary>
 		/// <param name="value">value to receive the data</param>
 		public void ReadCursor(ref char value)
 		{
 			ReadElement(Cursor, ref value);
 		}
-		/// <summary>Stream out the Value of element <paramref name="name"/> into <paramref name="value"/></summary>
+		/// <summary>Stream out the Value of <see cref="Cursor"/> into <paramref name="value"/></summary>
 		/// <param name="value">value to receive the data</param>
 		public void ReadCursor(ref bool value)
 		{
 			ReadElement(Cursor, ref value);
 		}
 		/// <summary>
-		/// Stream out the Value of element <paramref name="name"/>
-		/// using numerical base of <paramref name="base"/> into 
-		/// <paramref name="value"/>
+		/// Stream out the Value of <see cref="Cursor"/>
+		/// using numerical base of <paramref name="base"/> into <paramref name="value"/>
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
@@ -248,9 +255,8 @@ namespace KSoft.IO
 			ReadElement(Cursor, from_base, ref value);
 		}
 		/// <summary>
-		/// Stream out the Value of element <paramref name="name"/>
-		/// using numerical base of <paramref name="base"/> into 
-		/// <paramref name="value"/>
+		/// Stream out the Value of <see cref="Cursor"/>
+		/// using numerical base of <paramref name="base"/> into <paramref name="value"/>
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
@@ -259,9 +265,8 @@ namespace KSoft.IO
 			ReadElement(Cursor, from_base, ref value);
 		}
 		/// <summary>
-		/// Stream out the Value of element <paramref name="name"/>
-		/// using numerical base of <paramref name="base"/> into 
-		/// <paramref name="value"/>
+		/// Stream out the Value of <see cref="Cursor"/>
+		/// using numerical base of <paramref name="base"/> into <paramref name="value"/>
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
@@ -270,9 +275,8 @@ namespace KSoft.IO
 			ReadElement(Cursor, from_base, ref value);
 		}
 		/// <summary>
-		/// Stream out the Value of element <paramref name="name"/>
-		/// using numerical base of <paramref name="base"/> into 
-		/// <paramref name="value"/>
+		/// Stream out the Value of <see cref="Cursor"/>
+		/// using numerical base of <paramref name="base"/> into <paramref name="value"/>
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
@@ -281,9 +285,8 @@ namespace KSoft.IO
 			ReadElement(Cursor, from_base, ref value);
 		}
 		/// <summary>
-		/// Stream out the Value of element <paramref name="name"/>
-		/// using numerical base of <paramref name="base"/> into 
-		/// <paramref name="value"/>
+		/// Stream out the Value of <see cref="Cursor"/>
+		/// using numerical base of <paramref name="base"/> into <paramref name="value"/>
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
@@ -292,9 +295,8 @@ namespace KSoft.IO
 			ReadElement(Cursor, from_base, ref value);
 		}
 		/// <summary>
-		/// Stream out the Value of element <paramref name="name"/>
-		/// using numerical base of <paramref name="base"/> into 
-		/// <paramref name="value"/>
+		/// Stream out the Value of <see cref="Cursor"/>
+		/// using numerical base of <paramref name="base"/> into <paramref name="value"/>
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
@@ -303,9 +305,8 @@ namespace KSoft.IO
 			ReadElement(Cursor, from_base, ref value);
 		}
 		/// <summary>
-		/// Stream out the Value of element <paramref name="name"/>
-		/// using numerical base of <paramref name="base"/> into 
-		/// <paramref name="value"/>
+		/// Stream out the Value of <see cref="Cursor"/>
+		/// using numerical base of <paramref name="base"/> into <paramref name="value"/>
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
@@ -314,9 +315,8 @@ namespace KSoft.IO
 			ReadElement(Cursor, from_base, ref value);
 		}
 		/// <summary>
-		/// Stream out the Value of element <paramref name="name"/>
-		/// using numerical base of <paramref name="base"/> into 
-		/// <paramref name="value"/>
+		/// Stream out the Value of<see cref="Cursor"/>
+		/// using numerical base of <paramref name="base"/> into <paramref name="value"/>
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
@@ -324,26 +324,26 @@ namespace KSoft.IO
 		{
 			ReadElement(Cursor, from_base, ref value);
 		}
-		/// <summary>Stream out the Value of element <paramref name="name"/> into <paramref name="value"/></summary>
+		/// <summary>Stream out the Value of <see cref="Cursor"/> into <paramref name="value"/></summary>
 		/// <param name="value">value to receive the data</param>
 		public void ReadCursor(ref float value)
 		{
 			ReadElement(Cursor, ref value);
 		}
-		/// <summary>Stream out the Value of element <paramref name="name"/> into <paramref name="value"/></summary>
+		/// <summary>Stream out the Value of <see cref="Cursor"/> into <paramref name="value"/></summary>
 		/// <param name="value">value to receive the data</param>
 		public void ReadCursor(ref double value)
 		{
 			ReadElement(Cursor, ref value);
 		}
-		/// <summary>Stream out the Value of element <paramref name="name"/> into the enum <paramref name="value"/></summary>
+		/// <summary>Stream out the Value of <see cref="Cursor"/> into the enum <paramref name="value"/></summary>
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="enum_value">value to receive the data</param>
 		public void ReadCursor<TEnum>(ref TEnum enum_value) where TEnum : struct
 		{
 			ReadElement(Cursor, ref enum_value);
 		}
-		/// <summary>Stream out the Value of element <paramref name="name"/> into the enum <paramref name="value"/></summary>
+		/// <summary>Stream out the Value of <see cref="Cursor"/> into the enum <paramref name="value"/></summary>
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="enum_value">value to receive the data</param>
 		public void ReadCursor<TEnum>(ref int enum_value) where TEnum : struct, IConvertible

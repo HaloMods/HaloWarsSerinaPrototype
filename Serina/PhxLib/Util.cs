@@ -16,12 +16,12 @@ namespace PhxLib
 		[Contracts.ContractClass(typeof(IPhxXmlStreamableContract))]
 		public interface IPhxXmlStreamable
 		{
-			void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs);
+			void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs);
 		};
 		[Contracts.ContractClassFor(typeof(IPhxXmlStreamable))]
 		abstract class IPhxXmlStreamableContract : IPhxXmlStreamable
 		{
-			public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+			public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 			{
 				Contract.Requires(s != null);
 				Contract.Requires(mode != System.IO.FileAccess.ReadWrite);
@@ -31,20 +31,23 @@ namespace PhxLib
 		#endregion
 	};
 
-	public static class Util
+	public static partial class Util
 	{
 		public const int kInvalidInt32 = -1;
 		public const float kInvalidSingle = -1.0f;
 		public const float kInvalidSingleNaN = float.NaN;
 
+		/// <summary>Sentinel for cases which reference undefined data (eg, an undefined ProtoObject)</summary>
+		public const int kInvalidReference = kInvalidInt32 - 1;
+
 		public static readonly Func<int> kGetInvalidInt32 = () => kInvalidInt32;
 		public static readonly Func<float> kGetInvalidSingle = () => kInvalidSingle;
 
 		public static readonly Predicate<bool> kNotFalsePredicate = x => x != false;
-		public static readonly Predicate<int> kNotInvalidPredicate = x => x != -1;
-		public static readonly Predicate<sbyte> kNotInvalidPredicateSByte = x => x != -1;
-		public static readonly Predicate<short> kNotInvalidPredicateInt16 = x => x != -1;
-		public static readonly Predicate<float> kNotInvalidPredicateSingle = x => x != -1.0f;
+		public static readonly Predicate<int> kNotInvalidPredicate = x => x > kInvalidInt32;
+		public static readonly Predicate<sbyte> kNotInvalidPredicateSByte = x => x > kInvalidInt32;
+		public static readonly Predicate<short> kNotInvalidPredicateInt16 = x => x > kInvalidInt32;
+		public static readonly Predicate<float> kNotInvalidPredicateSingle = x => x > kInvalidSingle;
 		public static readonly Predicate<float> kNotInvalidPredicateSingleNaN = x => !float.IsNaN(x);
 		public static readonly Predicate<float> kNotZeroPredicateSingle = x => x != 0.0f;
 		public static readonly Predicate<string> kNotNullOrEmpty = x => !string.IsNullOrEmpty(x);

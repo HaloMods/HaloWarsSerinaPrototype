@@ -36,6 +36,23 @@ namespace PhxLib.Collections
 			Contract.Requires<ArgumentNullException>(@params != null);
 		}
 
+		/// <summary>
+		/// If the new count is greater than <see cref="Count"/>, adds new elements up-to <paramref name="new_count"/>,
+		/// using the "invalid value" defined in the list params
+		/// </summary>
+		/// <param name="new_count"></param>
+		/// <exception cref="ArgumentOutOfRangeException"><paramref name="new_count"/> is less than <see cref="Count"/></exception>
+		internal void ResizeCount(int new_count)
+		{
+			if (new_count < Count) throw new ArgumentOutOfRangeException("new_count", new_count.ToString(),
+				"For resizing to a smaller Count, use Capacity.");
+
+			var eip = ExplicitIndexParams;
+
+			for (int x = Count; x < new_count; x++)
+				base.Add(eip.kTypeGetInvalid());
+		}
+
 		internal void InitializeItem(int index)
 		{
 			if (index < 0) throw new ArgumentOutOfRangeException(index.ToString(), "index");

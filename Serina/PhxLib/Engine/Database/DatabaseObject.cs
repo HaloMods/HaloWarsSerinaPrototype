@@ -47,7 +47,7 @@ namespace PhxLib.Engine
 	{
 		#region Xml constants
 		internal const string kXmlAttrName = "name";
-		protected const string kXmlAttrNameN = "Name";
+		internal const string kXmlAttrNameN = "Name";
 		const string kXmlElementDisplayName = "DisplayNameID";
 		const string kXmlElementRolloverTextID = "RolloverTextID";
 		const string kXmlElementPrereqTextID = "PrereqTextID";
@@ -62,7 +62,7 @@ namespace PhxLib.Engine
 		}
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			xs.StreamXmlForStringID(s, mode, kXmlElementDisplayName, ref mDisplayNameID);
 		}
@@ -97,7 +97,7 @@ namespace PhxLib.Engine
 		}
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			base.StreamXml(s, mode, xs);
 
@@ -124,12 +124,12 @@ namespace PhxLib.Engine
 		}
 
 		#region IXmlElementStreamable Members
-		protected virtual void StreamXmlDbId(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		protected virtual void StreamXmlDbId(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrDbId, KSoft.NumeralBase.Decimal, ref mDbId);
 		}
 
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			base.StreamXml(s, mode, xs);
 

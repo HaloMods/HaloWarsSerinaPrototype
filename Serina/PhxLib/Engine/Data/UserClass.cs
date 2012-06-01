@@ -22,7 +22,7 @@ namespace PhxLib.Engine
 		BTriggerVarType mType;
 
 		#region IXmlElementStreamable Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrType, ref mType);
 		}
@@ -58,7 +58,7 @@ namespace PhxLib.Engine
 		}
 
 		#region BListAutoIdObject Members
-		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BDatabaseXmlSerializerBase xs)
+		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttribute(mode, kXmlAttrDbId, KSoft.NumeralBase.Decimal, ref mDbId);
 			XML.Util.Serialize(s, mode, xs, Fields, BUserClassField.kBListXmlParams);
