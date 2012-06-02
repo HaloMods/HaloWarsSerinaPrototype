@@ -345,6 +345,10 @@ namespace PhxLib.Engine
 		//CheckPos, // 6, see: DeathSpawnSquad
 		KillOnDetach,// = 1<<7,
 
+		#region Alpha only
+		[Obsolete] cFlagPhysicsControl,
+		#endregion
+
 		//[Obsolete] NonCollidable = NonCollideable, // Fixed in HW's XmlFiles.cs
 		[Obsolete, XmlIgnore] NonSolid,
 		[Obsolete, XmlIgnore] RenderBelowDecals,

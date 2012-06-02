@@ -36,7 +36,7 @@ namespace PhxLib.XML
 		{
 			var td = new Engine.BTacticData(name);
 
-			if (mode == FA.Read && !DontPerformXmlFixups) FixTacticsXml(s, name);
+			if (mode == FA.Read) FixTacticsXml(s, name);
 			td.StreamXml(s, mode, this);
 
 			TacticsMap[name] = td;
@@ -45,7 +45,7 @@ namespace PhxLib.XML
 		/// <remarks>For streaming directly from gamedata.xml</remarks>
 		void StreamXmlGameData(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			if(!DontPerformXmlFixups) FixGameDataXml(s);
+			if(mode == FA.Read) FixGameDataXml(s);
 			Database.GameData.StreamGameXml(s, mode, this);
 		}
 		void PreloadDamageTypes(KSoft.IO.XmlElementStream s, FA mode)
@@ -61,7 +61,7 @@ namespace PhxLib.XML
 		void StreamXmlWeaponTypes(KSoft.IO.XmlElementStream s, FA mode)
 		{
 			XML.Util.Serialize(s, mode, this, Database.WeaponTypes, Engine.BWeaponType.kBListXmlParams, true);
-			if (mode == FA.Read && !DontPerformXmlFixups) FixWeaponTypes();
+			if (mode == FA.Read) FixWeaponTypes();
 		}
 		/// <remarks>For streaming directly from UserClasses.xml</remarks>
 		void StreamXmlUserClasses(KSoft.IO.XmlElementStream s, FA mode)
@@ -86,7 +86,7 @@ namespace PhxLib.XML
 		/// <remarks>For streaming directly from objects.xml</remarks>
 		void StreamXmlObjects(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			if (mode == FA.Read && !DontPerformXmlFixups) FixObjectsXml(s);
+			if (mode == FA.Read) FixObjectsXml(s);
 			XML.Util.Serialize(s, mode, this, mObjectsSerializer, true);
 		}
 
@@ -97,6 +97,7 @@ namespace PhxLib.XML
 		/// <remarks>For streaming directly from squads.xml</remarks>
 		void StreamXmlSquads(KSoft.IO.XmlElementStream s, FA mode)
 		{
+			if (mode == FA.Read) FixSquadsXml(s);
 			XML.Util.Serialize(s, mode, this, mSquadsSerializer, true);
 		}
 
@@ -117,7 +118,7 @@ namespace PhxLib.XML
 		/// <remarks>For streaming directly from techs.xml</remarks>
 		void StreamXmlTechs(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			if (mode == FA.Read && !DontPerformXmlFixups) FixTechsXml(s);
+			if (mode == FA.Read) FixTechsXml(s);
 			XML.Util.Serialize(s, mode, this, mTechsSerializer, true);
 		}
 
@@ -136,20 +137,21 @@ namespace PhxLib.XML
 		/// <remarks>For streaming directly from objects_update.xml</remarks>
 		void StreamXmlObjectsUpdate(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			//if(mode == FA.Read && !DontPerformXmlFixups) FixObjectsXml(s);
+			//if(mode == FA.Read) FixObjectsXml(s);
 			XML.Util.SerializeUpdate(s, this, mObjectsSerializer, true);
 		}
 
 		/// <remarks>For streaming directly from squads_update.xml</remarks>
 		void StreamXmlSquadsUpdate(KSoft.IO.XmlElementStream s, FA mode)
 		{
+			//if (mode == FA.Read) FixSquadsXml(s);
 			XML.Util.SerializeUpdate(s, this, mSquadsSerializer, true);
 		}
 
 		/// <remarks>For streaming directly from techs_update.xml</remarks>
 		void StreamXmlTechsUpdate(KSoft.IO.XmlElementStream s, FA mode)
 		{
-			if (mode == FA.Read && !DontPerformXmlFixups) FixTechsXml(s);
+			if (mode == FA.Read) FixTechsXml(s);
 			XML.Util.SerializeUpdate(s, this, mTechsSerializer, true);
 		}
 		#endregion

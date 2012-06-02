@@ -79,10 +79,6 @@ namespace PhxLib.XML
 				UseInnerTextForData, UseElementForData, InternDataNames,
 				ToLowerDataNames);
 		}
-		public void StreamIsUpdateAttr(KSoft.IO.XmlElementStream s, FA mode, ref bool is_update)
-		{
-			s.StreamAttributeOpt(mode, "update", ref is_update, PhxLib.Util.kNotFalsePredicate);
-		}
 	};
 
 	internal abstract class BListXmlSerializerBase<T> : IDisposable, IO.IPhxXmlStreamable
@@ -141,7 +137,13 @@ namespace PhxLib.XML
 
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xs)
 		{
-			using (s.EnterCursorBookmark(mode, Params.GetOptionalRootName()))
+			bool should_stream = true;
+			string root_name = Params.GetOptionalRootName();
+
+			if (mode == FA.Read) // If the stream doesn't have the expected element, don't try to stream
+				should_stream = root_name == null || s.ElementsExists(root_name);
+
+			if (should_stream) using (s.EnterCursorBookmark(mode, root_name))
 			{
 					 if (mode == FA.Read)	ReadXmlNodes(s, xs);
 				else if (mode == FA.Write)	WriteXmlNodes(s, xs);

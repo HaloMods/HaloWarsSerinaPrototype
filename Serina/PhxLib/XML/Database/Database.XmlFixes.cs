@@ -20,6 +20,8 @@ namespace PhxLib.XML
 
 		protected virtual void FixObjectsXml(KSoft.IO.XmlElementStream s) {}
 
+		protected virtual void FixSquadsXml(KSoft.IO.XmlElementStream s) { }
+
 		protected virtual void FixTechsXml(KSoft.IO.XmlElementStream s) {}
 
 		protected static void FixTacticsTraceFixEvent(string tactic_name, string xpath)
