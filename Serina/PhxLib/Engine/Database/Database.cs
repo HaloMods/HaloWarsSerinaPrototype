@@ -77,9 +77,9 @@ namespace PhxLib.Engine
 		{
 			mTriggerSerializer = new XML.BTriggerScriptSerializer(Engine);
 		}
-		public BTriggerSystem LoadScript(string script_name)
+		public BTriggerSystem LoadScript(string script_name, BTriggerScriptType type = BTriggerScriptType.TriggerScript)
 		{
-			var ctxt = mTriggerSerializer.StreamTriggerScriptGetContext(FA.Read, BTriggerScriptType.TriggerScript, script_name);
+			var ctxt = mTriggerSerializer.StreamTriggerScriptGetContext(FA.Read, type, script_name);
 			var task = System.Threading.Tasks.Task<bool>.Factory.StartNew((state) => {
 				var _ctxt = state as XML.BTriggerScriptSerializer.StreamTriggerScriptContext;
 				return Engine.TryStreamData(_ctxt.FileInfo, FA.Read, mTriggerSerializer.StreamTriggerScript, _ctxt);
@@ -326,7 +326,8 @@ namespace PhxLib.Engine
 		{
 			using (var xs = NewXmlSerializer())
 			{
-				xs.Load(XML.BDatabaseXmlSerializerLoadFlags.LoadUpdates | XML.BDatabaseXmlSerializerLoadFlags.UseSynchronousLoading);
+				var flags = XML.BDatabaseXmlSerializerLoadFlags.LoadUpdates | XML.BDatabaseXmlSerializerLoadFlags.UseSynchronousLoading;
+				xs.Load(flags);
 			}
 		}
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode)

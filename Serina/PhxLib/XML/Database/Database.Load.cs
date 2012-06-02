@@ -48,6 +48,11 @@ namespace PhxLib.XML
 		}
 		void StreamTactics(FA mode, bool synchronous)
 		{
+			if (Database.Engine.Build == PhxEngineBuild.Alpha)
+			{
+				Debug.Trace.XML.TraceInformation("BDatabaseXmlSerializer: Alpha build detected, skipping Tactics streaming");
+				return;
+			}
 			bool r = true;
 
 			if(!synchronous) StreamTacticsAsync(ref r, mode);
@@ -206,7 +211,6 @@ namespace PhxLib.XML
 		{
 			AutoIdSerializersInitialize();
 
-			DontPerformXmlFixups = (flags & BDatabaseXmlSerializerLoadFlags.DontPerformXmlFixups) != 0;
 			bool synchronous = (flags & BDatabaseXmlSerializerLoadFlags.UseSynchronousLoading) != 0;
 			LoadImpl(synchronous);
 			if ((flags & BDatabaseXmlSerializerLoadFlags.LoadUpdates) != 0) LoadUpdates(synchronous);

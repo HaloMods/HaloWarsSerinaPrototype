@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Contracts = System.Diagnostics.Contracts;
 using Contract = System.Diagnostics.Contracts.Contract;
 
@@ -99,7 +100,6 @@ namespace PhxLib.Engine
 		public const string kXmlRootName = "TriggerDatabase";
 		#endregion
 
-		// 366, 120
 		public Collections.BListAutoId<BTriggerProtoCondition> Conditions { get; private set; }
 		public Collections.BListAutoId<BTriggerProtoEffect> Effects { get; private set; }
 		public Dictionary<uint, TriggerProtoDbObject> LookupTable { get; private set; }
@@ -110,7 +110,7 @@ namespace PhxLib.Engine
 			Conditions = new Collections.BListAutoId<BTriggerProtoCondition>();
 			Effects = new Collections.BListAutoId<BTriggerProtoEffect>();
 			LookupTable = new Dictionary<uint, TriggerProtoDbObject>();
-			mUsedIds = new System.Collections.BitArray(1085);
+			mUsedIds = new System.Collections.BitArray(1088);
 		}
 
 		#region IPhxXmlStreamable Members
@@ -138,15 +138,19 @@ namespace PhxLib.Engine
 		{
 			if (mode == FA.Write)
 			{
-				Conditions.Sort(SortById);
-				Effects.Sort(SortById);
+				var task_sort_cond = Task.Factory.StartNew(() => Conditions.Sort(SortById));
+				var task_sort_effe = Task.Factory.StartNew(() => Effects.Sort(SortById));
+
+				var task_unknowns = Task<int>.Factory.StartNew(() =>
+				{
+					using (s.EnterCursorBookmark("Unknowns"))
+						return WriteUnknowns(s, mode, xs);
+				});
+				s.WriteAttribute("UnknownCount", KSoft.NumeralBase.Decimal, task_unknowns.Result);
 				s.WriteAttribute("ConditionsCount", KSoft.NumeralBase.Decimal, Conditions.Count);
 				s.WriteAttribute("EffectsCount", KSoft.NumeralBase.Decimal, Effects.Count);
 
-				int count;
-				using (s.EnterCursorBookmark("Unknowns"))
-					count = WriteUnknowns(s, mode, xs);
-				s.WriteAttribute("UnknownCount", KSoft.NumeralBase.Decimal, count);
+				Task.WaitAll(task_sort_cond, task_sort_effe);
 			}
 
 			XML.Util.Serialize(s, mode, xs, Conditions, BTriggerProtoCondition.kBListXmlParams);

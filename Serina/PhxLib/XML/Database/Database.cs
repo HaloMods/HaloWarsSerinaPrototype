@@ -14,7 +14,6 @@ namespace PhxLib.XML
 	{
 		LoadUpdates = 1<<0,
 		UseSynchronousLoading = 1<<1,
-		DontPerformXmlFixups = 1<<2,
 	};
 	public abstract partial class BDatabaseXmlSerializerBase : BXmlSerializerInterface,
 		KSoft.IO.IXmlElementStreamable
@@ -24,8 +23,6 @@ namespace PhxLib.XML
 			mPowersSerializer, 
 			mTechsSerializer
 			;
-
-		protected bool DontPerformXmlFixups { get; private set; }
 
 		protected BDatabaseXmlSerializerBase()
 		{

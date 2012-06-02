@@ -41,6 +41,15 @@ namespace Serina
 				db.LoadScript(script_name);
 			}
 		}
+		static void LoadTriggerScripts(PhxLib.Engine.BDatabaseBase db, string[] files, 
+			string remove_dir, PhxLib.Engine.BTriggerScriptType type)
+		{
+			foreach (var filename in files)
+			{
+				var script_name = IO.Path.GetFileName(filename);
+				db.LoadScript(script_name.Replace(remove_dir, ""), type);
+			}
+		}
 		static void LoadScenarioScripts(PhxLib.Engine.BDatabaseBase db, string[] files, string scnr_dir)
 		{
 			foreach (var filename in files)
@@ -53,6 +62,7 @@ namespace Serina
 		{
 			var db = hw.Database;
 			string[] files;
+			string dir;
 
 			files = IO.Directory.GetFiles(hw.Directories.GetAbsoluteDirectory(
 				PhxLib.Engine.ContentStorage.Game,
@@ -64,11 +74,23 @@ namespace Serina
 				PhxLib.Engine.GameDirectory.TriggerScripts));
 			LoadTriggerScripts(db, files);
 
-			string scnr_dir = hw.Directories.GetAbsoluteDirectory(
+			dir = hw.Directories.GetAbsoluteDirectory(
+				PhxLib.Engine.ContentStorage.Game,
+				PhxLib.Engine.GameDirectory.AbilityScripts);
+			files = IO.Directory.GetFiles(dir, "*.ability", IO.SearchOption.AllDirectories);
+			LoadTriggerScripts(db, files, dir, PhxLib.Engine.BTriggerScriptType.Ability);
+
+			dir = hw.Directories.GetAbsoluteDirectory(
+				PhxLib.Engine.ContentStorage.Game,
+				PhxLib.Engine.GameDirectory.PowerScripts);
+			files = IO.Directory.GetFiles(dir, "*.power", IO.SearchOption.AllDirectories);
+			LoadTriggerScripts(db, files, dir, PhxLib.Engine.BTriggerScriptType.Power);
+
+			dir = hw.Directories.GetAbsoluteDirectory(
 				PhxLib.Engine.ContentStorage.Game,
 				PhxLib.Engine.GameDirectory.Scenario);
-			files = IO.Directory.GetFiles(scnr_dir, "*.scn", IO.SearchOption.AllDirectories);
-			LoadScenarioScripts(db, files, scnr_dir);
+			files = IO.Directory.GetFiles(dir, "*.scn", IO.SearchOption.AllDirectories);
+			LoadScenarioScripts(db, files, dir);
 		}
 
 		protected override void OnStartup(StartupEventArgs e)
@@ -76,6 +98,7 @@ namespace Serina
 // 			string lc = System.Globalization.CultureInfo.CurrentCulture.Name;
 
 			const string kGameRoot = @"C:\Users\Sean\Downloads\HW\Release\";
+			const string kGameRootAlpha = @"C:\Users\Sean\Downloads\HW\phx_alpha\";
 			const string kUpdateRoot = @"C:\Users\Sean\Downloads\HW\phx_tu6\";
 			const string kXmlPhxApp = @"C:\Users\Sean\Downloads\HW\_Serina\";
 

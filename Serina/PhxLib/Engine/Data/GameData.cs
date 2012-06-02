@@ -160,7 +160,8 @@ namespace PhxLib.Engine
 		{
 			xs.StreamXmlForDBID(s, mode, kXmlAttrBase, ref mBaseObjectID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
 			xs.StreamXmlForDBID(s, mode, kXmlAttrInfected, ref mInfectedObjectID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
-			xs.StreamXmlForDBID(s, mode, kXmlAttrInfectedSquad, ref mInfectedSquadID, DatabaseObjectKind.Squad, false, XML.Util.kSourceAttr);
+			if(xs.Database.Engine.Build != PhxEngineBuild.Alpha)
+				xs.StreamXmlForDBID(s, mode, kXmlAttrInfectedSquad, ref mInfectedSquadID, DatabaseObjectKind.Squad, false, XML.Util.kSourceAttr);
 		}
 		#endregion
 	};
