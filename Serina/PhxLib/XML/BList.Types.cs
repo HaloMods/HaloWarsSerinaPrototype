@@ -373,12 +373,12 @@ namespace PhxLib.XML
 
 			ListExplicitIndex.InitializeItem(index);
 			int value = 0;
-			s.ReadCursor(KSoft.NumeralBase.Decimal, ref value);
+			s.ReadCursor(ref value);
 			ListExplicitIndex[index] = value;
 		}
 		protected override void WriteXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, int data)
 		{
-			s.WriteCursor(KSoft.NumeralBase.Decimal, data);
+			s.WriteCursor(data);
 		}
 		#endregion
 	};

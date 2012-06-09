@@ -621,8 +621,8 @@ namespace PhxLib.Engine
 		{
 			base.StreamXml(s, mode, xs);
 
-			s.StreamAttributeOpt(mode, kXmlAttrId, KSoft.NumeralBase.Decimal, ref mId, Util.kNotInvalidPredicate);
-			s.StreamElementOpt(mode, kXmlElementObjectClass, ref mClassType, x => x != BProtoObjectClassType.Invalid);
+			s.StreamAttributeOpt(mode, kXmlAttrId, ref mId, Util.kNotInvalidPredicate);
+			s.StreamElementEnumOpt(mode, kXmlElementObjectClass, ref mClassType, x => x != BProtoObjectClassType.Invalid);
 
 			XML.Util.Serialize(s, mode, xs, Veterancy, BProtoObjectVeterancy.kBListExplicitIndexXmlParams);
 

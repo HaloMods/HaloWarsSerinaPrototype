@@ -126,7 +126,7 @@ namespace PhxLib.Engine
 		#region IXmlElementStreamable Members
 		protected virtual void StreamXmlDbId(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamAttribute(mode, kXmlAttrDbId, KSoft.NumeralBase.Decimal, ref mDbId);
+			s.StreamAttribute(mode, kXmlAttrDbId, ref mDbId);
 		}
 
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)

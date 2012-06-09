@@ -47,10 +47,10 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadCursor(string, ref sbyte)"/>
 		/// <seealso cref="WriteCursor(string, sbyte)"/>
-		public void StreamCursor(FA mode, NumeralBase num_base, ref sbyte value)
+		public void StreamCursor(FA mode, ref sbyte value, NumeralBase num_base = NumeralBase.Decimal)
 		{
-				 if (mode == FA.Read) ReadCursor(num_base, ref value);
-			else if (mode == FA.Write) WriteCursor(num_base, value);
+				 if (mode == FA.Read) ReadCursor(ref value, num_base);
+			else if (mode == FA.Write) WriteCursor(value, num_base);
 		}
 		/// <summary>Stream the Value of <see cref="Cursor"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -58,10 +58,10 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadCursor(string, ref byte)"/>
 		/// <seealso cref="WriteCursor(string, byte)"/>
-		public void StreamCursor(FA mode, NumeralBase num_base, ref byte value)
+		public void StreamCursor(FA mode, ref byte value, NumeralBase num_base = NumeralBase.Decimal)
 		{
-				 if (mode == FA.Read) ReadCursor(num_base, ref value);
-			else if (mode == FA.Write) WriteCursor(num_base, value);
+				 if (mode == FA.Read) ReadCursor(ref value, num_base);
+			else if (mode == FA.Write) WriteCursor(value, num_base);
 		}
 		/// <summary>Stream the Value of <see cref="Cursor"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -69,10 +69,10 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadCursor(string, ref short)"/>
 		/// <seealso cref="WriteCursor(string, short)"/>
-		public void StreamCursor(FA mode, NumeralBase num_base, ref short value)
+		public void StreamCursor(FA mode, ref short value, NumeralBase num_base = NumeralBase.Decimal)
 		{
-				 if (mode == FA.Read) ReadCursor(num_base, ref value);
-			else if (mode == FA.Write) WriteCursor(num_base, value);
+				 if (mode == FA.Read) ReadCursor(ref value, num_base);
+			else if (mode == FA.Write) WriteCursor(value, num_base);
 		}
 		/// <summary>Stream the Value of <see cref="Cursor"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -80,10 +80,10 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadCursor(string, ref ushort)"/>
 		/// <seealso cref="WriteCursor(string, ushort)"/>
-		public void StreamCursor(FA mode, NumeralBase num_base, ref ushort value)
+		public void StreamCursor(FA mode, ref ushort value, NumeralBase num_base = NumeralBase.Decimal)
 		{
-				 if (mode == FA.Read) ReadCursor(num_base, ref value);
-			else if (mode == FA.Write) WriteCursor(num_base, value);
+				 if (mode == FA.Read) ReadCursor(ref value, num_base);
+			else if (mode == FA.Write) WriteCursor(value, num_base);
 		}
 		/// <summary>Stream the Value of <see cref="Cursor"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -91,10 +91,10 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadCursor(string, ref int)"/>
 		/// <seealso cref="WriteCursor(string, int)"/>
-		public void StreamCursor(FA mode, NumeralBase num_base, ref int value)
+		public void StreamCursor(FA mode, ref int value, NumeralBase num_base = NumeralBase.Decimal)
 		{
-				 if (mode == FA.Read) ReadCursor(num_base, ref value);
-			else if (mode == FA.Write) WriteCursor(num_base, value);
+				 if (mode == FA.Read) ReadCursor(ref value, num_base);
+			else if (mode == FA.Write) WriteCursor(value, num_base);
 		}
 		/// <summary>Stream the Value of <see cref="Cursor"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -102,10 +102,10 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadCursor(string, ref uint)"/>
 		/// <seealso cref="WriteCursor(string, uint)"/>
-		public void StreamCursor(FA mode, NumeralBase num_base, ref uint value)
+		public void StreamCursor(FA mode, ref uint value, NumeralBase num_base = NumeralBase.Decimal)
 		{
-				 if (mode == FA.Read) ReadCursor(num_base, ref value);
-			else if (mode == FA.Write) WriteCursor(num_base, value);
+				 if (mode == FA.Read) ReadCursor(ref value, num_base);
+			else if (mode == FA.Write) WriteCursor(value, num_base);
 		}
 		/// <summary>Stream the Value of <see cref="Cursor"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -113,10 +113,10 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadCursor(string, ref long)"/>
 		/// <seealso cref="WriteCursor(string, long)"/>
-		public void StreamCursor(FA mode, NumeralBase num_base, ref long value)
+		public void StreamCursor(FA mode, ref long value, NumeralBase num_base = NumeralBase.Decimal)
 		{
-				 if (mode == FA.Read) ReadCursor(num_base, ref value);
-			else if (mode == FA.Write) WriteCursor(num_base, value);
+				 if (mode == FA.Read) ReadCursor(ref value, num_base);
+			else if (mode == FA.Write) WriteCursor(value, num_base);
 		}
 		/// <summary>Stream the Value of <see cref="Cursor"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -124,10 +124,10 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadCursor(string, ref ulong)"/>
 		/// <seealso cref="WriteCursor(string, ulong)"/>
-		public void StreamCursor(FA mode, NumeralBase num_base, ref ulong value)
+		public void StreamCursor(FA mode, ref ulong value, NumeralBase num_base = NumeralBase.Decimal)
 		{
-				 if (mode == FA.Read) ReadCursor(num_base, ref value);
-			else if (mode == FA.Write) WriteCursor(num_base, value);
+				 if (mode == FA.Read) ReadCursor(ref value, num_base);
+			else if (mode == FA.Write) WriteCursor(value, num_base);
 		}
 		/// <summary>Stream the Value of <see cref="Cursor"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -156,10 +156,10 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <seealso cref="ReadCursor{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteCursor(string, Enum, bool)"/>
-		public void StreamCursor<TEnum>(FA mode, ref TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
+		public void StreamCursorEnum<TEnum>(FA mode, ref TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
-				 if (mode == FA.Read) ReadCursor(ref value);
-			else if (mode == FA.Write) WriteCursor(value);
+				 if (mode == FA.Read) ReadCursorEnum(ref value);
+			else if (mode == FA.Write) WriteCursorEnum(value, is_flags);
 		}
 		#endregion
 
@@ -225,12 +225,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadElement(string, NumeralBase, ref sbyte)"/>
 		/// <seealso cref="WriteElement(string, NumeralBase, sbyte)"/>
-		public void StreamElement(FA mode, string name, NumeralBase num_base, ref sbyte value)
+		public void StreamElement(FA mode, string name, ref sbyte value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadElement(name, num_base, ref value);
-			else if (mode == FA.Write) WriteElement(name, num_base, value);
+				 if (mode == FA.Read) ReadElement(name, ref value, num_base);
+			else if (mode == FA.Write) WriteElement(name, value, num_base);
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -239,12 +239,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadElement(string, NumeralBase, ref byte)"/>
 		/// <seealso cref="WriteElement(string, NumeralBase, byte)"/>
-		public void StreamElement(FA mode, string name, NumeralBase num_base, ref byte value)
+		public void StreamElement(FA mode, string name, ref byte value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadElement(name, num_base, ref value);
-			else if (mode == FA.Write) WriteElement(name, num_base, value);
+				 if (mode == FA.Read) ReadElement(name, ref value, num_base);
+			else if (mode == FA.Write) WriteElement(name, value, num_base);
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -253,12 +253,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadElement(string, NumeralBase, ref short)"/>
 		/// <seealso cref="WriteElement(string, NumeralBase, short)"/>
-		public void StreamElement(FA mode, string name, NumeralBase num_base, ref short value)
+		public void StreamElement(FA mode, string name, ref short value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadElement(name, num_base, ref value);
-			else if (mode == FA.Write) WriteElement(name, num_base, value);
+				 if (mode == FA.Read) ReadElement(name, ref value, num_base);
+			else if (mode == FA.Write) WriteElement(name, value, num_base);
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -267,12 +267,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadElement(string, NumeralBase, ref ushort)"/>
 		/// <seealso cref="WriteElement(string, NumeralBase, ushort)"/>
-		public void StreamElement(FA mode, string name, NumeralBase num_base, ref ushort value)
+		public void StreamElement(FA mode, string name, ref ushort value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadElement(name, num_base, ref value);
-			else if (mode == FA.Write) WriteElement(name, num_base, value);
+				 if (mode == FA.Read) ReadElement(name, ref value, num_base);
+			else if (mode == FA.Write) WriteElement(name, value, num_base);
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -281,12 +281,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadElement(string, NumeralBase, ref int)"/>
 		/// <seealso cref="WriteElement(string, NumeralBase, int)"/>
-		public void StreamElement(FA mode, string name, NumeralBase num_base, ref int value)
+		public void StreamElement(FA mode, string name, ref int value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadElement(name, num_base, ref value);
-			else if (mode == FA.Write) WriteElement(name, num_base, value);
+				 if (mode == FA.Read) ReadElement(name, ref value, num_base);
+			else if (mode == FA.Write) WriteElement(name, value, num_base);
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -295,12 +295,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadElement(string, NumeralBase, ref uint)"/>
 		/// <seealso cref="WriteElement(string, NumeralBase, uint)"/>
-		public void StreamElement(FA mode, string name, NumeralBase num_base, ref uint value)
+		public void StreamElement(FA mode, string name, ref uint value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadElement(name, num_base, ref value);
-			else if (mode == FA.Write) WriteElement(name, num_base, value);
+				 if (mode == FA.Read) ReadElement(name, ref value, num_base);
+			else if (mode == FA.Write) WriteElement(name, value, num_base);
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -309,12 +309,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadElement(string, NumeralBase, ref long)"/>
 		/// <seealso cref="WriteElement(string, NumeralBase, long)"/>
-		public void StreamElement(FA mode, string name, NumeralBase num_base, ref long value)
+		public void StreamElement(FA mode, string name, ref long value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadElement(name, num_base, ref value);
-			else if (mode == FA.Write) WriteElement(name, num_base, value);
+				 if (mode == FA.Read) ReadElement(name, ref value, num_base);
+			else if (mode == FA.Write) WriteElement(name, value, num_base);
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -323,12 +323,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadElement(string, NumeralBase, ref ulong)"/>
 		/// <seealso cref="WriteElement(string, NumeralBase, ulong)"/>
-		public void StreamElement(FA mode, string name, NumeralBase num_base, ref ulong value)
+		public void StreamElement(FA mode, string name, ref ulong value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadElement(name, num_base, ref value);
-			else if (mode == FA.Write) WriteElement(name, num_base, value);
+				 if (mode == FA.Read) ReadElement(name, ref value, num_base);
+			else if (mode == FA.Write) WriteElement(name, value, num_base);
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -364,12 +364,12 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <seealso cref="ReadElement{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteElement(string, Enum, bool)"/>
-		public void StreamElement<TEnum>(FA mode, string name, ref TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
+		public void StreamElementEnum<TEnum>(FA mode, string name, ref TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadElement(name, ref value);
-			else if (mode == FA.Write) WriteElement(name, value, is_flags);
+				 if (mode == FA.Read) ReadElementEnum(name, ref value);
+			else if (mode == FA.Write) WriteElementEnum(name, value, is_flags);
 		}
 		#endregion
 
@@ -440,15 +440,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadElementOpt(string, NumeralBase, ref sbyte)"/>
 		/// <seealso cref="WriteElementOptOnTrue(string, NumeralBase, sbyte, Predicate{sbyte})"/>
-		public bool StreamElementOpt(FA mode, string name, NumeralBase num_base, ref sbyte value, Predicate<sbyte> predicate)
+		public bool StreamElementOpt(FA mode, string name, ref sbyte value, Predicate<sbyte> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadElementOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadElementOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -460,15 +460,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadElementOpt(string, NumeralBase, ref byte)"/>
 		/// <seealso cref="WriteElementOptOnTrue(string, NumeralBase, byte, Predicate{byte})"/>
-		public bool StreamElementOpt(FA mode, string name, NumeralBase num_base, ref byte value, Predicate<byte> predicate)
+		public bool StreamElementOpt(FA mode, string name, ref byte value, Predicate<byte> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadElementOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadElementOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -480,15 +480,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadElementOpt(string, NumeralBase, ref short)"/>
 		/// <seealso cref="WriteElementOptOnTrue(string, NumeralBase, short, Predicate{short})"/>
-		public bool StreamElementOpt(FA mode, string name, NumeralBase num_base, ref short value, Predicate<short> predicate)
+		public bool StreamElementOpt(FA mode, string name, ref short value, Predicate<short> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadElementOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadElementOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -500,15 +500,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadElementOpt(string, NumeralBase, ref ushort)"/>
 		/// <seealso cref="WriteElementOptOnTrue(string, NumeralBase, ushort, Predicate{ushort})"/>
-		public bool StreamElementOpt(FA mode, string name, NumeralBase num_base, ref ushort value, Predicate<ushort> predicate)
+		public bool StreamElementOpt(FA mode, string name, ref ushort value, Predicate<ushort> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadElementOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadElementOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -520,15 +520,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadElementOpt(string, NumeralBase, ref int)"/>
 		/// <seealso cref="WriteElementOptOnTrue(string, NumeralBase, int, Predicate{int})"/>
-		public bool StreamElementOpt(FA mode, string name, NumeralBase num_base, ref int value, Predicate<int> predicate)
+		public bool StreamElementOpt(FA mode, string name, ref int value, Predicate<int> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadElementOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadElementOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -540,15 +540,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadElementOpt(string, NumeralBase, ref uint)"/>
 		/// <seealso cref="WriteElementOptOnTrue(string, NumeralBase, uint, Predicate{uint})"/>
-		public bool StreamElementOpt(FA mode, string name, NumeralBase num_base, ref uint value, Predicate<uint> predicate)
+		public bool StreamElementOpt(FA mode, string name, ref uint value, Predicate<uint> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadElementOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadElementOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -560,15 +560,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadElementOpt(string, NumeralBase, ref long)"/>
 		/// <seealso cref="WriteElementOptOnTrue(string, NumeralBase, long, Predicate{long})"/>
-		public bool StreamElementOpt(FA mode, string name, NumeralBase num_base, ref long value, Predicate<long> predicate)
+		public bool StreamElementOpt(FA mode, string name, ref long value, Predicate<long> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadElementOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadElementOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -580,15 +580,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadElementOpt(string, NumeralBase, ref ulong)"/>
 		/// <seealso cref="WriteElementOptOnTrue(string, NumeralBase, ulong, Predicate{ulong})"/>
-		public bool StreamElementOpt(FA mode, string name, NumeralBase num_base, ref ulong value, Predicate<ulong> predicate)
+		public bool StreamElementOpt(FA mode, string name, ref ulong value, Predicate<ulong> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadElementOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadElementOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of element <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -639,7 +639,7 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsElement"/> based Enum?</param>
 		/// <seealso cref="ReadElementOpt{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteElementOptOnTrue{TEnum}(string, Enum, Predicate{TEnum}, bool)"/>
-		public bool StreamElementOpt<TEnum>(FA mode, string name, ref TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
+		public bool StreamElementEnumOpt<TEnum>(FA mode, string name, ref TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
 			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -647,8 +647,8 @@ namespace KSoft.IO
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadElementOpt(name, ref value);
-			else if (mode == FA.Write) executed = WriteElementOptOnTrue(name, value, predicate);
+				 if (mode == FA.Read) executed = ReadElementEnumOpt(name, ref value);
+			else if (mode == FA.Write) executed = WriteElementEnumOptOnTrue(name, value, predicate, is_flags);
 			return executed;
 		}
 		#endregion
@@ -700,12 +700,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadAttribute(string, NumeralBase, ref sbyte)"/>
 		/// <seealso cref="WriteAttribute(string, NumeralBase, sbyte)"/>
-		public void StreamAttribute(FA mode, string name, NumeralBase num_base, ref sbyte value)
+		public void StreamAttribute(FA mode, string name, ref sbyte value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadAttribute(name, num_base, ref value);
-			else if (mode == FA.Write) WriteAttribute(name, num_base, value);
+				 if (mode == FA.Read) ReadAttribute(name, ref value, num_base);
+			else if (mode == FA.Write) WriteAttribute(name, value, num_base);
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -714,12 +714,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadAttribute(string, NumeralBase, ref byte)"/>
 		/// <seealso cref="WriteAttribute(string, NumeralBase, byte)"/>
-		public void StreamAttribute(FA mode, string name, NumeralBase num_base, ref byte value)
+		public void StreamAttribute(FA mode, string name, ref byte value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadAttribute(name, num_base, ref value);
-			else if (mode == FA.Write) WriteAttribute(name, num_base, value);
+				 if (mode == FA.Read) ReadAttribute(name, ref value, num_base);
+			else if (mode == FA.Write) WriteAttribute(name, value, num_base);
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -728,12 +728,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadAttribute(string, NumeralBase, ref short)"/>
 		/// <seealso cref="WriteAttribute(string, NumeralBase, short)"/>
-		public void StreamAttribute(FA mode, string name, NumeralBase num_base, ref short value)
+		public void StreamAttribute(FA mode, string name, ref short value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadAttribute(name, num_base, ref value);
-			else if (mode == FA.Write) WriteAttribute(name, num_base, value);
+				 if (mode == FA.Read) ReadAttribute(name, ref value, num_base);
+			else if (mode == FA.Write) WriteAttribute(name, value, num_base);
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -742,12 +742,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadAttribute(string, NumeralBase, ref ushort)"/>
 		/// <seealso cref="WriteAttribute(string, NumeralBase, ushort)"/>
-		public void StreamAttribute(FA mode, string name, NumeralBase num_base, ref ushort value)
+		public void StreamAttribute(FA mode, string name, ref ushort value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadAttribute(name, num_base, ref value);
-			else if (mode == FA.Write) WriteAttribute(name, num_base, value);
+				 if (mode == FA.Read) ReadAttribute(name, ref value, num_base);
+			else if (mode == FA.Write) WriteAttribute(name, value, num_base);
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -756,12 +756,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadAttribute(string, NumeralBase, ref int)"/>
 		/// <seealso cref="WriteAttribute(string, NumeralBase, int)"/>
-		public void StreamAttribute(FA mode, string name, NumeralBase num_base, ref int value)
+		public void StreamAttribute(FA mode, string name, ref int value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadAttribute(name, num_base, ref value);
-			else if (mode == FA.Write) WriteAttribute(name, num_base, value);
+				 if (mode == FA.Read) ReadAttribute(name, ref value, num_base);
+			else if (mode == FA.Write) WriteAttribute(name, value, num_base);
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -770,12 +770,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadAttribute(string, NumeralBase, ref uint)"/>
 		/// <seealso cref="WriteAttribute(string, NumeralBase, uint)"/>
-		public void StreamAttribute(FA mode, string name, NumeralBase num_base, ref uint value)
+		public void StreamAttribute(FA mode, string name, ref uint value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadAttribute(name, num_base, ref value);
-			else if (mode == FA.Write) WriteAttribute(name, num_base, value);
+				 if (mode == FA.Read) ReadAttribute(name, ref value, num_base);
+			else if (mode == FA.Write) WriteAttribute(name, value, num_base);
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -784,12 +784,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadAttribute(string, NumeralBase, ref long)"/>
 		/// <seealso cref="WriteAttribute(string, NumeralBase, long)"/>
-		public void StreamAttribute(FA mode, string name, NumeralBase num_base, ref long value)
+		public void StreamAttribute(FA mode, string name, ref long value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadAttribute(name, num_base, ref value);
-			else if (mode == FA.Write) WriteAttribute(name, num_base, value);
+				 if (mode == FA.Read) ReadAttribute(name, ref value, num_base);
+			else if (mode == FA.Write) WriteAttribute(name, value, num_base);
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -798,12 +798,12 @@ namespace KSoft.IO
 		/// <param name="value">Source or destination value</param>
 		/// <seealso cref="ReadAttribute(string, NumeralBase, ref ulong)"/>
 		/// <seealso cref="WriteAttribute(string, NumeralBase, ulong)"/>
-		public void StreamAttribute(FA mode, string name, NumeralBase num_base, ref ulong value)
+		public void StreamAttribute(FA mode, string name, ref ulong value, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadAttribute(name, num_base, ref value);
-			else if (mode == FA.Write) WriteAttribute(name, num_base, value);
+				 if (mode == FA.Read) ReadAttribute(name, ref value, num_base);
+			else if (mode == FA.Write) WriteAttribute(name, value, num_base);
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
 		/// <param name="mode">Read or Write</param>
@@ -839,12 +839,12 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <seealso cref="ReadElement{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteAttribute(string, Enum, bool)"/>
-		public void StreamAttribute<TEnum>(FA mode, string name, ref TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
+		public void StreamAttributeEnum<TEnum>(FA mode, string name, ref TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-				 if (mode == FA.Read) ReadAttribute(name, ref value);
-			else if (mode == FA.Write) WriteAttribute(name, value, is_flags);
+				 if (mode == FA.Read) ReadAttributeEnum(name, ref value);
+			else if (mode == FA.Write) WriteAttributeEnum(name, value, is_flags);
 		}
 		#endregion
 
@@ -915,15 +915,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadAttributeOpt(string, NumeralBase, ref sbyte)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue(string, NumeralBase, sbyte, Predicate{sbyte})"/>
-		public bool StreamAttributeOpt(FA mode, string name, NumeralBase num_base, ref sbyte value, Predicate<sbyte> predicate)
+		public bool StreamAttributeOpt(FA mode, string name, ref sbyte value, Predicate<sbyte> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadAttributeOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadAttributeOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -935,15 +935,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadAttributeOpt(string, NumeralBase, ref byte)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue(string, NumeralBase, byte, Predicate{byte})"/>
-		public bool StreamAttributeOpt(FA mode, string name, NumeralBase num_base, ref byte value, Predicate<byte> predicate)
+		public bool StreamAttributeOpt(FA mode, string name, ref byte value, Predicate<byte> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadAttributeOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadAttributeOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -955,15 +955,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadAttributeOpt(string, NumeralBase, ref short)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue(string, NumeralBase, short, Predicate{short})"/>
-		public bool StreamAttributeOpt(FA mode, string name, NumeralBase num_base, ref short value, Predicate<short> predicate)
+		public bool StreamAttributeOpt(FA mode, string name, ref short value, Predicate<short> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadAttributeOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadAttributeOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -975,15 +975,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadAttributeOpt(string, NumeralBase, ref ushort)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue(string, NumeralBase, ushort, Predicate{ushort})"/>
-		public bool StreamAttributeOpt(FA mode, string name, NumeralBase num_base, ref ushort value, Predicate<ushort> predicate)
+		public bool StreamAttributeOpt(FA mode, string name, ref ushort value, Predicate<ushort> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadAttributeOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadAttributeOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -995,15 +995,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadAttributeOpt(string, NumeralBase, ref int)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue(string, NumeralBase, int, Predicate{int})"/>
-		public bool StreamAttributeOpt(FA mode, string name, NumeralBase num_base, ref int value, Predicate<int> predicate)
+		public bool StreamAttributeOpt(FA mode, string name, ref int value, Predicate<int> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadAttributeOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadAttributeOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -1015,15 +1015,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadAttributeOpt(string, NumeralBase, ref uint)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue(string, NumeralBase, uint, Predicate{uint})"/>
-		public bool StreamAttributeOpt(FA mode, string name, NumeralBase num_base, ref uint value, Predicate<uint> predicate)
+		public bool StreamAttributeOpt(FA mode, string name, ref uint value, Predicate<uint> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadAttributeOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadAttributeOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -1035,15 +1035,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadAttributeOpt(string, NumeralBase, ref long)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue(string, NumeralBase, long, Predicate{long})"/>
-		public bool StreamAttributeOpt(FA mode, string name, NumeralBase num_base, ref long value, Predicate<long> predicate)
+		public bool StreamAttributeOpt(FA mode, string name, ref long value, Predicate<long> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadAttributeOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadAttributeOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -1055,15 +1055,15 @@ namespace KSoft.IO
 		/// <returns>True if <paramref name="value"/> was read/written from/to stream</returns>
 		/// <seealso cref="ReadAttributeOpt(string, NumeralBase, ref ulong)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue(string, NumeralBase, ulong, Predicate{ulong})"/>
-		public bool StreamAttributeOpt(FA mode, string name, NumeralBase num_base, ref ulong value, Predicate<ulong> predicate)
+		public bool StreamAttributeOpt(FA mode, string name, ref ulong value, Predicate<ulong> predicate, NumeralBase num_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadAttributeOpt(name, num_base, ref value);
-			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, num_base, value, predicate);
+				 if (mode == FA.Read) executed = ReadAttributeOpt(name, ref value, num_base);
+			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, value, predicate, num_base);
 			return executed;
 		}
 		/// <summary>Stream the Value of attribute <paramref name="name"/> to or from <paramref name="value"/></summary>
@@ -1114,7 +1114,7 @@ namespace KSoft.IO
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <seealso cref="ReadAttributeOpt{TEnum}(string, ref TEnum)"/>
 		/// <seealso cref="WriteAttributeOptOnTrue{TEnum}(string, Enum, Predicate{TEnum}, bool)"/>
-		public bool StreamAttributeOpt<TEnum>(FA mode, string name, ref TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
+		public bool StreamAttributeEnumOpt<TEnum>(FA mode, string name, ref TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
 			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1122,8 +1122,8 @@ namespace KSoft.IO
 			if (predicate == null) predicate = x => true;
 
 			bool executed = false;
-				 if (mode == FA.Read) executed = ReadAttributeOpt(name, ref value);
-			else if (mode == FA.Write) executed = WriteAttributeOptOnTrue(name, value, predicate);
+				 if (mode == FA.Read) executed = ReadAttributeEnumOpt(name, ref value);
+			else if (mode == FA.Write) executed = WriteAttributeEnumOptOnTrue(name, value, predicate, is_flags);
 			return executed;
 		}
 		#endregion

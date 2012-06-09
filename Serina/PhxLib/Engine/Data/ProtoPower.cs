@@ -150,9 +150,9 @@ namespace PhxLib.Engine
 				// TargetEffectiveness
 				XML.Util.Serialize(s, mode, xs, Populations, BPopulation.kBListXmlParamsSingle_LowerCase);
 
-				s.StreamElementOpt(mode, kXmlElementPowerType, ref mPowerType, e => e != BPowerType.None);
-				s.StreamElementOpt(mode, kXmlElementAutoRecharge, ref mAutoRecharge, Util.kNotInvalidPredicateSingle);
-				s.StreamElementOpt(mode, kXmlElementUseLimit, ref mUseLimit, Util.kNotInvalidPredicate);
+				s.StreamElementEnumOpt(mode, kXmlElementPowerType, ref mPowerType, e => e != BPowerType.None);
+				s.StreamElementOpt    (mode, kXmlElementAutoRecharge, ref mAutoRecharge, Util.kNotInvalidPredicateSingle);
+				s.StreamElementOpt    (mode, kXmlElementUseLimit, ref mUseLimit, Util.kNotInvalidPredicate);
 				StreamXmlFlags(s, mode);
 			}
 			s.StreamElementOpt(mode, kXmlElementTriggerScript, ref mTriggerScript, Util.kNotNullOrEmpty);

@@ -47,7 +47,7 @@ namespace PhxLib.Engine
 
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamAttribute(mode, kXmlAttrId, KSoft.NumeralBase.Decimal, ref mID);
+			s.StreamAttribute(mode, kXmlAttrId, ref mID);
 		}
 	};
 	/// <summary>Script objects which can be "commented" out</summary>
@@ -86,14 +86,14 @@ namespace PhxLib.Engine
 		protected void StreamType<TTypeEnum>(KSoft.IO.XmlElementStream s, FA mode, ref TTypeEnum type)
 			where TTypeEnum : struct, IFormattable
 		{
-			s.StreamAttribute(mode, kXmlAttrType, ref type);
+			s.StreamAttributeEnum(mode, kXmlAttrType, ref type);
 		}
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			base.StreamXml(s, mode, xs);
 
-			s.StreamAttribute(mode, kXmlAttrDbId, KSoft.NumeralBase.Decimal, ref mDbId);
-			s.StreamAttribute(mode, kXmlAttrVersion, KSoft.NumeralBase.Decimal, ref mVersion);
+			s.StreamAttribute(mode, kXmlAttrDbId, ref mDbId);
+			s.StreamAttribute(mode, kXmlAttrVersion, ref mVersion);
 			// Stream it last, so when we save it ourselves, the (relatively) fixed width stuff comes first
 //			XML.Util.StreamInternString(s, mode, kXmlAttrType, ref mTypeStr, false);
 		}
@@ -206,11 +206,11 @@ namespace PhxLib.Engine
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			s.StreamAttribute(mode, DatabaseNamedObject.kXmlAttrNameN, ref mName);
-			s.StreamAttribute(mode, kXmlAttrType, ref mType);
-			s.StreamAttribute(mode, kXmlAttrNextTriggerVar, KSoft.NumeralBase.Decimal, ref mNextTriggerVarID);
-			s.StreamAttribute(mode, kXmlAttrNextTrigger, KSoft.NumeralBase.Decimal, ref mNextTriggerID);
-			s.StreamAttribute(mode, kXmlAttrNextCondition, KSoft.NumeralBase.Decimal, ref mNextConditionID);
-			s.StreamAttribute(mode, kXmlAttrNextEffect, KSoft.NumeralBase.Decimal, ref mNextEffectID);
+			s.StreamAttributeEnum(mode, kXmlAttrType, ref mType);
+			s.StreamAttribute(mode, kXmlAttrNextTriggerVar, ref mNextTriggerVarID);
+			s.StreamAttribute(mode, kXmlAttrNextTrigger, ref mNextTriggerID);
+			s.StreamAttribute(mode, kXmlAttrNextCondition, ref mNextConditionID);
+			s.StreamAttribute(mode, kXmlAttrNextEffect, ref mNextEffectID);
 			s.StreamAttribute(mode, kXmlAttrExternal, ref mExternal);
 
 			using (s.EnterOwnerBookmark(this))

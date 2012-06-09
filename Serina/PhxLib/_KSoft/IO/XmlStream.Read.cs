@@ -13,6 +13,12 @@ namespace KSoft.IO
 
 		public bool ExceptionOnEnumParseFail { get; set; }
 
+		static int EnumToInt<TEnum>(TEnum value) where TEnum : struct, IConvertible
+		{
+			// Note: Enum's convertible implementation isn't efficient. Uses 'GetValue' which returns the value in a boxed object
+			return value.ToInt32(null);
+		}
+
 		bool ParseEnum<TEnum>(string str, out TEnum value) where TEnum : struct
 		{
 			bool result = Enum.TryParse<TEnum>(str, IgnoreCaseOnEnums, out value);
@@ -29,16 +35,13 @@ namespace KSoft.IO
 			TEnum value;
 			bool result = ParseEnum(str, out value);
 
-			if (result) int_value = value.ToInt32(null);
+			if (result) int_value = EnumToInt(value);
 
 			return result;
 		}
 		bool ParseEnumOpt<TEnum>(string str, out TEnum value) where TEnum : struct
 		{
 			bool result = Enum.TryParse<TEnum>(str, IgnoreCaseOnEnums, out value);
-
-			//if (!result && ExceptionOnEnumParseFail)
-			//	throw new ArgumentException("Parameter is not a member of " + typeof(TEnum), str);
 
 			return result;
 		}
@@ -49,7 +52,7 @@ namespace KSoft.IO
 			TEnum value;
 			bool result = ParseEnumOpt(str, out value);
 
-			if (result) int_value = value.ToInt32(null);
+			if (result) int_value = EnumToInt(value);
 
 			return result;
 		}
@@ -97,7 +100,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to read</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		void ReadElement(XmlElement n, NumeralBase from_base, ref sbyte value)
+		void ReadElement(XmlElement n, ref sbyte value, NumeralBase from_base)
 		{
 			value = Convert.ToSByte(GetInnerText(n), (int)from_base);
 		}
@@ -109,7 +112,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to read</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		void ReadElement(XmlElement n, NumeralBase from_base, ref byte value)	
+		void ReadElement(XmlElement n, ref byte value, NumeralBase from_base)
 		{
 			value = Convert.ToByte(GetInnerText(n), (int)from_base);
 		}
@@ -121,7 +124,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to read</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		void ReadElement(XmlElement n, NumeralBase from_base, ref short value)
+		void ReadElement(XmlElement n, ref short value, NumeralBase from_base)
 		{
 			value = Convert.ToInt16(GetInnerText(n), (int)from_base);
 		}
@@ -133,7 +136,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to read</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		void ReadElement(XmlElement n, NumeralBase from_base, ref ushort value)
+		void ReadElement(XmlElement n, ref ushort value, NumeralBase from_base)
 		{
 			value = Convert.ToUInt16(GetInnerText(n), (int)from_base);
 		}
@@ -145,7 +148,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to read</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		void ReadElement(XmlElement n, NumeralBase from_base, ref int value)
+		void ReadElement(XmlElement n, ref int value, NumeralBase from_base)
 		{
 			value = Convert.ToInt32(GetInnerText(n), (int)from_base);
 		}
@@ -157,7 +160,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to read</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		void ReadElement(XmlElement n, NumeralBase from_base, ref uint value)
+		void ReadElement(XmlElement n, ref uint value, NumeralBase from_base)
 		{
 			value = Convert.ToUInt32(GetInnerText(n), (int)from_base);
 		}
@@ -169,7 +172,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to read</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		void ReadElement(XmlElement n, NumeralBase from_base, ref long value)
+		void ReadElement(XmlElement n, ref long value, NumeralBase from_base)
 		{
 			value = Convert.ToInt64(GetInnerText(n), (int)from_base);
 		}
@@ -181,7 +184,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to read</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		void ReadElement(XmlElement n, NumeralBase from_base, ref ulong value)
+		void ReadElement(XmlElement n, ref ulong value, NumeralBase from_base)
 		{
 			value = Convert.ToUInt64(GetInnerText(n), (int)from_base);
 		}
@@ -203,7 +206,7 @@ namespace KSoft.IO
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="n">Node element to read</param>
 		/// <param name="enum_value">value to receive the data</param>
-		void ReadElement<TEnum>(XmlElement n, ref TEnum enum_value) where TEnum : struct
+		void ReadElementEnum<TEnum>(XmlElement n, ref TEnum enum_value) where TEnum : struct
 		{
 			ParseEnum<TEnum>(GetInnerText(n), out enum_value);
 		}
@@ -211,7 +214,7 @@ namespace KSoft.IO
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="n">Node element to read</param>
 		/// <param name="enum_value">value to receive the data</param>
-		void ReadElement<TEnum>(XmlElement n, ref int enum_value) where TEnum : struct, IConvertible
+		void ReadElementEnum<TEnum>(XmlElement n, ref int enum_value) where TEnum : struct, IConvertible
 		{
 			ParseEnum<TEnum>(GetInnerText(n), out enum_value);
 		}
@@ -250,9 +253,9 @@ namespace KSoft.IO
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadCursor(NumeralBase from_base, ref sbyte value)
+		public void ReadCursor(ref sbyte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
-			ReadElement(Cursor, from_base, ref value);
+			ReadElement(Cursor, ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the Value of <see cref="Cursor"/>
@@ -260,9 +263,9 @@ namespace KSoft.IO
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadCursor(NumeralBase from_base, ref byte value)	
+		public void ReadCursor(ref byte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
-			ReadElement(Cursor, from_base, ref value);
+			ReadElement(Cursor, ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the Value of <see cref="Cursor"/>
@@ -270,9 +273,9 @@ namespace KSoft.IO
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadCursor(NumeralBase from_base, ref short value)
+		public void ReadCursor(ref short value, NumeralBase from_base = NumeralBase.Decimal)
 		{
-			ReadElement(Cursor, from_base, ref value);
+			ReadElement(Cursor, ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the Value of <see cref="Cursor"/>
@@ -280,9 +283,9 @@ namespace KSoft.IO
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadCursor(NumeralBase from_base, ref ushort value)
+		public void ReadCursor(ref ushort value, NumeralBase from_base = NumeralBase.Decimal)
 		{
-			ReadElement(Cursor, from_base, ref value);
+			ReadElement(Cursor, ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the Value of <see cref="Cursor"/>
@@ -290,9 +293,9 @@ namespace KSoft.IO
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadCursor(NumeralBase from_base, ref int value)
+		public void ReadCursor(ref int value, NumeralBase from_base = NumeralBase.Decimal)
 		{
-			ReadElement(Cursor, from_base, ref value);
+			ReadElement(Cursor, ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the Value of <see cref="Cursor"/>
@@ -300,9 +303,9 @@ namespace KSoft.IO
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadCursor(NumeralBase from_base, ref uint value)
+		public void ReadCursor(ref uint value, NumeralBase from_base = NumeralBase.Decimal)
 		{
-			ReadElement(Cursor, from_base, ref value);
+			ReadElement(Cursor, ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the Value of <see cref="Cursor"/>
@@ -310,9 +313,9 @@ namespace KSoft.IO
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadCursor(NumeralBase from_base, ref long value)
+		public void ReadCursor(ref long value, NumeralBase from_base = NumeralBase.Decimal)
 		{
-			ReadElement(Cursor, from_base, ref value);
+			ReadElement(Cursor, ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the Value of<see cref="Cursor"/>
@@ -320,9 +323,9 @@ namespace KSoft.IO
 		/// </summary>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadCursor(NumeralBase from_base, ref ulong value)
+		public void ReadCursor(ref ulong value, NumeralBase from_base = NumeralBase.Decimal)
 		{
-			ReadElement(Cursor, from_base, ref value);
+			ReadElement(Cursor, ref value, from_base);
 		}
 		/// <summary>Stream out the Value of <see cref="Cursor"/> into <paramref name="value"/></summary>
 		/// <param name="value">value to receive the data</param>
@@ -339,16 +342,16 @@ namespace KSoft.IO
 		/// <summary>Stream out the Value of <see cref="Cursor"/> into the enum <paramref name="value"/></summary>
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="enum_value">value to receive the data</param>
-		public void ReadCursor<TEnum>(ref TEnum enum_value) where TEnum : struct
+		public void ReadCursorEnum<TEnum>(ref TEnum enum_value) where TEnum : struct
 		{
-			ReadElement(Cursor, ref enum_value);
+			ReadElementEnum(Cursor, ref enum_value);
 		}
 		/// <summary>Stream out the Value of <see cref="Cursor"/> into the enum <paramref name="value"/></summary>
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="enum_value">value to receive the data</param>
-		public void ReadCursor<TEnum>(ref int enum_value) where TEnum : struct, IConvertible
+		public void ReadCursorEnum<TEnum>(ref int enum_value) where TEnum : struct, IConvertible
 		{
-			ReadElement(Cursor, ref enum_value);
+			ReadElementEnum(Cursor, ref enum_value);
 		}
 		#endregion
 
@@ -416,11 +419,11 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadElement(string name, NumeralBase from_base, ref sbyte value)
+		public void ReadElement(string name, ref sbyte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), from_base, ref value);
+			ReadElement(GetElement(name), ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the InnerText of element <paramref name="name"/>
@@ -430,11 +433,11 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadElement(string name, NumeralBase from_base, ref byte value)	
+		public void ReadElement(string name, ref byte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), from_base, ref value);
+			ReadElement(GetElement(name), ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the InnerText of element <paramref name="name"/>
@@ -444,11 +447,11 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadElement(string name, NumeralBase from_base, ref short value)
+		public void ReadElement(string name, ref short value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), from_base, ref value);
+			ReadElement(GetElement(name), ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the InnerText of element <paramref name="name"/>
@@ -458,11 +461,11 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadElement(string name, NumeralBase from_base, ref ushort value)
+		public void ReadElement(string name, ref ushort value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), from_base, ref value);
+			ReadElement(GetElement(name), ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the InnerText of element <paramref name="name"/>
@@ -472,11 +475,11 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadElement(string name, NumeralBase from_base, ref int value)
+		public void ReadElement(string name, ref int value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), from_base, ref value);
+			ReadElement(GetElement(name), ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the InnerText of element <paramref name="name"/>
@@ -486,11 +489,11 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadElement(string name, NumeralBase from_base, ref uint value)
+		public void ReadElement(string name, ref uint value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), from_base, ref value);
+			ReadElement(GetElement(name), ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the InnerText of element <paramref name="name"/>
@@ -500,11 +503,11 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadElement(string name, NumeralBase from_base, ref long value)
+		public void ReadElement(string name, ref long value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), from_base, ref value);
+			ReadElement(GetElement(name), ref value, from_base);
 		}
 		/// <summary>
 		/// Stream out the InnerText of element <paramref name="name"/>
@@ -514,11 +517,11 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadElement(string name, NumeralBase from_base, ref ulong value)
+		public void ReadElement(string name, ref ulong value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), from_base, ref value);
+			ReadElement(GetElement(name), ref value, from_base);
 		}
 		/// <summary>Stream out the InnerText of element <paramref name="name"/> into <paramref name="value"/></summary>
 		/// <param name="name">Element name</param>
@@ -542,21 +545,21 @@ namespace KSoft.IO
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="name">Element name</param>
 		/// <param name="enum_value">value to receive the data</param>
-		public void ReadElement<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
+		public void ReadElementEnum<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), ref enum_value);
+			ReadElementEnum(GetElement(name), ref enum_value);
 		}
 		/// <summary>Stream out the InnerText of element <paramref name="name"/> into the enum <paramref name="value"/></summary>
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="name">Element name</param>
 		/// <param name="enum_value">value to receive the data</param>
-		public void ReadElement<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
+		public void ReadElementEnum<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			ReadElement(GetElement(name), ref enum_value);
+			ReadElementEnum(GetElement(name), ref enum_value);
 		}
 		#endregion
 
@@ -609,7 +612,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadAttribute(string name, NumeralBase from_base, ref sbyte value)
+		public void ReadAttribute(string name, ref sbyte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -623,7 +626,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadAttribute(string name, NumeralBase from_base, ref byte value)
+		public void ReadAttribute(string name, ref byte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -637,7 +640,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadAttribute(string name, NumeralBase from_base, ref short value)
+		public void ReadAttribute(string name, ref short value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -651,7 +654,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadAttribute(string name, NumeralBase from_base, ref ushort value)
+		public void ReadAttribute(string name, ref ushort value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -665,7 +668,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadAttribute(string name, NumeralBase from_base, ref int value)
+		public void ReadAttribute(string name, ref int value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -679,7 +682,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadAttribute(string name, NumeralBase from_base, ref uint value)
+		public void ReadAttribute(string name, ref uint value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -693,7 +696,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadAttribute(string name, NumeralBase from_base, ref long value)
+		public void ReadAttribute(string name, ref long value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -707,7 +710,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		public void ReadAttribute(string name, NumeralBase from_base, ref ulong value)
+		public void ReadAttribute(string name, ref ulong value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -735,7 +738,7 @@ namespace KSoft.IO
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="name">Attribute name</param>
 		/// <param name="enum_value">enum value to receive the data</param>
-		public void ReadAttribute<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
+		public void ReadAttributeEnum<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -745,7 +748,7 @@ namespace KSoft.IO
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="name">Attribute name</param>
 		/// <param name="enum_value">enum value to receive the data</param>
-		public void ReadAttribute<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
+		public void ReadAttributeEnum<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -773,7 +776,7 @@ namespace KSoft.IO
 		/// <summary>Stream out the InnerText of element <paramref name="name"/> into <paramref name="value"/></summary>
 		/// <param name="name">Element name</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
 		public bool ReadElementOpt(string name, ref string value)
 		{
@@ -786,7 +789,7 @@ namespace KSoft.IO
 		/// <summary>Stream out the InnerText of element <paramref name="name"/> into <paramref name="value"/></summary>
 		/// <param name="name">Element name</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
 		public bool ReadElementOpt(string name, ref char value)
 		{
@@ -799,7 +802,7 @@ namespace KSoft.IO
 		/// <summary>Stream out the InnerText of element <paramref name="name"/> into <paramref name="value"/></summary>
 		/// <param name="name">Element name</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
 		public bool ReadElementOpt(string name, ref bool value)
 		{
@@ -817,9 +820,9 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt(string name, NumeralBase from_base, ref sbyte value)
+		public bool ReadElementOpt(string name, ref sbyte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -835,9 +838,9 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt(string name, NumeralBase from_base, ref byte value)
+		public bool ReadElementOpt(string name, ref byte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -853,9 +856,9 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt(string name, NumeralBase from_base, ref short value)
+		public bool ReadElementOpt(string name, ref short value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -871,9 +874,9 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt(string name, NumeralBase from_base, ref ushort value)
+		public bool ReadElementOpt(string name, ref ushort value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -889,9 +892,9 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt(string name, NumeralBase from_base, ref int value)
+		public bool ReadElementOpt(string name, ref int value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -907,9 +910,9 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt(string name, NumeralBase from_base, ref uint value)
+		public bool ReadElementOpt(string name, ref uint value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -925,9 +928,9 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt(string name, NumeralBase from_base, ref long value)
+		public bool ReadElementOpt(string name, ref long value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -943,9 +946,9 @@ namespace KSoft.IO
 		/// <param name="name">Element name</param>
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt(string name, NumeralBase from_base, ref ulong value)
+		public bool ReadElementOpt(string name, ref ulong value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -956,7 +959,7 @@ namespace KSoft.IO
 		/// <summary>Stream out the InnerText of element <paramref name="name"/> into <paramref name="value"/></summary>
 		/// <param name="name">Element name</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
 		public bool ReadElementOpt(string name, ref float value)
 		{
@@ -969,7 +972,7 @@ namespace KSoft.IO
 		/// <summary>Stream out the InnerText of element <paramref name="name"/> into <paramref name="value"/></summary>
 		/// <param name="name">Element name</param>
 		/// <param name="value">value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
 		public bool ReadElementOpt(string name, ref double value)
 		{
@@ -983,9 +986,9 @@ namespace KSoft.IO
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="name">Element name</param>
 		/// <param name="enum_value">enum value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
+		public bool ReadElementEnumOpt<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -996,9 +999,9 @@ namespace KSoft.IO
 		/// <typeparam name="TEnum">Enumeration type</typeparam>
 		/// <param name="name">Element name</param>
 		/// <param name="enum_value">enum value to receive the data</param>
-		/// <remarks>If inner text is just an empty string, the stream ignores it's existence</remarks>
+		/// <remarks>If inner text is just an empty string, the stream ignores its existence</remarks>
 		/// <returns>true if the value exists</returns>
-		public bool ReadElementOpt<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
+		public bool ReadElementEnumOpt<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1065,7 +1068,7 @@ namespace KSoft.IO
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt(string name, NumeralBase from_base, ref sbyte value)
+		public bool ReadAttributeOpt(string name, ref sbyte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1082,7 +1085,7 @@ namespace KSoft.IO
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt(string name, NumeralBase from_base, ref byte value)
+		public bool ReadAttributeOpt(string name, ref byte value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1099,7 +1102,7 @@ namespace KSoft.IO
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt(string name, NumeralBase from_base, ref short value)
+		public bool ReadAttributeOpt(string name, ref short value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1116,7 +1119,7 @@ namespace KSoft.IO
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt(string name, NumeralBase from_base, ref ushort value)
+		public bool ReadAttributeOpt(string name, ref ushort value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1133,7 +1136,7 @@ namespace KSoft.IO
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt(string name, NumeralBase from_base, ref int value)
+		public bool ReadAttributeOpt(string name, ref int value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1150,7 +1153,7 @@ namespace KSoft.IO
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt(string name, NumeralBase from_base, ref uint value)
+		public bool ReadAttributeOpt(string name, ref uint value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1167,7 +1170,7 @@ namespace KSoft.IO
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt(string name, NumeralBase from_base, ref long value)
+		public bool ReadAttributeOpt(string name, ref long value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1184,7 +1187,7 @@ namespace KSoft.IO
 		/// <param name="from_base">numerical base to use</param>
 		/// <param name="value">value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt(string name, NumeralBase from_base, ref ulong value)
+		public bool ReadAttributeOpt(string name, ref ulong value, NumeralBase from_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1221,7 +1224,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="enum_value">enum value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
+		public bool ReadAttributeEnumOpt<TEnum>(string name, ref TEnum enum_value) where TEnum : struct
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
@@ -1233,7 +1236,7 @@ namespace KSoft.IO
 		/// <param name="name">Attribute name</param>
 		/// <param name="enum_value">enum value to receive the data</param>
 		/// <returns>true if the value exists</returns>
-		public bool ReadAttributeOpt<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
+		public bool ReadAttributeEnumOpt<TEnum>(string name, ref int enum_value) where TEnum : struct, IConvertible
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 

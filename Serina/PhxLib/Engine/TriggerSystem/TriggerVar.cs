@@ -536,8 +536,8 @@ namespace PhxLib.Engine
 		{
 			base.StreamXml(s, mode, xs);
 
-			s.StreamAttribute(mode, kXmlAttrType, ref mType);
-			s.StreamAttribute(mode, kXmlAttrIsNull, ref mIsNull);
+			s.StreamAttributeEnum(mode, kXmlAttrType, ref mType);
+			s.StreamAttribute    (mode, kXmlAttrIsNull, ref mIsNull);
 			//s.StreamCursor(mode, ref mValue);
 		}
 	};

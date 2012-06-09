@@ -24,7 +24,7 @@ namespace PhxLib.Engine
 		#region IXmlElementStreamable Members
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamAttribute(mode, kXmlAttrType, ref mType);
+			s.StreamAttributeEnum(mode, kXmlAttrType, ref mType);
 		}
 		#endregion
 	};
@@ -60,7 +60,7 @@ namespace PhxLib.Engine
 		#region BListAutoIdObject Members
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamAttribute(mode, kXmlAttrDbId, KSoft.NumeralBase.Decimal, ref mDbId);
+			s.StreamAttribute(mode, kXmlAttrDbId, ref mDbId);
 			XML.Util.Serialize(s, mode, xs, Fields, BUserClassField.kBListXmlParams);
 		}
 		#endregion
