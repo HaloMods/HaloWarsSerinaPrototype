@@ -46,8 +46,8 @@ namespace PhxLib.Engine
 
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamAttribute(mode, kXmlAttrDbId, KSoft.NumeralBase.Decimal, ref mDbId);
-			s.StreamAttribute(mode, kXmlAttrVersion, KSoft.NumeralBase.Decimal, ref mVersion);
+			s.StreamAttribute(mode, kXmlAttrDbId, ref mDbId);
+			s.StreamAttribute(mode, kXmlAttrVersion, ref mVersion);
 
 			XML.Util.Serialize(s, mode, xs, Params, BTriggerParam.kBListExplicitIndexXmlParams);
 		}
@@ -128,7 +128,7 @@ namespace PhxLib.Engine
 			{
 				if (!mUsedIds[x])
 				{
-					s.WriteElement("Unknown", KSoft.NumeralBase.Decimal, x);
+					s.WriteElement("Unknown", x);
 					count++;
 				}
 			}
@@ -146,9 +146,9 @@ namespace PhxLib.Engine
 					using (s.EnterCursorBookmark("Unknowns"))
 						return WriteUnknowns(s, mode, xs);
 				});
-				s.WriteAttribute("UnknownCount", KSoft.NumeralBase.Decimal, task_unknowns.Result);
-				s.WriteAttribute("ConditionsCount", KSoft.NumeralBase.Decimal, Conditions.Count);
-				s.WriteAttribute("EffectsCount", KSoft.NumeralBase.Decimal, Effects.Count);
+				s.WriteAttribute("UnknownCount", task_unknowns.Result);
+				s.WriteAttribute("ConditionsCount", Conditions.Count);
+				s.WriteAttribute("EffectsCount", Effects.Count);
 
 				Task.WaitAll(task_sort_cond, task_sort_effe);
 			}

@@ -434,7 +434,7 @@ namespace PhxLib.Engine
 			xs.StreamXmlForDBID(s, mode, kXmlElementProjectile, ref mProjectileObjectID, DatabaseObjectKind.Object);
 
 			xs.StreamXmlForDBID(s, mode, kXmlElementWeaponType, ref mWeaponTypeID, DatabaseObjectKind.WeaponType);
-			s.StreamElementOpt(mode, kXmlElementVisualAmmo, KSoft.NumeralBase.Decimal, ref mVisualAmmo, Util.kNotInvalidPredicate);
+			s.StreamElementOpt(mode, kXmlElementVisualAmmo, ref mVisualAmmo, Util.kNotInvalidPredicate);
 			//mTriggerScriptID
 
 			s.StreamElementOpt(mode, kXmlElementMinRange, ref mMinRange, Util.kNotInvalidPredicateSingle);
@@ -461,7 +461,7 @@ namespace PhxLib.Engine
 			#endregion
 			s.StreamElementOpt(mode, kXmlElementStasisHealToDrainRatio, ref mStasisHealToDrainRatio, Util.kNotInvalidPredicateSingle);
 
-			s.StreamElementOpt(mode, kXmlElementBounces, KSoft.NumeralBase.Decimal, ref mBounces, Util.kNotInvalidPredicateSByte);
+			s.StreamElementOpt(mode, kXmlElementBounces, ref mBounces, Util.kNotInvalidPredicateSByte);
 			s.StreamElementOpt(mode, kXmlElementBounceRange, ref mBounceRange, Util.kNotInvalidPredicateSingle);
 
 			s.StreamElementOpt(mode, kXmlElementMaxPullRange, ref mMaxPullRange, Util.kNotInvalidPredicateSingle);
@@ -625,15 +625,15 @@ namespace PhxLib.Engine
 		{
 			var td = s.Owner as BTacticData;
 
-			s.StreamElementOpt(mode, kXmlElementActionType, ref mActionType, kNotInvalidActionType);
+			s.StreamElementEnumOpt(mode, kXmlElementActionType, ref mActionType, kNotInvalidActionType);
 			s.StreamElementOpt(mode, kXmlElementProjectileSpread, ref mProjectileSpread, Util.kNotInvalidPredicateSingle);
 
 			xs.StreamXmlForDBID(s, mode, kXmlElementSquadType, ref mSquadTypeID, DatabaseObjectKind.Squad);
 			td.StreamXmlForID(s, mode, kXmlElementWeapon, ref mWeaponID, BTacticData.ObjectKind.Weapon);
 			td.StreamXmlForID(s, mode, kXmlElementLinkedAction, ref mLinkedActionID, BTacticData.ObjectKind.Action);
 
-			s.StreamElementOpt(mode, kXmlElementSquadMode, ref mSquadMode, kNotInvalidSquadMode);
-			s.StreamElementOpt(mode, kXmlElementNewSquadMode, ref mNewSquadMode, kNotInvalidSquadMode);
+			s.StreamElementEnumOpt(mode, kXmlElementSquadMode, ref mSquadMode, kNotInvalidSquadMode);
+			s.StreamElementEnumOpt(mode, kXmlElementNewSquadMode, ref mNewSquadMode, kNotInvalidSquadMode);
 #if false
 			td.StreamXmlForID(s, mode, kXmlElementNewTacticState, ref mNewTacticStateID, BTacticData.ObjectKind.TacticState);
 #endif
@@ -659,7 +659,7 @@ namespace PhxLib.Engine
 			td.StreamXmlForID(s, mode, kXmlElementSlaveAttackAction, ref mSlaveAttackActionID, BTacticData.ObjectKind.Action);
 			td.StreamXmlForID(s, mode, kXmlElementBaseDPSWeapon, ref mBaseDPSWeaponID, BTacticData.ObjectKind.Weapon);
 
-			s.StreamElementOpt(mode, kXmlElementPersistentActionType, ref mPersistentActionType, kNotInvalidActionType);
+			s.StreamElementEnumOpt(mode, kXmlElementPersistentActionType, ref mPersistentActionType, kNotInvalidActionType);
 
 			#region Duration
 			if (ShouldStreamDuration(s, mode)) using (s.EnterCursorBookmark(mode, kXmlElementDuration))
@@ -672,7 +672,7 @@ namespace PhxLib.Engine
 			#region AutoRepair
 			if (ShouldStreamAutoRepair(s, mode)) using (s.EnterCursorBookmark(mode, kXmlElementAutoRepair))
 			{
-				s.StreamAttribute(mode, kXmlElementAutoRepairAttrIdleTime, KSoft.NumeralBase.Decimal, ref mAutoRepairIdleTime);
+				s.StreamAttribute(mode, kXmlElementAutoRepairAttrIdleTime, ref mAutoRepairIdleTime);
 				s.StreamAttribute(mode, kXmlElementAutoRepairAttrThreshold, ref mAutoRepairThreshold);
 				s.StreamAttribute(mode, kXmlElementAutoRepairAttrSearchDistance, ref mAutoRepairSearchDistance);
 			}
@@ -691,7 +691,7 @@ namespace PhxLib.Engine
 #if false
 			xs.StreamXmlForStringID(s, mode, kXmlElementCount, ref mCountStringID);
 #endif
-			s.StreamElementOpt(mode, kXmlElementMaxNumUnitsPerformAction, KSoft.NumeralBase.Decimal, ref mMaxNumUnitsPerformAction, Util.kNotInvalidPredicate);
+			s.StreamElementOpt(mode, kXmlElementMaxNumUnitsPerformAction, ref mMaxNumUnitsPerformAction, Util.kNotInvalidPredicate);
 			s.StreamElementOpt(mode, kXmlElementDamageCharge, ref mDamageCharge, Util.kNotInvalidPredicateSingle);
 		}
 
@@ -773,9 +773,9 @@ namespace PhxLib.Engine
 		{
 			var td = s.Owner as BTacticData;
 
-			s.StreamElementOpt(mode, kXmlElementRelation, ref mRelation, e => e != BDiplomacy.Invalid);
-			if(!s.StreamElementOpt(mode, kXmlElementSquadMode, ref mSquadMode, e => e != BSquadMode.Invalid))
-				s.StreamElementOpt(mode, kXmlElementAutoTargetSquadMode, ref mAutoTargetSquadMode, e => e != BSquadMode.Invalid);
+			s.StreamElementEnumOpt(mode, kXmlElementRelation, ref mRelation, e => e != BDiplomacy.Invalid);
+			if(!s.StreamElementEnumOpt(mode, kXmlElementSquadMode, ref mSquadMode, e => e != BSquadMode.Invalid))
+				s.StreamElementEnumOpt(mode, kXmlElementAutoTargetSquadMode, ref mAutoTargetSquadMode, e => e != BSquadMode.Invalid);
 
 			XML.Util.Serialize(s, mode, xs, DamageTypes, kDamageTypeBListXmlParams);
 			XML.Util.Serialize(s, mode, xs, TargetTypes, kTargetTypeBListXmlParams);

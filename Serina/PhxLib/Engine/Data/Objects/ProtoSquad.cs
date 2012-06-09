@@ -78,7 +78,7 @@ namespace PhxLib.Engine
 		#region IXmlElementStreamable Members
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamAttribute(mode, kXmlAttrCount, KSoft.NumeralBase.Decimal, ref mCount);
+			s.StreamAttribute(mode, kXmlAttrCount, ref mCount);
 			xs.StreamXmlForDBID(s, mode, null, ref mUnitID, DatabaseObjectKind.Object, false, XML.Util.kSourceCursor);
 		}
 		#endregion

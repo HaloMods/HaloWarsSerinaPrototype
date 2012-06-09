@@ -90,9 +90,9 @@ namespace PhxLib.XML
 		protected static void StreamValue(KSoft.IO.XmlElementStream s, FA mode, string value_name, ref int value, 
 			bool use_inner_text, bool use_element)
 		{
-			if (use_inner_text)			s.StreamCursor(mode, KSoft.NumeralBase.Decimal, ref value);
-			else if (use_element)		s.StreamElement(mode, value_name, KSoft.NumeralBase.Decimal, ref value);
-			else if (value_name != null)s.StreamAttribute(mode, value_name, KSoft.NumeralBase.Decimal, ref value);
+			if (use_inner_text)			s.StreamCursor(mode, ref value);
+			else if (use_element)		s.StreamElement(mode, value_name, ref value);
+			else if (value_name != null)s.StreamAttribute(mode, value_name, ref value);
 		}
 		#endregion
 	};

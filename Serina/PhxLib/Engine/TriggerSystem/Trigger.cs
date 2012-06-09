@@ -54,11 +54,11 @@ namespace PhxLib.Engine
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			//if (mode == FA.Read) s.ReadCursorName(ref mType);
-			s.StreamAttribute(mode, kXmlAttrType, ref mType);
-			s.StreamAttribute(mode, kXmlAttrSigId, KSoft.NumeralBase.Decimal, ref mSigID);
+			s.StreamAttributeEnum(mode, kXmlAttrType, ref mType);
+			s.StreamAttribute(mode, kXmlAttrSigId, ref mSigID);
 			s.StreamAttribute(mode, DatabaseNamedObject.kXmlAttrNameN, ref mName);
 			s.StreamAttributeOpt(mode, kXmlAttrOptional, ref mOptional, Util.kNotFalsePredicate);
-			s.StreamCursor(mode, ref mVarType);
+			s.StreamCursorEnum(mode, ref mVarType);
 		}
 		#endregion
 
@@ -142,10 +142,10 @@ namespace PhxLib.Engine
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			if (mode == FA.Read) s.ReadCursorName(ref mType);
-			s.StreamAttribute(mode, kXmlAttrSigId, KSoft.NumeralBase.Decimal, ref mSigID);
+			s.StreamAttribute(mode, kXmlAttrSigId, ref mSigID);
 			s.StreamAttribute(mode, DatabaseNamedObject.kXmlAttrNameN, ref mName);
 			s.StreamAttribute(mode, kXmlAttrOptional, ref mOptional);
-			s.StreamCursor(mode, KSoft.NumeralBase.Decimal, ref mVarID);
+			s.StreamCursor(mode, ref mVarID);
 		}
 		#endregion
 
@@ -243,8 +243,8 @@ namespace PhxLib.Engine
 			base.StreamXml(s, mode, xs);
 
 			s.StreamAttribute(mode, kXmlAttrActive, ref mActive);
-			s.StreamAttribute(mode, kXmlAttrEvaluateFrequency, KSoft.NumeralBase.Decimal, ref mEvaluateFrequency);
-			s.StreamAttribute(mode, kXmlAttrEvalLimit, KSoft.NumeralBase.Decimal, ref mEvalLimit);
+			s.StreamAttribute(mode, kXmlAttrEvaluateFrequency, ref mEvaluateFrequency);
+			s.StreamAttribute(mode, kXmlAttrEvalLimit, ref mEvalLimit);
 			s.StreamAttribute(mode, kXmlAttrConditionalTrigger, ref mConditionalTrigger);
 
 			// These tags must exist no matter what :|

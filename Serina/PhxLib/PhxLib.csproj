@@ -196,15 +196,10 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PostSharp">
-      <HintPath>..\packages\PostSharp.2.1.6.15\lib\net20\PostSharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -218,6 +213,7 @@
     <Compile Include="Collections\BProtoEnum.cs" />
     <Compile Include="DataAnnotations\DatabaseObject.cs" />
     <Compile Include="DataAnnotations\Misc.cs" />
+    <Compile Include="DataAnnotations\PhxField.cs" />
     <Compile Include="Debug\Exceptions.cs" />
     <Compile Include="Debug\Trace.cs" />
     <Compile Include="Engine\Database\Database.ValuePooling.cs" />
@@ -285,6 +281,7 @@
     <Compile Include="_KSoft\Text\Util.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Engine\TriggerSystem\DatabaseBuilder\" />
     <Folder Include="RedShift\" />
     <Folder Include="Sim\" />
   </ItemGroup>

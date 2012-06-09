@@ -109,7 +109,7 @@ namespace PhxLib.Engine
 		#region IPhxXmlStreamable Members
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamAttribute(mode, kXmlAttrOperator, ref mTechStatus);
+			s.StreamAttributeEnum(mode, kXmlAttrOperator, ref mTechStatus);
 			xs.StreamXmlForDBID(s, mode, null, ref mTechID, DatabaseObjectKind.Object, false, XML.Util.kSourceCursor);
 		}
 		#endregion
@@ -136,9 +136,9 @@ namespace PhxLib.Engine
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			xs.StreamXmlForDBID(s, mode, kXmlAttrUnit, ref mUnitID, DatabaseObjectKind.Object, false, XML.Util.kSourceAttr);
-			if (!s.StreamAttributeOpt(mode, kXmlAttrOperator, ref mOperator, e => e != BProtoTechTypeCountOperator.None))
+			if (!s.StreamAttributeEnumOpt(mode, kXmlAttrOperator, ref mOperator, e => e != BProtoTechTypeCountOperator.None))
 				mOperator = BProtoTechTypeCountOperator.None;
-			if (!s.StreamAttributeOpt(mode, kXmlAttrCount, KSoft.NumeralBase.Decimal, ref mCount, Util.kNotInvalidPredicateInt16))
+			if (!s.StreamAttributeOpt(mode, kXmlAttrCount, ref mCount, Util.kNotInvalidPredicateInt16))
 				mCount = Util.kInvalidInt32;
 		}
 		#endregion
@@ -204,7 +204,7 @@ namespace PhxLib.Engine
 		}
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamAttribute(mode, kXmlAttrType, ref mType);
+			s.StreamAttributeEnum(mode, kXmlAttrType, ref mType);
 			StreamXmlValueID(s, mode, xs);
 		}
 		#endregion
@@ -272,7 +272,7 @@ namespace PhxLib.Engine
 						break;
 
 					case BProtoObjectCommandType.ChangeMode: // unused
-						s.StreamAttribute(mode, attr_name, ref CommandDataSM);
+						s.StreamAttributeEnum(mode, attr_name, ref CommandDataSM);
 						break;
 
 					case BProtoObjectCommandType.Ability:
@@ -285,7 +285,7 @@ namespace PhxLib.Engine
 			}
 			public void StreamCommand(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 			{
-				if (s.StreamAttributeOpt(mode, kXmlAttrODT_Command_Type, ref CommandType, e => e != BProtoObjectCommandType.Invalid))
+				if (s.StreamAttributeEnumOpt(mode, kXmlAttrODT_Command_Type, ref CommandType, e => e != BProtoObjectCommandType.Invalid))
 					StreamCommandData(s, mode, xs);
 			}
 			public void StreamDamageModifier(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
@@ -561,7 +561,7 @@ namespace PhxLib.Engine
 		}
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamAttribute(mode, kXmlAttrType, ref mType);
+			s.StreamAttributeEnum(mode, kXmlAttrType, ref mType);
 
 			bool stream_targets = false;
 			switch (mType)
@@ -569,10 +569,10 @@ namespace PhxLib.Engine
 				case BProtoTechEffectType.Data:
 					s.StreamAttributeOpt(mode, kXmlAttrAllActions, ref mAllActions, Util.kNotFalsePredicate);
 					XML.Util.StreamInternStringOpt(s, mode, kXmlAttrAction, ref mAction, false);
-					s.StreamAttribute(mode, kXmlAttrSubType, ref mDU.SubType);
+					s.StreamAttributeEnum   (mode, kXmlAttrSubType, ref mDU.SubType);
 					// e.g., SubType==Icon and these won't be used...TODO: is Icon the only one?
-					s.StreamAttributeOpt(mode, kXmlAttrAmount, ref mAmount, Util.kNotInvalidPredicateSingleNaN);
-					s.StreamAttributeOpt(mode, kXmlAttrRelativity, ref mRelativity, x => x != BObjectDataRelative.Invalid);
+					s.StreamAttributeOpt    (mode, kXmlAttrAmount, ref mAmount, Util.kNotInvalidPredicateSingleNaN);
+					s.StreamAttributeEnumOpt(mode, kXmlAttrRelativity, ref mRelativity, x => x != BObjectDataRelative.Invalid);
 					StreamXmlObjectData(s, mode, xs);
 					stream_targets = true;
 					break;
@@ -587,7 +587,7 @@ namespace PhxLib.Engine
 					break;
 				#region Unused
 				case BProtoTechEffectType.SetAge:
-					s.StreamCursor(mode, ref mDU.SetAgeLevel);
+					s.StreamCursorEnum(mode, ref mDU.SetAgeLevel);
 					break;
 				#endregion
 				case BProtoTechEffectType.GodPower:
@@ -665,7 +665,7 @@ namespace PhxLib.Engine
 		#region IXmlElementStreamable Members
 		protected override void StreamXmlDbId(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamElementOpt(mode, kXmlElementDbId, KSoft.NumeralBase.Decimal, ref mDbId, Util.kNotInvalidPredicate);
+			s.StreamElementOpt(mode, kXmlElementDbId, ref mDbId, Util.kNotInvalidPredicate);
 		}
 
 		bool ShouldStreamPrereqs(KSoft.IO.XmlElementStream s, FA mode)
@@ -685,7 +685,7 @@ namespace PhxLib.Engine
 		{
 			base.StreamXml(s, mode, xs);
 
-			s.StreamElement(mode, kXmlElementStatus, ref mStatus);
+			s.StreamElementEnum(mode, kXmlElementStatus, ref mStatus);
 
 			if (ShouldStreamPrereqs(s, mode))
 				Prereqs.StreamXml(s, mode, xs);

@@ -62,49 +62,49 @@ namespace KSoft.IO
 		/// <summary></summary>
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
-		void WriteElement(XmlElement n, NumeralBase to_base, sbyte value)
+		void WriteElement(XmlElement n, sbyte value, NumeralBase to_base)
 		{
 			WriteElement(n, Convert.ToString(value, (int)to_base));
 		}
 		/// <summary></summary>
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
-		void WriteElement(XmlElement n, NumeralBase to_base, byte value)
+		void WriteElement(XmlElement n, byte value, NumeralBase to_base)
 		{
 			WriteElement(n, Convert.ToString(value, (int)to_base));
 		}
 		/// <summary></summary>
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
-		void WriteElement(XmlElement n, NumeralBase to_base, short value)
+		void WriteElement(XmlElement n, short value, NumeralBase to_base)
 		{
 			WriteElement(n, Convert.ToString(value, (int)to_base));
 		}
 		/// <summary></summary>
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
-		void WriteElement(XmlElement n, NumeralBase to_base, ushort value)
+		void WriteElement(XmlElement n, ushort value, NumeralBase to_base)
 		{
 			WriteElement(n, Convert.ToString(value, (int)to_base));
 		}
 		/// <summary></summary>
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
-		void WriteElement(XmlElement n, NumeralBase to_base, int value)
+		void WriteElement(XmlElement n, int value, NumeralBase to_base)
 		{
 			WriteElement(n, Convert.ToString(value, (int)to_base));
 		}
 		/// <summary></summary>
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
-		void WriteElement(XmlElement n, NumeralBase to_base, uint value)
+		void WriteElement(XmlElement n, uint value, NumeralBase to_base)
 		{
 			WriteElement(n, Convert.ToString(value, (int)to_base));
 		}
 		/// <summary></summary>
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
-		void WriteElement(XmlElement n, NumeralBase to_base, long value)
+		void WriteElement(XmlElement n, long value, NumeralBase to_base)
 		{
 			WriteElement(n, Convert.ToString(value, (int)to_base));
 		}
@@ -112,7 +112,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		// TODO: implement to_base for ulong
-		void WriteElement(XmlElement n, NumeralBase to_base, ulong value)
+		void WriteElement(XmlElement n, ulong value, NumeralBase to_base)
 		{
 			if (to_base != NumeralBase.Decimal) throw new NotImplementedException("TODO: implement NumeralBase for ulong");
 
@@ -136,7 +136,7 @@ namespace KSoft.IO
 		/// <param name="n">Node element to write</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <param name="is_flags">Is <paramref name="enum_value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
-		void WriteElement<TEnum>(XmlElement n, TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
+		void WriteElementEnum<TEnum>(XmlElement n, TEnum value, bool is_flags) where TEnum : struct, IFormattable
 		{
 			WriteElement(n, is_flags ?
 				Text.Util.EnumToFlagsString(value) :
@@ -168,58 +168,58 @@ namespace KSoft.IO
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
-		public void WriteCursor(NumeralBase to_base, sbyte value)
+		public void WriteCursor(sbyte value, NumeralBase to_base = NumeralBase.Decimal)
 		{
-			WriteElement(Cursor, to_base, value);
+			WriteElement(Cursor, value, to_base);
 		}
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
-		public void WriteCursor(NumeralBase to_base, byte value)
+		public void WriteCursor(byte value, NumeralBase to_base = NumeralBase.Decimal)
 		{
-			WriteElement(Cursor, to_base, value);
+			WriteElement(Cursor, value, to_base);
 		}
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
-		public void WriteCursor(NumeralBase to_base, short value)
+		public void WriteCursor(short value, NumeralBase to_base = NumeralBase.Decimal)
 		{
-			WriteElement(Cursor, to_base, value);
+			WriteElement(Cursor, value, to_base);
 		}
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
-		public void WriteCursor(NumeralBase to_base, ushort value)
+		public void WriteCursor(ushort value, NumeralBase to_base = NumeralBase.Decimal)
 		{
-			WriteElement(Cursor, to_base, value);
+			WriteElement(Cursor, value, to_base);
 		}
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
-		public void WriteCursor(NumeralBase to_base, int value)
+		public void WriteCursor(int value, NumeralBase to_base = NumeralBase.Decimal)
 		{
-			WriteElement(Cursor, to_base, value);
+			WriteElement(Cursor, value, to_base);
 		}
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
-		public void WriteCursor(NumeralBase to_base, uint value)
+		public void WriteCursor(uint value, NumeralBase to_base = NumeralBase.Decimal)
 		{
-			WriteElement(Cursor, to_base, value);
+			WriteElement(Cursor, value, to_base);
 		}
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
-		public void WriteCursor(NumeralBase to_base, long value)
+		public void WriteCursor(long value, NumeralBase to_base = NumeralBase.Decimal)
 		{
-			WriteElement(Cursor, to_base, value);
+			WriteElement(Cursor, value, to_base);
 		}
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
-		public void WriteCursor(NumeralBase to_base, ulong value)
+		public void WriteCursor(ulong value, NumeralBase to_base = NumeralBase.Decimal)
 		{
-			WriteElement(Cursor, to_base, value);
+			WriteElement(Cursor, value, to_base);
 		}
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
@@ -236,9 +236,9 @@ namespace KSoft.IO
 		/// <summary>Set <see cref="Cursor"/>'s value to <paramref name="value"/></summary>
 		/// <param name="value">Data to set the <see cref="Cursor"/> to</param>
 		/// <param name="is_flags">Is <paramref name="enum_value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
-		public void WriteCursor<TEnum>(TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
+		public void WriteCursorEnum<TEnum>(TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
-			WriteElement(Cursor, value, is_flags);
+			WriteElementEnum(Cursor, value, is_flags);
 		}
 		#endregion
 
@@ -325,88 +325,88 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement(string name, NumeralBase to_base, sbyte value)
+		public void WriteElement(string name, sbyte value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			WriteElement(WriteElementAppend(name), to_base, value);
+			WriteElement(WriteElementAppend(name), value, to_base);
 		}
 		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
 		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement(string name, NumeralBase to_base, byte value)
+		public void WriteElement(string name, byte value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			WriteElement(WriteElementAppend(name), to_base, value);
+			WriteElement(WriteElementAppend(name), value, to_base);
 		}
 		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
 		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement(string name, NumeralBase to_base, short value)
+		public void WriteElement(string name, short value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			WriteElement(WriteElementAppend(name), to_base, value);
+			WriteElement(WriteElementAppend(name), value, to_base);
 		}
 		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
 		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement(string name, NumeralBase to_base, ushort value)
+		public void WriteElement(string name, ushort value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			WriteElement(WriteElementAppend(name), to_base, value);
+			WriteElement(WriteElementAppend(name), value, to_base);
 		}
 		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
 		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement(string name, NumeralBase to_base, int value)
+		public void WriteElement(string name, int value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			WriteElement(WriteElementAppend(name), to_base, value);
+			WriteElement(WriteElementAppend(name), value, to_base);
 		}
 		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
 		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement(string name, NumeralBase to_base, uint value)
+		public void WriteElement(string name, uint value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			WriteElement(WriteElementAppend(name), to_base, value);
+			WriteElement(WriteElementAppend(name), value, to_base);
 		}
 		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
 		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement(string name, NumeralBase to_base, long value)
+		public void WriteElement(string name, long value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			WriteElement(WriteElementAppend(name), to_base, value);
+			WriteElement(WriteElementAppend(name), value, to_base);
 		}
 		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
 		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
 		/// <param name="to_base">Numerical base to use (IE 2, 8, 10, 16). Currently unused.</param>
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement(string name, NumeralBase to_base, ulong value)
+		public void WriteElement(string name, ulong value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			WriteElement(WriteElementAppend(name), to_base, value);
+			WriteElement(WriteElementAppend(name), value, to_base);
 		}
 		/// <summary>Create a new element in the underlying <see cref="XmlDocument"/>, relative to <see cref="Cursor"/></summary>
 		/// <param name="name">The <see cref="XmlElement"/>'s name</param>
@@ -433,11 +433,11 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <param name="is_flags">Is <paramref name="enum_value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
-		public void WriteElement<TEnum>(string name, TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
+		public void WriteElementEnum<TEnum>(string name, TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
-			WriteElement(WriteElementAppend(name), value, is_flags);
+			WriteElementEnum(WriteElementAppend(name), value, is_flags);
 		}
 		#endregion
 
@@ -486,7 +486,7 @@ namespace KSoft.IO
 		/// <param name="name">Name of the <see cref="XmlAttribute"/></param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
-		public void WriteAttribute(string name, NumeralBase to_base, sbyte value)
+		public void WriteAttribute(string name, sbyte value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -497,7 +497,7 @@ namespace KSoft.IO
 		/// <param name="name">Name of the <see cref="XmlAttribute"/></param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
-		public void WriteAttribute(string name, NumeralBase to_base, byte value)
+		public void WriteAttribute(string name, byte value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -508,7 +508,7 @@ namespace KSoft.IO
 		/// <param name="name">Name of the <see cref="XmlAttribute"/></param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
-		public void WriteAttribute(string name, NumeralBase to_base, short value)
+		public void WriteAttribute(string name, short value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -519,7 +519,7 @@ namespace KSoft.IO
 		/// <param name="name">Name of the <see cref="XmlAttribute"/></param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
-		public void WriteAttribute(string name, NumeralBase to_base, ushort value)
+		public void WriteAttribute(string name, ushort value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -530,7 +530,7 @@ namespace KSoft.IO
 		/// <param name="name">Name of the <see cref="XmlAttribute"/></param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
-		public void WriteAttribute(string name, NumeralBase to_base, int value)
+		public void WriteAttribute(string name, int value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -541,7 +541,7 @@ namespace KSoft.IO
 		/// <param name="name">Name of the <see cref="XmlAttribute"/></param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
-		public void WriteAttribute(string name, NumeralBase to_base, uint value)
+		public void WriteAttribute(string name, uint value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -552,7 +552,7 @@ namespace KSoft.IO
 		/// <param name="name">Name of the <see cref="XmlAttribute"/></param>
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
-		public void WriteAttribute(string name, NumeralBase to_base, long value)
+		public void WriteAttribute(string name, long value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -564,7 +564,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use (IE 2, 8, 10, 16). Currently unused.</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		// TODO: implement to_base for ulong
-		public void WriteAttribute(string name, NumeralBase to_base, ulong value)
+		public void WriteAttribute(string name, ulong value, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -597,7 +597,7 @@ namespace KSoft.IO
 		/// <param name="name">Name of the <see cref="XmlAttribute"/></param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <param name="is_flags">Is <paramref name="enum_value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
-		public void WriteAttribute<TEnum>(string name, TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
+		public void WriteAttributeEnum<TEnum>(string name, TEnum value, bool is_flags = false) where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
 			Contract.Requires(Cursor != null, kContract_CursorNullMsg);
@@ -729,14 +729,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnTrue(string name, NumeralBase to_base, sbyte value, Predicate<sbyte> predicate)
+		public bool WriteElementOptOnTrue(string name, sbyte value, Predicate<sbyte> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -747,14 +747,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnFalse(string name, NumeralBase to_base, sbyte value, Predicate<sbyte> predicate)
+		public bool WriteElementOptOnFalse(string name, sbyte value, Predicate<sbyte> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = !predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -766,14 +766,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnTrue(string name, NumeralBase to_base, byte value, Predicate<byte> predicate)
+		public bool WriteElementOptOnTrue(string name, byte value, Predicate<byte> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -784,14 +784,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnFalse(string name, NumeralBase to_base, byte value, Predicate<byte> predicate)
+		public bool WriteElementOptOnFalse(string name, byte value, Predicate<byte> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = !predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -803,14 +803,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnTrue(string name, NumeralBase to_base, short value, Predicate<short> predicate)
+		public bool WriteElementOptOnTrue(string name, short value, Predicate<short> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -821,14 +821,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnFalse(string name, NumeralBase to_base, short value, Predicate<short> predicate)
+		public bool WriteElementOptOnFalse(string name, short value, Predicate<short> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = !predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -840,14 +840,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnTrue(string name, NumeralBase to_base, ushort value, Predicate<ushort> predicate)
+		public bool WriteElementOptOnTrue(string name, ushort value, Predicate<ushort> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -858,14 +858,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnFalse(string name, NumeralBase to_base, ushort value, Predicate<ushort> predicate)
+		public bool WriteElementOptOnFalse(string name, ushort value, Predicate<ushort> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = !predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -877,14 +877,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnTrue(string name, NumeralBase to_base, int value, Predicate<int> predicate)
+		public bool WriteElementOptOnTrue(string name, int value, Predicate<int> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -895,14 +895,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnFalse(string name, NumeralBase to_base, int value, Predicate<int> predicate)
+		public bool WriteElementOptOnFalse(string name, int value, Predicate<int> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = !predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -914,14 +914,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnTrue(string name, NumeralBase to_base, uint value, Predicate<uint> predicate)
+		public bool WriteElementOptOnTrue(string name, uint value, Predicate<uint> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -932,14 +932,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnFalse(string name, NumeralBase to_base, uint value, Predicate<uint> predicate)
+		public bool WriteElementOptOnFalse(string name, uint value, Predicate<uint> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = !predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -951,14 +951,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnTrue(string name, NumeralBase to_base, long value, Predicate<long> predicate)
+		public bool WriteElementOptOnTrue(string name, long value, Predicate<long> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -969,14 +969,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnFalse(string name, NumeralBase to_base, long value, Predicate<long> predicate)
+		public bool WriteElementOptOnFalse(string name, long value, Predicate<long> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = !predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -988,14 +988,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnTrue(string name, NumeralBase to_base, ulong value, Predicate<ulong> predicate)
+		public bool WriteElementOptOnTrue(string name, ulong value, Predicate<ulong> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -1006,14 +1006,14 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <remarks>Does not change <see cref="Cursor"/></remarks>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnFalse(string name, NumeralBase to_base, ulong value, Predicate<ulong> predicate)
+		public bool WriteElementOptOnFalse(string name, ulong value, Predicate<ulong> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
 
 			bool result = !predicate(value);
 
-			if (result) WriteElement(name, to_base, value);
+			if (result) WriteElement(name, value, to_base);
 
 			return result;
 		}
@@ -1094,7 +1094,7 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnTrue<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
+		public bool WriteElementEnumOptOnTrue<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
 			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1103,7 +1103,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteElement(name, value, is_flags);
+			if (result) WriteElementEnum(name, value, is_flags);
 
 			return result;
 		}
@@ -1114,7 +1114,7 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the element's <see cref="XmlElement.InnerText"/> to</param>
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteElementOptOnFalse<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
+		public bool WriteElementEnumOptOnFalse<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
 			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1123,7 +1123,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteElement(name, value, is_flags);
+			if (result) WriteElementEnum(name, value, is_flags);
 
 			return result;
 		}
@@ -1245,7 +1245,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnTrue(string name, NumeralBase to_base, sbyte value, Predicate<sbyte> predicate)
+		public bool WriteAttributeOptOnTrue(string name, sbyte value, Predicate<sbyte> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1253,7 +1253,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1263,7 +1263,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnFalse(string name, NumeralBase to_base, sbyte value, Predicate<sbyte> predicate)
+		public bool WriteAttributeOptOnFalse(string name, sbyte value, Predicate<sbyte> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1271,7 +1271,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1282,7 +1282,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnTrue(string name, NumeralBase to_base, byte value, Predicate<byte> predicate)
+		public bool WriteAttributeOptOnTrue(string name, byte value, Predicate<byte> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1290,7 +1290,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1300,7 +1300,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnFalse(string name, NumeralBase to_base, byte value, Predicate<byte> predicate)
+		public bool WriteAttributeOptOnFalse(string name, byte value, Predicate<byte> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1308,7 +1308,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1319,7 +1319,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnTrue(string name, NumeralBase to_base, short value, Predicate<short> predicate)
+		public bool WriteAttributeOptOnTrue(string name, short value, Predicate<short> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1327,7 +1327,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1337,7 +1337,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnFalse(string name, NumeralBase to_base, short value, Predicate<short> predicate)
+		public bool WriteAttributeOptOnFalse(string name, short value, Predicate<short> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1345,7 +1345,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1356,7 +1356,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnTrue(string name, NumeralBase to_base, ushort value, Predicate<ushort> predicate)
+		public bool WriteAttributeOptOnTrue(string name, ushort value, Predicate<ushort> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1364,7 +1364,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1374,7 +1374,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnFalse(string name, NumeralBase to_base, ushort value, Predicate<ushort> predicate)
+		public bool WriteAttributeOptOnFalse(string name, ushort value, Predicate<ushort> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1382,7 +1382,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1393,7 +1393,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnTrue(string name, NumeralBase to_base, int value, Predicate<int> predicate)
+		public bool WriteAttributeOptOnTrue(string name, int value, Predicate<int> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1401,7 +1401,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1411,7 +1411,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnFalse(string name, NumeralBase to_base, int value, Predicate<int> predicate)
+		public bool WriteAttributeOptOnFalse(string name, int value, Predicate<int> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1419,7 +1419,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1430,7 +1430,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnTrue(string name, NumeralBase to_base, uint value, Predicate<uint> predicate)
+		public bool WriteAttributeOptOnTrue(string name, uint value, Predicate<uint> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1438,7 +1438,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1448,7 +1448,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnFalse(string name, NumeralBase to_base, uint value, Predicate<uint> predicate)
+		public bool WriteAttributeOptOnFalse(string name, uint value, Predicate<uint> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1456,7 +1456,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1467,7 +1467,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnTrue(string name, NumeralBase to_base, long value, Predicate<long> predicate)
+		public bool WriteAttributeOptOnTrue(string name, long value, Predicate<long> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1475,7 +1475,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1485,7 +1485,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnFalse(string name, NumeralBase to_base, long value, Predicate<long> predicate)
+		public bool WriteAttributeOptOnFalse(string name, long value, Predicate<long> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1493,7 +1493,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1504,7 +1504,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use (IE 2, 8, 10, 16). Currently unused.</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnTrue(string name, NumeralBase to_base, ulong value, Predicate<ulong> predicate)
+		public bool WriteAttributeOptOnTrue(string name, ulong value, Predicate<ulong> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1512,7 +1512,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1522,7 +1522,7 @@ namespace KSoft.IO
 		/// <param name="to_base">Numerical base to use (IE 2, 8, 10, 16). Currently unused.</param>
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnFalse(string name, NumeralBase to_base, ulong value, Predicate<ulong> predicate)
+		public bool WriteAttributeOptOnFalse(string name, ulong value, Predicate<ulong> predicate, NumeralBase to_base = NumeralBase.Decimal)
 		{
 			Contract.Requires(predicate != null);
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1530,7 +1530,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteAttribute(name, to_base, value);
+			if (result) WriteAttribute(name, value, to_base);
 
 			return result;
 		}
@@ -1611,7 +1611,7 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnTrue<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
+		public bool WriteAttributeEnumOptOnTrue<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
 			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1620,7 +1620,7 @@ namespace KSoft.IO
 
 			bool result = predicate(value);
 
-			if (result) WriteAttribute(name, value, is_flags);
+			if (result) WriteAttributeEnum(name, value, is_flags);
 
 			return result;
 		}
@@ -1631,7 +1631,7 @@ namespace KSoft.IO
 		/// <param name="value">Data to set the attribute text to</param>
 		/// <param name="is_flags">Is <paramref name="value"/> a <see cref="FlagsAttribute"/> based Enum?</param>
 		/// <returns>True if <paramref name="value"/> was written</returns>
-		public bool WriteAttributeOptOnFalse<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
+		public bool WriteAttributeEnumOptOnFalse<TEnum>(string name, TEnum value, Predicate<TEnum> predicate, bool is_flags = false)
 			where TEnum : struct, IFormattable
 		{
 			Contract.Requires(!string.IsNullOrEmpty(name));
@@ -1640,7 +1640,7 @@ namespace KSoft.IO
 
 			bool result = !predicate(value);
 
-			if (result) WriteAttribute(name, value, is_flags);
+			if (result) WriteAttributeEnum(name, value, is_flags);
 
 			return result;
 		}

@@ -68,9 +68,9 @@ namespace PhxLib.Engine
 		#region IPhxXmlStreamable Members
 		public void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
-			s.StreamCursor(mode, ref mType);
-			s.StreamAttributeOpt(mode, kXmlAttrTarget, ref mTarget, e => e != BCollectibleSkullTarget.None);
-			s.StreamAttributeOpt(mode, kXmlAttrValue, ref mValue, Util.kNotInvalidPredicateSingle);
+			s.StreamCursorEnum(mode, ref mType);
+			s.StreamAttributeEnumOpt(mode, kXmlAttrTarget, ref mTarget, e => e != BCollectibleSkullTarget.None);
+			s.StreamAttributeOpt    (mode, kXmlAttrValue, ref mValue, Util.kNotInvalidPredicateSingle);
 		}
 		#endregion
 	};

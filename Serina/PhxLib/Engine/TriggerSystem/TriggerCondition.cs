@@ -333,7 +333,7 @@ namespace PhxLib.Engine
 			base.StreamXml(s, mode, xs);
 
 			if(s.StreamAttributeOpt(mode, kXmlAttrAsync, ref mAsync, Util.kNotFalsePredicate))
-				s.StreamAttribute(mode, kXmlAttrAsyncParameterKey, KSoft.NumeralBase.Decimal, ref mAsyncParameterKey);
+				s.StreamAttribute(mode, kXmlAttrAsyncParameterKey, ref mAsyncParameterKey);
 		}
 	};
 
@@ -374,7 +374,7 @@ namespace PhxLib.Engine
 
 			s.StreamAttribute(mode, kXmlAttrInvert, ref mInvert);
 			s.StreamAttribute(mode, kXmlAttrAsync, ref mAsync);
-			s.StreamAttribute(mode, kXmlAttrAsyncParameterKey, KSoft.NumeralBase.Decimal, ref mAsyncParameterKey);
+			s.StreamAttribute(mode, kXmlAttrAsyncParameterKey, ref mAsyncParameterKey);
 		}
 	};
 }

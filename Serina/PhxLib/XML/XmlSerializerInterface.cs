@@ -32,9 +32,9 @@ namespace PhxLib.XML
 		public void StreamXmlForStringID(KSoft.IO.XmlElementStream s, FA mode, string name,
 			ref int value, XmlNodeType type = Util.kSourceElement)
 		{
-			if (type == XmlNodeType.Element)		s.StreamElementOpt(mode, name, KSoft.NumeralBase.Decimal, ref value, PhxUtil.kNotInvalidPredicate);
-			else if (type == XmlNodeType.Attribute)	s.StreamAttributeOpt(mode, name, KSoft.NumeralBase.Decimal, ref value, PhxUtil.kNotInvalidPredicate);
-			else if (type == XmlNodeType.Text)		s.StreamCursor(mode, KSoft.NumeralBase.Decimal, ref value);
+			if (type == XmlNodeType.Element)		s.StreamElementOpt(mode, name, ref value, PhxUtil.kNotInvalidPredicate);
+			else if (type == XmlNodeType.Attribute)	s.StreamAttributeOpt(mode, name, ref value, PhxUtil.kNotInvalidPredicate);
+			else if (type == XmlNodeType.Text)		s.StreamCursor(mode, ref value);
 
 			if (mode == FA.Read)
 			{

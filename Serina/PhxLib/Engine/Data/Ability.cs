@@ -101,20 +101,16 @@ namespace PhxLib.Engine
 		float mDuration = Util.kInvalidSingle;
 		public float Duration { get { return mDuration; } }
 
-		public BAbility()
-		{
-		}
-
 		#region IXmlElementStreamable Members
 		public override void StreamXml(KSoft.IO.XmlElementStream s, FA mode, XML.BXmlSerializerInterface xs)
 		{
 			base.StreamXml(s, mode, xs);
 
-			s.StreamElementOpt(mode, kXmlElementType, ref mType, e => e != BAbilityType.Invalid);
-			s.StreamElementOpt(mode, kXmlElementSquadMode, ref mSquadMode, e => e != BSquadMode.Invalid);
-			s.StreamElementOpt(mode, kXmlElementDamageTakenModifier, ref mDamageTakenModifier, Util.kNotInvalidPredicateSingle);
-			s.StreamElementOpt(mode, kXmlElementTargetType, ref mTargetType, e => e != BAbilityTargetType.Invalid);
-			s.StreamElementOpt(mode, kXmlElementDuration, ref mDuration, Util.kNotInvalidPredicateSingle);
+			s.StreamElementEnumOpt(mode, kXmlElementType, ref mType, e => e != BAbilityType.Invalid);
+			s.StreamElementEnumOpt(mode, kXmlElementSquadMode, ref mSquadMode, e => e != BSquadMode.Invalid);
+			s.StreamElementOpt    (mode, kXmlElementDamageTakenModifier, ref mDamageTakenModifier, Util.kNotInvalidPredicateSingle);
+			s.StreamElementEnumOpt(mode, kXmlElementTargetType, ref mTargetType, e => e != BAbilityTargetType.Invalid);
+			s.StreamElementOpt    (mode, kXmlElementDuration, ref mDuration, Util.kNotInvalidPredicateSingle);
 		}
 		#endregion
 	};
