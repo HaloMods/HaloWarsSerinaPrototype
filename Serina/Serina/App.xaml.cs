@@ -31,67 +31,6 @@ namespace Serina
 			hw.Load();
 			return hw;
 		}
-		static void LoadTriggerScripts(PhxLib.Engine.BDatabaseBase db, string[] files)
-		{
-			foreach (var filename in files)
-			{
-				if (filename.EndsWith("skirmishai.triggerscript"))
-					continue;
-				var script_name = IO.Path.GetFileName(filename);
-				db.LoadScript(script_name);
-			}
-		}
-		static void LoadTriggerScripts(PhxLib.Engine.BDatabaseBase db, string[] files, 
-			string remove_dir, PhxLib.Engine.BTriggerScriptType type)
-		{
-			foreach (var filename in files)
-			{
-				var script_name = IO.Path.GetFileName(filename);
-				db.LoadScript(script_name.Replace(remove_dir, ""), type);
-			}
-		}
-		static void LoadScenarioScripts(PhxLib.Engine.BDatabaseBase db, string[] files, string scnr_dir)
-		{
-			foreach (var filename in files)
-			{
- 				var scnr_name = IO.Path.GetFileName(filename);
-				db.LoadScenarioScripts(filename.Replace(scnr_dir, ""));
-			}
-		}
-		static void LoadTriggerScripts(PhxLib.PhxEngine hw)
-		{
-			var db = hw.Database;
-			string[] files;
-			string dir;
-
-			files = IO.Directory.GetFiles(hw.Directories.GetAbsoluteDirectory(
-				PhxLib.Engine.ContentStorage.Game,
-				PhxLib.Engine.GameDirectory.TriggerScripts));
-			LoadTriggerScripts(db, files);
-
-			files = IO.Directory.GetFiles(hw.Directories.GetAbsoluteDirectory(
-				PhxLib.Engine.ContentStorage.Update,
-				PhxLib.Engine.GameDirectory.TriggerScripts));
-			LoadTriggerScripts(db, files);
-
-			dir = hw.Directories.GetAbsoluteDirectory(
-				PhxLib.Engine.ContentStorage.Game,
-				PhxLib.Engine.GameDirectory.AbilityScripts);
-			files = IO.Directory.GetFiles(dir, "*.ability", IO.SearchOption.AllDirectories);
-			LoadTriggerScripts(db, files, dir, PhxLib.Engine.BTriggerScriptType.Ability);
-
-			dir = hw.Directories.GetAbsoluteDirectory(
-				PhxLib.Engine.ContentStorage.Game,
-				PhxLib.Engine.GameDirectory.PowerScripts);
-			files = IO.Directory.GetFiles(dir, "*.power", IO.SearchOption.AllDirectories);
-			LoadTriggerScripts(db, files, dir, PhxLib.Engine.BTriggerScriptType.Power);
-
-			dir = hw.Directories.GetAbsoluteDirectory(
-				PhxLib.Engine.ContentStorage.Game,
-				PhxLib.Engine.GameDirectory.Scenario);
-			files = IO.Directory.GetFiles(dir, "*.scn", IO.SearchOption.AllDirectories);
-			LoadScenarioScripts(db, files, dir);
-		}
 
 		protected override void OnStartup(StartupEventArgs e)
 		{
@@ -144,16 +83,14 @@ namespace Serina
 				{
 					using (s.EnterCursorBookmark("Object"))
 					{
-						s.WriteAttribute("dbid", KSoft.NumeralBase.Decimal, obj.DbId);
+						s.WriteAttribute("dbid", obj.DbId);
 						s.WriteAttribute("name", obj.Name);
-						s.WriteAttributeOptOnTrue("id", KSoft.NumeralBase.Decimal, obj.Id, PhxLib.Util.kNotInvalidPredicate);
+						s.WriteAttributeOptOnTrue("id", obj.Id, PhxLib.Util.kNotInvalidPredicate);
 					}
 				}
 				s.Document.Save(app_xml + "ObjectDBIDs.xml");
 			}
 			#endregion
-			LoadTriggerScripts(hw);
-			if (true) hw.TriggerDb.Save(app_xml + "TriggerDatabase.xml", hw.Database);
 		}
 	};
 }

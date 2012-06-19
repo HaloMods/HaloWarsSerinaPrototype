@@ -23,7 +23,7 @@ namespace PhxLib
 		{
 			HandleWordUnsigned uhandle = (HandleWordUnsigned)undefined_ref_handle;
 
-			return (HandleWord)(uhandle & kUndefinedReferenceHandleBitmask);
+			return (HandleWord)(uhandle & ~kUndefinedReferenceHandleBitmask);
 		}
 		public static HandleWord GetUndefinedReferenceHandle(HandleWord undefined_ref_data_index)
 		{

@@ -19,12 +19,17 @@ namespace PhxLib.Collections
 		public BTypeNames()
 		{
 			kUnregisteredMessage = BuildUnRegisteredMsg();
+			UndefinedInterface = new ProtoEnumWithUndefinedImpl(this);
 		}
 
 		#region IProtoEnum Members
-		protected virtual int GetMemberIndexByName(string member_name)
+		public virtual int TryGetMemberId(string member_name)
 		{
-			return FindIndex(n => Util.StrEqualsIgnoreCase(n, member_name));
+			return mList.FindIndex(n => Util.StrEqualsIgnoreCase(n, member_name));
+		}
+		public virtual string TryGetMemberName(int member_id)
+		{
+			return IsValidMemberId(member_id) ? GetMemberName(member_id) : null;
 		}
 		public bool IsValidMemberId(int member_id)
 		{
@@ -32,14 +37,14 @@ namespace PhxLib.Collections
 		}
 		public bool IsValidMemberName(string member_name)
 		{
-			int index = GetMemberIndexByName(member_name);
+			int index = TryGetMemberId(member_name);
 
 			return index != -1;
 		}
 
 		public int GetMemberId(string member_name)
 		{
-			int index = GetMemberIndexByName(member_name);
+			int index = TryGetMemberId(member_name);
 
 			if (index == -1)
 				throw new ArgumentException(kUnregisteredMessage, member_name);
@@ -53,6 +58,8 @@ namespace PhxLib.Collections
 
 		public virtual int MemberCount { get { return Count; } }
 		#endregion
+
+		internal IProtoEnumWithUndefined UndefinedInterface { get; private set; }
 	};
 	public class BTypeNamesWithCode : BTypeNames
 	{
@@ -66,9 +73,9 @@ namespace PhxLib.Collections
 		}
 
 		#region IProtoEnum Members
-		protected override int GetMemberIndexByName(string member_name)
+		public override int TryGetMemberId(string member_name)
 		{
-			int idx = base.GetMemberIndexByName(member_name);
+			int idx = base.TryGetMemberId(member_name);
 
 			if (idx == Util.kInvalidInt32)
 			{
@@ -77,6 +84,15 @@ namespace PhxLib.Collections
 			}
 
 			return idx;
+		}
+		public override string TryGetMemberName(int member_id)
+		{
+			string name = base.TryGetMemberName(member_id);
+			
+			if (name == null)
+				return mCodeTypes.TryGetMemberName(member_id);
+
+			return name;
 		}
 
 		public override string GetMemberName(int member_id)

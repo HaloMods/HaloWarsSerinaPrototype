@@ -43,6 +43,13 @@ namespace PhxLib.XML
 			}
 		}
 
+		static void TraceUndefinedHandle(KSoft.IO.XmlElementStream s, string name, int id, string kind)
+		{
+			Debug.Trace.XML.TraceEvent(System.Diagnostics.TraceEventType.Warning, -1,
+				"Generated UndefinedHandle in '{0}' for '{1}' ({2}). {3}={4}", 
+				s.StreamName, s.Cursor.Name, kind, name, PhxUtil.GetUndefinedReferenceDataIndex(id).ToString());
+		}
+
 		protected static bool ToLowerName(Engine.DatabaseObjectKind kind)
 		{
 			switch (kind)
@@ -79,6 +86,8 @@ namespace PhxLib.XML
 				{
 					dbid = Database.GetId(kind, id_name);
 					Contract.Assert(dbid != PhxUtil.kInvalidInt32);
+					if (PhxUtil.IsUndefinedReferenceHandle(dbid))
+						TraceUndefinedHandle(s, id_name, dbid, kind.ToString());
 				}
 				else
 					dbid = PhxUtil.kInvalidInt32;
@@ -118,6 +127,8 @@ namespace PhxLib.XML
 				{
 					dbid = Database.GetId(kind, id_name);
 					Contract.Assert(dbid != PhxUtil.kInvalidInt32);
+					if (PhxUtil.IsUndefinedReferenceHandle(dbid))
+						TraceUndefinedHandle(s, id_name, dbid, kind.ToString());
 				}
 				else
 					dbid = PhxUtil.kInvalidInt32;

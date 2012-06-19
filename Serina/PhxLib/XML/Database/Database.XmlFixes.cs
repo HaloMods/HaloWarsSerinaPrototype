@@ -26,7 +26,7 @@ namespace PhxLib.XML
 
 		protected static void FixTacticsTraceFixEvent(string tactic_name, string xpath)
 		{
-			Debug.Trace.Engine.TraceEvent(System.Diagnostics.TraceEventType.Warning, -1,
+			Debug.Trace.XML.TraceEvent(System.Diagnostics.TraceEventType.Warning, -1,
 					"Fixing Tactic '{0}' with XPath={1}", tactic_name, xpath);
 		}
 		protected virtual void FixTacticsXml(KSoft.IO.XmlElementStream s, string name) {}

@@ -220,8 +220,10 @@
     <Compile Include="Engine\Data\Ability.cs" />
     <Compile Include="Engine\Data\Civ.cs" />
     <Compile Include="Engine\Data\Collectibles.cs" />
+    <Compile Include="Engine\Data\PlacementRules.cs" />
     <Compile Include="Engine\GameDirectories.cs" />
     <Compile Include="Engine\Scenario\Player.cs" />
+    <Compile Include="Engine\TriggerSystem\DatabaseBuilder\XmlSerializerInterface.cs" />
     <Compile Include="Engine\TriggerSystem\TriggerDatabase.cs" />
     <Compile Include="Engine\UI\Locale.cs" />
     <Compile Include="Engine\UI\UIControls.cs" />
@@ -256,6 +258,7 @@
     <Compile Include="UndefinedReferenceHandle.cs" />
     <Compile Include="XML\BBitSet.cs" />
     <Compile Include="XML\BCollectionParams.cs" />
+    <Compile Include="XML\BProtoEnum.cs" />
     <Compile Include="XML\BScenario.cs" />
     <Compile Include="XML\BTriggerScript.cs" />
     <Compile Include="XML\Database\Database.cs" />
@@ -281,7 +284,6 @@
     <Compile Include="_KSoft\Text\Util.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Engine\TriggerSystem\DatabaseBuilder\" />
     <Folder Include="RedShift\" />
     <Folder Include="Sim\" />
   </ItemGroup>

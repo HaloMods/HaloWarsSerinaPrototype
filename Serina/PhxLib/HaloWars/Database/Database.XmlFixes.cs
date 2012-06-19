@@ -6,8 +6,14 @@ namespace PhxLib.HaloWars
 {
 	partial class BDatabase { partial class XmlSerializer
 	{
+		static bool gRemoveUndefined = false;
+
 		protected override void FixWeaponTypes()
 		{
+			// Don't add the types if we're not removing undefined data
+			// as we assume the UndefinedHandle/ProtoEnum shit is in use
+			if (!gRemoveUndefined) return;
+
 			Database.WeaponTypes.DynamicAdd(new BWeaponType(), "Cannon");
 			Database.WeaponTypes.DynamicAdd(new BWeaponType(), "needler");
 			Database.WeaponTypes.DynamicAdd(new BWeaponType(), "HeavyNeedler");
@@ -74,6 +80,10 @@ namespace PhxLib.HaloWars
 		}
 		static void FixGameDataResources(BGameData gd)
 		{
+			// Don't add the types if we're not removing undefined data
+			// as we assume the UndefinedHandle/ProtoEnum shit is in use
+			if (!gRemoveUndefined) return;
+
 			gd.Resources.DynamicAdd(new BResource(true), "Favor"); // [2]
 			gd.Resources.DynamicAdd(new BResource(true), "Relics");// [3]
 			gd.Resources.DynamicAdd(new BResource(true), "Honor"); // [4]
@@ -160,7 +170,7 @@ namespace PhxLib.HaloWars
 		}
 		static void FixSquadsXmlAlpha(KSoft.IO.XmlElementStream s)
 		{
-			FixSquadsXmlAphaUndefinedObjects(s,
+			if (gRemoveUndefined) FixSquadsXmlAphaUndefinedObjects(s,
 				"unsc_air_shortsword_01", "unsc_con_turret_01", "unsc_con_base_01",
 				"cov_inf_kamikazeGrunt_01", // needs to be 'cpgn_inf_kamikazegrunt_01', but fuck updating it
 				"cov_con_turret_01", "cov_con_node_01", "cov_con_base_01"
@@ -326,7 +336,7 @@ namespace PhxLib.HaloWars
 			if (node != null) FixTechsXmlEffectsDataSubType(s.Document, node);
 
 			FixTechsXmlEffectsInvalid(s, BProtoTech.kBListXmlParams, Database.Engine.Build);
-			FixTechsXmlBadNames(s, BProtoTech.kBListXmlParams, Database.Engine.Build);
+			if(gRemoveUndefined) FixTechsXmlBadNames(s, BProtoTech.kBListXmlParams, Database.Engine.Build);
 		}
 
 		static void FixTacticsXmlBadWeapons(KSoft.IO.XmlElementStream s, string name)
@@ -465,16 +475,19 @@ namespace PhxLib.HaloWars
 			}
 
 			// see: pow_gp_rage_impact
-			xpath = "Action[Weapon='RageShockwave']";
-			elements = s.Cursor.SelectNodes(xpath);
-			if (elements.Count > 0)
+			if (gRemoveUndefined)
 			{
-				foreach (XmlElement e in elements)
+				xpath = "Action[Weapon='RageShockwave']";
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0)
 				{
-					e.ParentNode.RemoveChild(e);
+					foreach (XmlElement e in elements)
+					{
+						e.ParentNode.RemoveChild(e);
+					}
+					FixTacticsTraceFixEvent(name, xpath);
+					return;
 				}
-				FixTacticsTraceFixEvent(name, xpath);
-				return;
 			}
 
 			// see: unsc_inf_cyclops_01
@@ -511,21 +524,21 @@ namespace PhxLib.HaloWars
 			string xpath;
 			XmlNodeList elements;
 
-			// see: cov_inf_grunt_01, cov_inf_needlergrunt_01, cov_inf_elite_01,
-			// creep_inf_grunt_01, creep_inf_needlergrunt_01
-			xpath = "Action[BaseDPSWeapon='InCoverPlasmaPistolAttackAction']"
-				+ " | Action[BaseDPSWeapon='InCoverNeedlerAttackAction']"
-				+ " | Action[BaseDPSWeapon='IcCoverPlasmaRifleAttackAction']"
-				+ " | Action[BaseDPSWeapon='PlasmaPistolAttackAction']";
-			elements = s.Cursor.SelectNodes(xpath);
-			if (elements.Count > 0)
+			// see: fx_proj_fldbomb_01
+			if (!ToLowerName(PhxLib.Engine.DatabaseObjectKind.Squad))
 			{
-				foreach (XmlElement e in elements)
+				xpath = "Action[ProtoObject='fld_inf_InfectionForm_02']";
+				elements = s.Cursor.SelectNodes(xpath);
+				if (elements.Count > 0)
 				{
-					e.ParentNode.RemoveChild(e);
+					foreach (XmlElement e in elements)
+					{
+						var fc = e["ProtoObject"].FirstChild;
+						fc.Value = "fld_inf_infectionForm_02";
+					}
+					FixTacticsTraceFixEvent(name, xpath);
+					return;
 				}
-				FixTacticsTraceFixEvent(name, xpath);
-				return;
 			}
 
 			// see: cov_inf_elitecommando_01, cpgn_scn10_warthog_01
@@ -556,21 +569,23 @@ namespace PhxLib.HaloWars
 				return;
 			}
 
-			// see: fx_proj_fldbomb_01
-			if (!ToLowerName(PhxLib.Engine.DatabaseObjectKind.Squad))
+			if (!gRemoveUndefined) return;
+
+			// see: cov_inf_grunt_01, cov_inf_needlergrunt_01, cov_inf_elite_01,
+			// creep_inf_grunt_01, creep_inf_needlergrunt_01
+			xpath = "Action[BaseDPSWeapon='InCoverPlasmaPistolAttackAction']"
+				+ " | Action[BaseDPSWeapon='InCoverNeedlerAttackAction']"
+				+ " | Action[BaseDPSWeapon='IcCoverPlasmaRifleAttackAction']"
+				+ " | Action[BaseDPSWeapon='PlasmaPistolAttackAction']";
+			elements = s.Cursor.SelectNodes(xpath);
+			if (elements.Count > 0)
 			{
-				xpath = "Action[ProtoObject='fld_inf_InfectionForm_02']";
-				elements = s.Cursor.SelectNodes(xpath);
-				if (elements.Count > 0)
+				foreach (XmlElement e in elements)
 				{
-					foreach (XmlElement e in elements)
-					{
-						var fc = e["ProtoObject"].FirstChild;
-						fc.Value = "fld_inf_infectionForm_02";
-					}
-					FixTacticsTraceFixEvent(name, xpath);
-					return;
+					e.ParentNode.RemoveChild(e);
 				}
+				FixTacticsTraceFixEvent(name, xpath);
+				return;
 			}
 		}
 		protected override void FixTacticsXml(KSoft.IO.XmlElementStream s, string name)

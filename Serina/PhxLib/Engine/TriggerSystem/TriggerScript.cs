@@ -151,6 +151,31 @@ namespace PhxLib.Engine
 		const string kXmlAttrExternal = "External";
 		#endregion
 
+		#region File Util
+		public static string GetFileExt(BTriggerScriptType type)
+		{
+			switch (type)
+			{
+				case BTriggerScriptType.TriggerScript: return ".triggerscript";
+				case BTriggerScriptType.Ability: return ".ability";
+				case BTriggerScriptType.Power: return ".power";
+
+				default: throw new Debug.UnreachableException(type.ToString());
+			}
+		}
+		public static string GetFileExtSearchPattern(BTriggerScriptType type)
+		{
+			switch (type)
+			{
+				case BTriggerScriptType.TriggerScript: return "*.triggerscript";
+				case BTriggerScriptType.Ability: return "*.ability";
+				case BTriggerScriptType.Power: return "*.power";
+
+				default: throw new Debug.UnreachableException(type.ToString());
+			}
+		}
+		#endregion
+
 		public BTriggerSystem Owner { get; private set; }
 
 		string mName;
@@ -184,8 +209,8 @@ namespace PhxLib.Engine
 		Dictionary<int, BTriggerVar> m_dbiVars;
 		Dictionary<int, BTrigger> m_dbiTriggers;
 
-		static void BuildDictionary<T>(out Dictionary<int, T> dic, IList<T> list)
-			where T : TriggerScriptIdObject
+		static void BuildDictionary<T>(out Dictionary<int, T> dic, Collections.BListAutoId<T> list)
+			where T : TriggerScriptIdObject, new()
 		{
 			dic = new Dictionary<int, T>(list.Count);
 

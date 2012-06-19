@@ -210,11 +210,18 @@ namespace PhxLib.XML
 			string name = null;
 			mParams.StreamDataName(s, FA.Read, ref name);
 
-			mList.Add(name);
+			mList.AddItem(name);
 		}
 		protected override void WriteXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, string name)
 		{
 			mParams.StreamDataName(s, FA.Write, ref name);
+		}
+
+		protected override void WriteXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
+		{
+			base.WriteXmlNodes(s, xs);
+
+			ProtoEnumUndefinedMembers.Write(s, mParams, mList.UndefinedInterface);
 		}
 		#endregion
 	};

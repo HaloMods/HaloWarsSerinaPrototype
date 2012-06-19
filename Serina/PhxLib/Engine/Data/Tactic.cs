@@ -887,9 +887,9 @@ namespace PhxLib.Engine
 		{
 			switch (kind)
 			{
-				case ObjectKind.Weapon:			return BDatabaseBase.TryGetId(m_dbiWeapons, name);
-				//case ObjectKind.TacticState:	return BDatabaseBase.TryGetId(m_dbiTacticStates, name);
-				case ObjectKind.Action:			return BDatabaseBase.TryGetId(m_dbiActions, name);
+				case ObjectKind.Weapon:			return BDatabaseBase.TryGetIdWithUndefined(m_dbiWeapons, name, Weapons);
+				//case ObjectKind.TacticState:	return BDatabaseBase.TryGetIdWithUndefined(m_dbiTacticStates, name, TacticStates);
+				case ObjectKind.Action:			return BDatabaseBase.TryGetIdWithUndefined(m_dbiActions, name, Actions);
 
 				default: throw new Debug.UnreachableException(kind.ToString());
 			}
@@ -898,9 +898,9 @@ namespace PhxLib.Engine
 		{
 			switch (kind)
 			{
-				case ObjectKind.Weapon:		return BDatabaseBase.TryGetName(Weapons, id);
-				//case ObjectKind.TacticState:return BDatabaseBase.TryGetName(TacticStates, id);
-				case ObjectKind.Action:		return BDatabaseBase.TryGetName(Actions, id);
+				case ObjectKind.Weapon:		return BDatabaseBase.TryGetNameWithUndefined(Weapons, id);
+				//case ObjectKind.TacticState:return BDatabaseBase.TryGetNameWithUndefined(TacticStates, id);
+				case ObjectKind.Action:		return BDatabaseBase.TryGetNameWithUndefined(Actions, id);
 
 				default: throw new Debug.UnreachableException(kind.ToString());
 			}

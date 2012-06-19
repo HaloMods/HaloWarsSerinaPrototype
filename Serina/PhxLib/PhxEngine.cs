@@ -108,5 +108,41 @@ namespace PhxLib
 
 			return true;
 		}
+
+		public void ReadDataFilesAsync<TContext>(ContentStorage loc, GameDirectory game_dir, string search_pat,
+			Action<KSoft.IO.XmlElementStream, FA, TContext> stream_proc, TContext ctxt,
+			out System.Threading.Tasks.ParallelLoopResult result)
+		{
+			Contract.Requires(!string.IsNullOrEmpty(search_pat));
+			Contract.Requires(stream_proc != null);
+
+			result = System.Threading.Tasks.Parallel.ForEach(Directories.GetFiles(loc, game_dir, search_pat), (filename) =>
+			{
+				const FA k_mode = FA.Read;
+
+				using (var s = new KSoft.IO.XmlElementStream(filename, k_mode, this))
+				{
+					SetupStream(s);
+					stream_proc(s, k_mode, ctxt);
+				}
+			});
+		}
+		public void ReadDataFilesAsync(ContentStorage loc, GameDirectory game_dir, string search_pat,
+			Action<KSoft.IO.XmlElementStream, FA> stream_proc,
+			out System.Threading.Tasks.ParallelLoopResult result)
+		{
+			Contract.Requires(!string.IsNullOrEmpty(search_pat));
+
+			result = System.Threading.Tasks.Parallel.ForEach(Directories.GetFiles(loc, game_dir, search_pat), (filename) =>
+			{
+				const FA k_mode = FA.Read;
+
+				using (var s = new KSoft.IO.XmlElementStream(filename, k_mode, this))
+				{
+					SetupStream(s);
+					stream_proc(s, k_mode);
+				}
+			});
+		}
 	};
 }
