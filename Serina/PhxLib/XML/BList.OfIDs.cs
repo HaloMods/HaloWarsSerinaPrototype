@@ -156,7 +156,7 @@ namespace PhxLib.XML
 
 			mParams.kStreamID(s, FA.Read, xs, mParams, mStreamCtxt, ref id);
 
-			mList.Add(id);
+			mList.AddItem(id);
 		}
 
 		protected override void ReadXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)

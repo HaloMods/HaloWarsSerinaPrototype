@@ -213,7 +213,7 @@ namespace PhxLib.XML
 			T item = new T();
 			item.StreamXml(s, FA.Read, xs);
 
-			List.Add(item);
+			List.AddItem(item);
 		}
 
 		protected override void WriteXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs, T data)

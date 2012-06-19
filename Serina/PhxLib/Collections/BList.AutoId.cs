@@ -56,6 +56,7 @@ namespace PhxLib.Collections
 		public BListAutoId()
 		{
 			kUnregisteredMessage = BuildUnRegisteredMsg();
+			UndefinedInterface = new ProtoEnumWithUndefinedImpl(this);
 		}
 
 		#region Database interfaces
@@ -69,7 +70,7 @@ namespace PhxLib.Collections
 		{
 			PreAdd(item, item_name, id);
 			if (m_dbi != null) m_dbi.Add(item.Data, item);
-			base.Add(item);
+			base.AddItem(item);
 
 			return item.AutoID;
 		}
@@ -82,9 +83,13 @@ namespace PhxLib.Collections
 		#endregion
 
 		#region IProtoEnum Members
-		internal int GetMemberIndexByName(string member_name)
+		public int TryGetMemberId(string member_name)
 		{
-			return FindIndex(n => Util.StrEqualsIgnoreCase(n.Data, member_name));
+			return mList.FindIndex(n => Util.StrEqualsIgnoreCase(n.Data, member_name));
+		}
+		public string TryGetMemberName(int member_id)
+		{
+			return IsValidMemberId(member_id) ? GetMemberName(member_id) : null;
 		}
 		public bool IsValidMemberId(int member_id)
 		{
@@ -92,14 +97,14 @@ namespace PhxLib.Collections
 		}
 		public bool IsValidMemberName(string member_name)
 		{
-			int index = GetMemberIndexByName(member_name);
+			int index = TryGetMemberId(member_name);
 
 			return index != -1;
 		}
 
 		public int GetMemberId(string member_name)
 		{
-			int index = GetMemberIndexByName(member_name);
+			int index = TryGetMemberId(member_name);
 
 			if (index == -1)
 				throw new ArgumentException(kUnregisteredMessage, member_name);
@@ -113,5 +118,12 @@ namespace PhxLib.Collections
 
 		public int MemberCount { get { return Count; } }
 		#endregion
+
+		internal IProtoEnumWithUndefined UndefinedInterface { get; private set; }
+
+		internal void Sort(Comparison<T> comparison)
+		{
+			mList.Sort(comparison);
+		}
 	};
 }

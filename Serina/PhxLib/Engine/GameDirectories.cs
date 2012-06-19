@@ -183,5 +183,15 @@ namespace PhxLib.Engine
 			else
 				return TryGetFileImpl(loc, game_dir, filename, out file, ext);
 		}
+
+		public IEnumerable<string> GetFiles(ContentStorage loc, GameDirectory game_dir, string search_pat)
+		{
+			Contract.Requires(loc != ContentStorage.UpdateOrGame, "Must iterate storages separately");
+			Contract.Requires(!string.IsNullOrEmpty(search_pat));
+
+			string dir = GetAbsoluteDirectory(loc, game_dir);
+
+			return Directory.GetFiles(dir, search_pat);
+		}
 	};
 }

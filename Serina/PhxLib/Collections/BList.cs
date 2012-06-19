@@ -12,7 +12,7 @@ namespace PhxLib.Collections
 	{
 	};
 
-	public abstract class BListBase<T> : List<T>, IEqualityComparer<BListBase<T>>
+	public abstract class BListBase<T> : /*List<T>,*/ IEqualityComparer<BListBase<T>>, IEnumerable<T>
 	{
 		protected static readonly IEqualityComparer<T> kValueEqualityComparer = EqualityComparer<T>.Default;
 
@@ -42,23 +42,60 @@ namespace PhxLib.Collections
 		};
 		protected static _EqualityComparer kEqualityComparer = new _EqualityComparer();
 
+		protected List<T> mList;
+
 		/// <summary>Parameters that dictate the functionality of this list</summary>
 		public BListParams Params { get; private set; }
 
-		protected BListBase(BListParams @params) : base(@params != null ? @params.InitialCapacity : BCollectionParams.kDefaultCapacity)
+		protected BListBase(int capacity = BCollectionParams.kDefaultCapacity)
+		{
+			mList = new List<T>(capacity);
+		}
+		protected BListBase(BListParams @params) : this(@params != null ? @params.InitialCapacity : BCollectionParams.kDefaultCapacity)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
 
 			Params = @params;
 		}
-		protected BListBase() { }
+
+		#region List interface
+		public int Count { get { return mList.Count; } }
+		internal int Capacity
+		{
+			get { return mList.Capacity; }
+			set { mList.Capacity = value; }
+		}
+
+		public virtual T this[int index]
+		{
+			get { return mList[index]; }
+			set { mList[index] = value; }
+		}
+
+		internal void AddItem(T item)
+		{
+			mList.Add(item);
+		}
+
+		#region IEnumerable<T> Members
+		public IEnumerator<T> GetEnumerator()
+		{
+			return mList.GetEnumerator();
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return mList.GetEnumerator();
+		}
+		#endregion
+		#endregion
 
 		public bool IsEmpty { get { return Count == 0; } }
 		internal void OptimizeStorage()
 		{
 			//if (Count == 0)
 			//	mList = null;
-			this.TrimExcess();
+			mList.TrimExcess();
 		}
 
 		#region IEqualityComparer<BListBase<T>> Members

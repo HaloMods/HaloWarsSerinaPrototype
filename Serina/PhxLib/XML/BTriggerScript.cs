@@ -11,17 +11,6 @@ namespace PhxLib.XML
 {
 	public class BTriggerScriptSerializer : BXmlSerializerInterface
 	{
-		static string GetFileExt(Engine.BTriggerScriptType type)
-		{
-			switch (type)
-			{
-				case Engine.BTriggerScriptType.TriggerScript: return ".triggerscript";
-				case Engine.BTriggerScriptType.Ability: return ".ability";
-				case Engine.BTriggerScriptType.Power: return ".power";
-
-				default: throw new Debug.UnreachableException(type.ToString());
-			}
-		}
 		static PhxEngine.XmlFileInfo GetFileInfo(FA mode, Engine.BTriggerScriptType type, string filename = null)
 		{
 			string root_name = Engine.BTriggerSystem.kXmlRootName;
@@ -104,8 +93,6 @@ namespace PhxLib.XML
 		}
 		public void LoadScenarioScripts(KSoft.IO.XmlElementStream s, FA mode, StreamTriggerScriptContext ctxt)
 		{
-			//var ts = ctxt.Script = new Engine.BTriggerSystem();
-
 			foreach (System.Xml.XmlElement e in s.Cursor)
 			{
 				if (e.Name != Engine.BTriggerSystem.kXmlRootName) continue;
@@ -113,7 +100,6 @@ namespace PhxLib.XML
 				using (s.EnterCursorBookmark(e))
 					new Engine.BTriggerSystem().StreamXml(s, mode, this);
 			}
-			//ts.StreamXml(s, mode, this);
 		}
 	};
 }

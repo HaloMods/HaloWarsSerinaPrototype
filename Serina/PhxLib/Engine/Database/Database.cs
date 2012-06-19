@@ -150,50 +150,9 @@ namespace PhxLib.Engine
 			Leaders.SetupDatabaseInterface(out m_dbiLeaders);
 		}
 
-		bool DataStoreIsReady(DatabaseTypeKind kind)
-		{
-			System.Collections.ICollection coll = null;
-
-			switch (kind)
-			{
-				case DatabaseTypeKind.Cost:		coll = GameData.Resources; break;
-				case DatabaseTypeKind.Pop:		coll = GameData.Populations; break;
-				case DatabaseTypeKind.Rate:		coll = GameData.Rates; break;
-
-				default: throw new Debug.UnreachableException(kind.ToString());
-			}
-
-			return coll.Count != 0;
-		}
-		bool DataStoreIsReady(DatabaseObjectKind kind)
-		{
-			System.Collections.ICollection coll = null;
-
-			switch (kind)
-			{
-				case DatabaseObjectKind.Ability:	coll = m_dbiAbilities; break;
-				case DatabaseObjectKind.Civ:		coll = m_dbiCivs; break;
-				case DatabaseObjectKind.DamageType:	coll = m_dbiDamageTypes; break;
-				case DatabaseObjectKind.Leader:		coll = m_dbiLeaders; break;
-				case DatabaseObjectKind.Object:		coll = m_dbiObjects; break;
-				case DatabaseObjectKind.ObjectType:	coll = ObjectTypes; break;
-				case DatabaseObjectKind.Power:		coll = m_dbiPowers; break;
-				case DatabaseObjectKind.Squad:		coll = m_dbiSquads; break;
-				case DatabaseObjectKind.Tech:		coll = m_dbiTechs; break;
-				// TODO: Should just use the Objects DBI AFAICT
-				case DatabaseObjectKind.Unit:		coll = m_dbiObjects; break;
-				case DatabaseObjectKind.UserClass:	coll = m_dbiUserClasses; break;
-				case DatabaseObjectKind.WeaponType:	coll = m_dbiWeaponTypes; break;
-
-				default: throw new Debug.UnreachableException(kind.ToString());
-			}
-
-			return coll.Count != 0;
-		}
-
 		static int TryGetId(Collections.BTypeNames dbi, string name)
 		{
-			return dbi.FindIndex(s => Util.StrEqualsIgnoreCase(s, name));
+			return dbi.TryGetMemberId(name);
 		}
 		static string TryGetName(Collections.BTypeNames dbi, int id)
 		{
@@ -204,7 +163,7 @@ namespace PhxLib.Engine
 		static int TryGetId<T>(Collections.BListAutoId<T> dbi, string name)
 			where T : class, Collections.IListAutoIdObject, new()
 		{
-			return dbi.FindIndex(r => Util.StrEqualsIgnoreCase(r.Data, name));
+			return dbi.TryGetMemberId(name);
 		}
 		internal static string TryGetName<T>(Collections.BListAutoId<T> dbi, int id)
 			where T : class, Collections.IListAutoIdObject, new()
@@ -213,13 +172,42 @@ namespace PhxLib.Engine
 
 			return null;
 		}
-		internal static int TryGetId<T>(Dictionary<string, T> dbi, string name)
-			where T : Collections.IListAutoIdObject
+		internal static int TryGetId<T>(Dictionary<string, T> dbi, string name, Collections.BListAutoId<T> _unused)
+			where T : class, Collections.IListAutoIdObject, new()
 		{
 			int id = Util.kInvalidInt32;
 
 			T obj;
 			if (dbi.TryGetValue(name, out obj)) id = obj.AutoID;
+
+			return id;
+		}
+
+		static int TryGetIdWithUndefined(Collections.BTypeNames dbi, string name)
+		{
+			return dbi.UndefinedInterface.GetMemberIdOrUndefined(name);
+		}
+		static string TryGetNameWithUndefined(Collections.BTypeNames dbi, int id)
+		{
+			return dbi.UndefinedInterface.GetMemberNameOrUndefined(id);
+		}
+		static int TryGetIdWithUndefined<T>(Collections.BListAutoId<T> dbi, string name)
+			where T : class, Collections.IListAutoIdObject, new()
+		{
+			return dbi.UndefinedInterface.GetMemberIdOrUndefined(name);
+		}
+		internal static string TryGetNameWithUndefined<T>(Collections.BListAutoId<T> dbi, int id)
+			where T : class, Collections.IListAutoIdObject, new()
+		{
+			return dbi.UndefinedInterface.GetMemberNameOrUndefined(id);
+		}
+		internal static int TryGetIdWithUndefined<T>(Dictionary<string, T> dbi, string name, Collections.BListAutoId<T> list)
+			where T : class, Collections.IListAutoIdObject, new()
+		{
+			int id = TryGetId(dbi, name, null);
+
+			if (id == Util.kInvalidInt32)
+				id = list.UndefinedInterface.GetMemberIdOrUndefined(name);
 
 			return id;
 		}
@@ -241,7 +229,7 @@ namespace PhxLib.Engine
 
 		int TryGetIdUnit(string name)
 		{
-			int id = TryGetId(m_dbiObjects, name);
+			int id = TryGetIdWithUndefined(m_dbiObjects, name, Objects);
 
 			if (id == Util.kInvalidInt32 && (id = TryGetId(ObjectTypes, name)) != Util.kInvalidInt32)
 				ObjectIdIsObjectTypeBitSet(ref id);
@@ -251,71 +239,79 @@ namespace PhxLib.Engine
 		string TryGetNameUnit(int id)
 		{
 			if (ObjectIdIsObjectTypeBitGet(ref id))
-				return TryGetName(ObjectTypes, id);
-			
-			return TryGetName(Objects, id);
+				return TryGetNameWithUndefined(ObjectTypes, id);
+
+			return TryGetNameWithUndefined(Objects, id);
 		}
 
 		public int GetId(DatabaseTypeKind kind, string name)
 		{
+			Contract.Requires<ArgumentOutOfRangeException>(kind != DatabaseTypeKind.None);
+
 			switch (kind)
 			{
-				case DatabaseTypeKind.Cost:	return TryGetId(GameData.Resources, name);
-				case DatabaseTypeKind.Pop:	return TryGetId(GameData.Populations, name);
-				case DatabaseTypeKind.Rate:	return TryGetId(GameData.Rates, name);
+				case DatabaseTypeKind.Cost:	return TryGetIdWithUndefined(GameData.Resources, name);
+				case DatabaseTypeKind.Pop:	return TryGetIdWithUndefined(GameData.Populations, name);
+				case DatabaseTypeKind.Rate:	return TryGetIdWithUndefined(GameData.Rates, name);
 
 				default: throw new Debug.UnreachableException(kind.ToString());
 			}
 		}
 		public int GetId(DatabaseObjectKind kind, string name)
 		{
+			Contract.Requires<ArgumentOutOfRangeException>(kind != DatabaseObjectKind.None);
+
 			switch (kind)
 			{
-				case DatabaseObjectKind.Ability:	return TryGetId(m_dbiAbilities, name);
-				case DatabaseObjectKind.Civ:		return TryGetId(m_dbiCivs, name);
-				case DatabaseObjectKind.DamageType:	return TryGetId(m_dbiDamageTypes, name);
-				case DatabaseObjectKind.Leader:		return TryGetId(m_dbiLeaders, name);
-				case DatabaseObjectKind.Object:		return TryGetId(m_dbiObjects, name);
-				case DatabaseObjectKind.ObjectType:	return TryGetId(ObjectTypes, name);
-				case DatabaseObjectKind.Power:		return TryGetId(m_dbiPowers, name);
-				case DatabaseObjectKind.Squad:		return TryGetId(m_dbiSquads, name);
-				case DatabaseObjectKind.Tech:		return TryGetId(m_dbiTechs, name);
+				case DatabaseObjectKind.Ability:	return TryGetIdWithUndefined(m_dbiAbilities, name, Abilities);
+				case DatabaseObjectKind.Civ:		return TryGetIdWithUndefined(m_dbiCivs, name, Civs);
+				case DatabaseObjectKind.DamageType:	return TryGetIdWithUndefined(m_dbiDamageTypes, name, DamageTypes);
+				case DatabaseObjectKind.Leader:		return TryGetIdWithUndefined(m_dbiLeaders, name, Leaders);
+				case DatabaseObjectKind.Object:		return TryGetIdWithUndefined(m_dbiObjects, name, Objects);
+				case DatabaseObjectKind.ObjectType:	return TryGetIdWithUndefined(ObjectTypes, name);
+				case DatabaseObjectKind.Power:		return TryGetIdWithUndefined(m_dbiPowers, name, Powers);
+				case DatabaseObjectKind.Squad:		return TryGetIdWithUndefined(m_dbiSquads, name, Squads);
+				case DatabaseObjectKind.Tech:		return TryGetIdWithUndefined(m_dbiTechs, name, Techs);
 				// TODO: Should just use the Objects DBI AFAICT
 				case DatabaseObjectKind.Unit:		return TryGetIdUnit(name);
-				case DatabaseObjectKind.UserClass:	return TryGetId(m_dbiUserClasses, name);
-				case DatabaseObjectKind.WeaponType:	return TryGetId(m_dbiWeaponTypes, name);
+				case DatabaseObjectKind.UserClass:	return TryGetIdWithUndefined(m_dbiUserClasses, name, UserClasses);
+				case DatabaseObjectKind.WeaponType:	return TryGetIdWithUndefined(m_dbiWeaponTypes, name, WeaponTypes);
 
 				default: throw new Debug.UnreachableException(kind.ToString());
 			}
 		}
 		public string GetName(DatabaseTypeKind kind, int id)
 		{
+			Contract.Requires<ArgumentOutOfRangeException>(kind != DatabaseTypeKind.None);
+
 			switch (kind)
 			{
-				case DatabaseTypeKind.Cost:	return TryGetName(GameData.Resources, id);
-				case DatabaseTypeKind.Pop:	return TryGetName(GameData.Populations, id);
-				case DatabaseTypeKind.Rate:	return TryGetName(GameData.Rates, id);
+				case DatabaseTypeKind.Cost:	return TryGetNameWithUndefined(GameData.Resources, id);
+				case DatabaseTypeKind.Pop:	return TryGetNameWithUndefined(GameData.Populations, id);
+				case DatabaseTypeKind.Rate:	return TryGetNameWithUndefined(GameData.Rates, id);
 
 				default: throw new Debug.UnreachableException(kind.ToString());
 			}
 		}
 		public string GetName(DatabaseObjectKind kind, int id)
 		{
+			Contract.Requires<ArgumentOutOfRangeException>(kind != DatabaseObjectKind.None);
+
 			switch (kind)
 			{
-				case DatabaseObjectKind.Ability:	return TryGetName(Abilities, id);
-				case DatabaseObjectKind.Civ:		return TryGetName(Civs, id);
-				case DatabaseObjectKind.DamageType:	return TryGetName(DamageTypes, id);
-				case DatabaseObjectKind.Leader:		return TryGetName(Leaders, id);
-				case DatabaseObjectKind.Object:		return TryGetName(Objects, id);
-				case DatabaseObjectKind.ObjectType:	return TryGetName(ObjectTypes, id);
-				case DatabaseObjectKind.Power:		return TryGetName(Powers, id);
-				case DatabaseObjectKind.Squad:		return TryGetName(Squads, id);
-				case DatabaseObjectKind.Tech:		return TryGetName(Techs, id);
+				case DatabaseObjectKind.Ability:	return TryGetNameWithUndefined(Abilities, id);
+				case DatabaseObjectKind.Civ:		return TryGetNameWithUndefined(Civs, id);
+				case DatabaseObjectKind.DamageType:	return TryGetNameWithUndefined(DamageTypes, id);
+				case DatabaseObjectKind.Leader:		return TryGetNameWithUndefined(Leaders, id);
+				case DatabaseObjectKind.Object:		return TryGetNameWithUndefined(Objects, id);
+				case DatabaseObjectKind.ObjectType:	return TryGetNameWithUndefined(ObjectTypes, id);
+				case DatabaseObjectKind.Power:		return TryGetNameWithUndefined(Powers, id);
+				case DatabaseObjectKind.Squad:		return TryGetNameWithUndefined(Squads, id);
+				case DatabaseObjectKind.Tech:		return TryGetNameWithUndefined(Techs, id);
 				// TODO: Should just use the Objects DBI AFAICT
 				case DatabaseObjectKind.Unit:		return TryGetNameUnit(id);
-				case DatabaseObjectKind.UserClass:	return TryGetName(UserClasses, id);
-				case DatabaseObjectKind.WeaponType:	return TryGetName(WeaponTypes, id);
+				case DatabaseObjectKind.UserClass:	return TryGetNameWithUndefined(UserClasses, id);
+				case DatabaseObjectKind.WeaponType:	return TryGetNameWithUndefined(WeaponTypes, id);
 
 				default: throw new Debug.UnreachableException(kind.ToString());
 			}

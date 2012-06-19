@@ -194,7 +194,7 @@ namespace PhxLib.XML
 			{
 				// The update system in HW is fucked...just because the "update" attribute is true or left out, doesn't mean the value existed before or is not a new value
 				// So just try
-				int idx = mList.GetMemberIndexByName(item_name);
+				int idx = mList.TryGetMemberId(item_name);
 				if (idx != -1)
 				{
 					item = mList[idx];
@@ -236,6 +236,12 @@ namespace PhxLib.XML
 			if (item_name != null) Params.StreamDataName(s, k_mode, ref item_name);
 
 			data.StreamXml(s, k_mode, xs);
+		}
+		protected override void WriteXmlNodes(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)
+		{
+			base.WriteXmlNodes(s, xs);
+
+			ProtoEnumUndefinedMembers.Write(s, mParams, mList.UndefinedInterface);
 		}
 
 		void PreloadXml(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xs)

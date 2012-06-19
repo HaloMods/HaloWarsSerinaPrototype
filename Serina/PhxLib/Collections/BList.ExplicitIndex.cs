@@ -50,7 +50,7 @@ namespace PhxLib.Collections
 			var eip = ExplicitIndexParams;
 
 			for (int x = Count; x < new_count; x++)
-				base.Add(eip.kTypeGetInvalid());
+				AddItem(eip.kTypeGetInvalid());
 		}
 
 		internal void InitializeItem(int index)
@@ -63,7 +63,7 @@ namespace PhxLib.Collections
 			{
 				// expand the list up-to the requested index
 				for (int x = Count; x <= index; x++)
-					base.Add(eip.kTypeGetInvalid());
+					AddItem(eip.kTypeGetInvalid());
 			}
 			else
 				base[index] = eip.kTypeGetInvalid();
