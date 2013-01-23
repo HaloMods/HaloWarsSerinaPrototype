@@ -7,11 +7,11 @@ namespace PhxLib.XML
 		protected virtual void FixWeaponTypes() {}
 
 		protected static XmlNode XPathSelectNodeByName(KSoft.IO.XmlElementStream s, XML.BListXmlParams op, 
-			string data_name, string attr_name = Engine.DatabaseNamedObject.kXmlAttrName)
+			string dataName, string attributeName = Engine.DatabaseNamedObject.kXmlAttrName)
 		{
 			string xpath = string.Format(
 				"/{0}/{1}[@{2}='{3}']",
-				op.RootName, op.ElementName, attr_name, data_name);
+				op.RootName, op.ElementName, attributeName, dataName);
 			return s.Document.SelectSingleNode(xpath);
 		}
 
@@ -24,10 +24,10 @@ namespace PhxLib.XML
 
 		protected virtual void FixTechsXml(KSoft.IO.XmlElementStream s) {}
 
-		protected static void FixTacticsTraceFixEvent(string tactic_name, string xpath)
+		protected static void FixTacticsTraceFixEvent(string tacticName, string xpath)
 		{
 			Debug.Trace.XML.TraceEvent(System.Diagnostics.TraceEventType.Warning, -1,
-					"Fixing Tactic '{0}' with XPath={1}", tactic_name, xpath);
+					"Fixing Tactic '{0}' with XPath={1}", tacticName, xpath);
 		}
 		protected virtual void FixTacticsXml(KSoft.IO.XmlElementStream s, string name) {}
 	};

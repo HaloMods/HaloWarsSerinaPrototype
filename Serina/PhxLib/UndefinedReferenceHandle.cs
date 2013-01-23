@@ -19,18 +19,18 @@ namespace PhxLib
 
 			return (uhandle & kUndefinedReferenceHandleBitmask) != 0;
 		}
-		public static HandleWord GetUndefinedReferenceDataIndex(HandleWord undefined_ref_handle)
+		public static HandleWord GetUndefinedReferenceDataIndex(HandleWord undefinedRefHandle)
 		{
-			HandleWordUnsigned uhandle = (HandleWordUnsigned)undefined_ref_handle;
+			HandleWordUnsigned uhandle = (HandleWordUnsigned)undefinedRefHandle;
 
 			return (HandleWord)(uhandle & ~kUndefinedReferenceHandleBitmask);
 		}
-		public static HandleWord GetUndefinedReferenceHandle(HandleWord undefined_ref_data_index)
+		public static HandleWord GetUndefinedReferenceHandle(HandleWord undefinedRefDataIndex)
 		{
-			Contract.Requires(undefined_ref_data_index < HandleWord.MaxValue,
+			Contract.Requires(undefinedRefDataIndex < HandleWord.MaxValue,
 				"Index value would generate a handle that matches the general invalid-handle sentinel");
 
-			HandleWordUnsigned index = (HandleWordUnsigned)undefined_ref_data_index;
+			HandleWordUnsigned index = (HandleWordUnsigned)undefinedRefDataIndex;
 
 			return (HandleWord)(index | kUndefinedReferenceHandleBitmask);
 		}

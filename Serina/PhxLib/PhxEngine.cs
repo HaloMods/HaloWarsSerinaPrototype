@@ -46,11 +46,11 @@ namespace PhxLib
 			s.InitializeAtRootElement();
 		}
 		public bool TryStreamData<TContext>(XmlFileInfo xfi, FA mode,
-			Action<KSoft.IO.XmlElementStream, FA, TContext> stream_proc, TContext ctxt,
+			Action<KSoft.IO.XmlElementStream, FA, TContext> streamProc, TContext ctxt,
 			string ext = null)
 		{
 			Contract.Requires(xfi != null);
-			Contract.Requires(stream_proc != null);
+			Contract.Requires(streamProc != null);
 
 			System.IO.FileInfo file;
 			bool result = Directories.TryGetFile(xfi.Location, xfi.Directory, xfi.FileName, out file, ext);
@@ -62,7 +62,7 @@ namespace PhxLib
 				using (var s = new KSoft.IO.XmlElementStream(file.FullName, mode, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, ctxt);
+					streamProc(s, mode, ctxt);
 				}
 			}
 			else if (mode == FA.Write)
@@ -70,7 +70,7 @@ namespace PhxLib
 				if(xfi.Writable) using (var s = KSoft.IO.XmlElementStream.CreateForWrite(xfi.RootName, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode, ctxt);
+					streamProc(s, mode, ctxt);
 					s.Document.Save(file.FullName);
 				}
 			}
@@ -78,10 +78,10 @@ namespace PhxLib
 			return true;
 		}
 		public bool TryStreamData(XmlFileInfo xfi, FA mode,
-			Action<KSoft.IO.XmlElementStream, FA> stream_proc, string ext = null)
+			Action<KSoft.IO.XmlElementStream, FA> streamProc, string ext = null)
 		{
 			Contract.Requires(xfi != null);
-			Contract.Requires(stream_proc != null);
+			Contract.Requires(streamProc != null);
 
 			System.IO.FileInfo file;
 			bool result = Directories.TryGetFile(xfi.Location, xfi.Directory, xfi.FileName, out file, ext);
@@ -93,7 +93,7 @@ namespace PhxLib
 				using (var s = new KSoft.IO.XmlElementStream(file.FullName, mode, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode);
+					streamProc(s, mode);
 				}
 			}
 			else if (mode == FA.Write)
@@ -101,7 +101,7 @@ namespace PhxLib
 				if(xfi.Writable) using (var s = KSoft.IO.XmlElementStream.CreateForWrite(xfi.RootName, this))
 				{
 					SetupStream(s);
-					stream_proc(s, mode);
+					streamProc(s, mode);
 					s.Document.Save(file.FullName);
 				}
 			}
@@ -109,38 +109,38 @@ namespace PhxLib
 			return true;
 		}
 
-		public void ReadDataFilesAsync<TContext>(ContentStorage loc, GameDirectory game_dir, string search_pat,
-			Action<KSoft.IO.XmlElementStream, FA, TContext> stream_proc, TContext ctxt,
+		public void ReadDataFilesAsync<TContext>(ContentStorage loc, GameDirectory gameDir, string searchPattern,
+			Action<KSoft.IO.XmlElementStream, FA, TContext> streamProc, TContext ctxt,
 			out System.Threading.Tasks.ParallelLoopResult result)
 		{
-			Contract.Requires(!string.IsNullOrEmpty(search_pat));
-			Contract.Requires(stream_proc != null);
+			Contract.Requires(!string.IsNullOrEmpty(searchPattern));
+			Contract.Requires(streamProc != null);
 
-			result = System.Threading.Tasks.Parallel.ForEach(Directories.GetFiles(loc, game_dir, search_pat), (filename) =>
+			result = System.Threading.Tasks.Parallel.ForEach(Directories.GetFiles(loc, gameDir, searchPattern), (filename) =>
 			{
 				const FA k_mode = FA.Read;
 
 				using (var s = new KSoft.IO.XmlElementStream(filename, k_mode, this))
 				{
 					SetupStream(s);
-					stream_proc(s, k_mode, ctxt);
+					streamProc(s, k_mode, ctxt);
 				}
 			});
 		}
-		public void ReadDataFilesAsync(ContentStorage loc, GameDirectory game_dir, string search_pat,
-			Action<KSoft.IO.XmlElementStream, FA> stream_proc,
+		public void ReadDataFilesAsync(ContentStorage loc, GameDirectory gameDir, string searchPattern,
+			Action<KSoft.IO.XmlElementStream, FA> streamProc,
 			out System.Threading.Tasks.ParallelLoopResult result)
 		{
-			Contract.Requires(!string.IsNullOrEmpty(search_pat));
+			Contract.Requires(!string.IsNullOrEmpty(searchPattern));
 
-			result = System.Threading.Tasks.Parallel.ForEach(Directories.GetFiles(loc, game_dir, search_pat), (filename) =>
+			result = System.Threading.Tasks.Parallel.ForEach(Directories.GetFiles(loc, gameDir, searchPattern), (filename) =>
 			{
 				const FA k_mode = FA.Read;
 
 				using (var s = new KSoft.IO.XmlElementStream(filename, k_mode, this))
 				{
 					SetupStream(s);
-					stream_proc(s, k_mode);
+					streamProc(s, k_mode);
 				}
 			});
 		}

@@ -38,14 +38,14 @@ namespace PhxLib.XML
 	partial class Util
 	{
 		public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
-			Collections.BTypeNames list, BListXmlParams @params, bool force_no_root_element_streaming = false)
+			Collections.BTypeNames list, BListXmlParams @params, bool forceNoRootElementStreaming = false)
 		{
 			Contract.Requires(s != null);
 			Contract.Requires(xsi != null);
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
-			if (force_no_root_element_streaming) @params.SetForceNoRootElementStreaming(true);
+			if (forceNoRootElementStreaming) @params.SetForceNoRootElementStreaming(true);
 			using(var xs = 
 #if NO_TLS_STREAMING
 				new BTypeNamesXmlSerializer(@params, list)
@@ -56,7 +56,7 @@ namespace PhxLib.XML
 			{
 				xs.StreamXml(s, mode, xsi);
 			}
-			if (force_no_root_element_streaming) @params.SetForceNoRootElementStreaming(false);
+			if (forceNoRootElementStreaming) @params.SetForceNoRootElementStreaming(false);
 		}
 
 		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
@@ -229,12 +229,12 @@ namespace PhxLib.XML
 	public class BTypeValuesXmlParams<T> : BListExplicitIndexXmlParams<T>
 	{
 		/// <summary>Sets ElementName and DataName (which defaults to XML attribute usage)</summary>
-		/// <param name="element_name"></param>
-		/// <param name="type_name">Name of the xml node which represents the type (enum) value</param>
-		public BTypeValuesXmlParams(string element_name, string type_name, BCollectionXmlParamsFlags flags = 0)
+		/// <param name="elementName"></param>
+		/// <param name="typeName">Name of the xml node which represents the type (enum) value</param>
+		public BTypeValuesXmlParams(string elementName, string typeName, BCollectionXmlParamsFlags flags = 0)
 		{
-			ElementName = element_name;
-			DataName = type_name;
+			ElementName = elementName;
+			DataName = typeName;
 			Flags = flags;
 		}
 	};
@@ -484,14 +484,14 @@ namespace PhxLib.XML
 		/*readonly*/ string kAttrName;
 
 #if NO_TLS_STREAMING
-		public BTypeValuesSingleAttrHackXmlSerializer(BTypeValuesXmlParams<float> @params, Collections.BTypeValuesSingle list, string attr_name)
+		public BTypeValuesSingleAttrHackXmlSerializer(BTypeValuesXmlParams<float> @params, Collections.BTypeValuesSingle list, string attributeName)
 			: base(@params, list)
 		{
 			Contract.Requires<ArgumentNullException>(@params != null);
 			Contract.Requires<ArgumentNullException>(list != null);
-			Contract.Requires<ArgumentNullException>(attr_name != null);
+			Contract.Requires<ArgumentNullException>(attributeName != null);
 
-			kAttrName = attr_name;
+			kAttrName = attributeName;
 		}
 #endif
 

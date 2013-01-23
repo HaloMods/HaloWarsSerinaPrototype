@@ -65,11 +65,11 @@ namespace PhxLib.XML
 
 		public BListXmlParams() { }
 		/// <summary>Sets RootName to plural of ElementName and sets UseInnerTextForData</summary>
-		/// <param name="element_name"></param>
-		/// <param name="additional_flags"></param>
-		public BListXmlParams(string element_name, BCollectionXmlParamsFlags additional_flags = 0) : base(element_name)
+		/// <param name="elementName"></param>
+		/// <param name="additionalFlags"></param>
+		public BListXmlParams(string elementName, BCollectionXmlParamsFlags additionalFlags = 0) : base(elementName)
 		{
-			Flags = additional_flags;
+			Flags = additionalFlags;
 			Flags |= BCollectionXmlParamsFlags.UseInnerTextForData;
 		}
 

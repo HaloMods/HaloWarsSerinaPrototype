@@ -61,20 +61,20 @@ namespace PhxLib.XML
 			PhxLib.Util.DisposeAndNull(ref mTechsSerializer);
 		}
 
-		public bool StreamXmlTactic(KSoft.IO.XmlElementStream s, FA mode, string xml_name, Engine.BProtoObject obj, 
-			ref bool was_streamed, XmlNodeType xml_source = Util.kSourceElement)
+		public bool StreamXmlTactic(KSoft.IO.XmlElementStream s, FA mode, string xmlName, Engine.BProtoObject obj, 
+			ref bool wasStreamed, XmlNodeType xmlSource = Util.kSourceElement)
 		{
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xml_source));
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xml_source) == (xml_name != null));
+			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xmlSource));
+			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xmlSource) == (xmlName != null));
 
 			string id_name = null;
 			bool to_lower = false;
 
 			if (mode == FA.Read)
 			{
-				was_streamed = Util.StreamStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
+				wasStreamed = Util.StreamStringOpt(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 
-				if (was_streamed)
+				if (wasStreamed)
 				{
 					id_name = System.IO.Path.GetFileNameWithoutExtension(id_name);
 
@@ -82,13 +82,13 @@ namespace PhxLib.XML
 					TacticsMap[id_name] = null;
 				}
 			}
-			else if (mode == FA.Write && was_streamed)
+			else if (mode == FA.Write && wasStreamed)
 			{
 				id_name = obj.Name + Engine.BTacticData.kFileExt;
-				Util.StreamStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
+				Util.StreamStringOpt(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 			}
 
-			return was_streamed;
+			return wasStreamed;
 		}
 	};
 }

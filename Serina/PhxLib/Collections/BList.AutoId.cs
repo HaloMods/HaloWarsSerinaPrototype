@@ -61,59 +61,59 @@ namespace PhxLib.Collections
 
 		#region Database interfaces
 		/// <remarks>Mainly a hack for adding new items dynamically</remarks>
-		void PreAdd(T item, string item_name, int id = Util.kInvalidInt32)
+		void PreAdd(T item, string itemName, int id = Util.kInvalidInt32)
 		{
 			item.AutoID = id != Util.kInvalidInt32 ? id : Count;
-			if (item_name != null) item.Data = item_name;
+			if (itemName != null) item.Data = itemName;
 		}
-		internal int DynamicAdd(T item, string item_name, int id = Util.kInvalidInt32)
+		internal int DynamicAdd(T item, string itemName, int id = Util.kInvalidInt32)
 		{
-			PreAdd(item, item_name, id);
-			if (m_dbi != null) m_dbi.Add(item.Data, item);
+			PreAdd(item, itemName, id);
+			if (mDBI != null) mDBI.Add(item.Data, item);
 			base.AddItem(item);
 
 			return item.AutoID;
 		}
 
-		Dictionary<string, T> m_dbi;
+		Dictionary<string, T> mDBI;
 		internal void SetupDatabaseInterface(out Dictionary<string, T> dbi)
 		{
-			m_dbi = dbi = new Dictionary<string, T>(Params != null ? Params.InitialCapacity : BCollectionParams.kDefaultCapacity);
+			mDBI = dbi = new Dictionary<string, T>(Params != null ? Params.InitialCapacity : BCollectionParams.kDefaultCapacity);
 		}
 		#endregion
 
 		#region IProtoEnum Members
-		public int TryGetMemberId(string member_name)
+		public int TryGetMemberId(string memberName)
 		{
-			return mList.FindIndex(n => Util.StrEqualsIgnoreCase(n.Data, member_name));
+			return mList.FindIndex(n => Util.StrEqualsIgnoreCase(n.Data, memberName));
 		}
-		public string TryGetMemberName(int member_id)
+		public string TryGetMemberName(int memberId)
 		{
-			return IsValidMemberId(member_id) ? GetMemberName(member_id) : null;
+			return IsValidMemberId(memberId) ? GetMemberName(memberId) : null;
 		}
-		public bool IsValidMemberId(int member_id)
+		public bool IsValidMemberId(int memberId)
 		{
-			return member_id >= 0 && member_id < Count;
+			return memberId >= 0 && memberId < Count;
 		}
-		public bool IsValidMemberName(string member_name)
+		public bool IsValidMemberName(string memberName)
 		{
-			int index = TryGetMemberId(member_name);
+			int index = TryGetMemberId(memberName);
 
 			return index != -1;
 		}
 
-		public int GetMemberId(string member_name)
+		public int GetMemberId(string memberName)
 		{
-			int index = TryGetMemberId(member_name);
+			int index = TryGetMemberId(memberName);
 
 			if (index == -1)
-				throw new ArgumentException(kUnregisteredMessage, member_name);
+				throw new ArgumentException(kUnregisteredMessage, memberName);
 
 			return index;
 		}
-		public string GetMemberName(int member_id)
+		public string GetMemberName(int memberId)
 		{
-			return this[member_id].Data;
+			return this[memberId].Data;
 		}
 
 		public int MemberCount { get { return Count; } }

@@ -160,9 +160,9 @@ namespace PhxLib.HaloWars
 				e.RemoveAttribute(kAttrNameOld);
 			}
 		}
-		static void FixSquadsXmlAphaUndefinedObjects(KSoft.IO.XmlElementStream s, params string[] squad_names)
+		static void FixSquadsXmlAphaUndefinedObjects(KSoft.IO.XmlElementStream s, params string[] squadNames)
 		{
-			foreach (string name in squad_names)
+			foreach (string name in squadNames)
 			{
 				var node = XPathSelectNodeByName(s, BProtoSquad.kBListXmlParams, name);
 				if (node != null) node.ParentNode.RemoveChild(node);

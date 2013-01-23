@@ -11,19 +11,19 @@ namespace PhxLib.Collections
 	public interface IProtoEnum
 	{
 		[Contracts.Pure]
-		int TryGetMemberId(string member_name);
+		int TryGetMemberId(string memberName);
 		[Contracts.Pure]
-		string TryGetMemberName(int member_id);
+		string TryGetMemberName(int memberId);
 
 		[Contracts.Pure]
-		bool IsValidMemberId(int member_id);
+		bool IsValidMemberId(int memberId);
 		[Contracts.Pure]
-		bool IsValidMemberName(string member_name);
+		bool IsValidMemberName(string memberName);
 
 		[Contracts.Pure]
-		int GetMemberId(string member_name);
+		int GetMemberId(string memberName);
 		[Contracts.Pure]
-		string GetMemberName(int member_id);
+		string GetMemberName(int memberId);
 
 		/// <summary>Number of members</summary>
 		[Contracts.Pure]
@@ -33,19 +33,19 @@ namespace PhxLib.Collections
 	abstract class IProtoEnumContract : IProtoEnum
 	{
 		#region IProtoEnum Members
-		int IProtoEnum.TryGetMemberId(string member_name)
+		int IProtoEnum.TryGetMemberId(string memberName)
 		{
 			Contract.Ensures(Contract.Result<int>() >= -1);
 
 			throw new NotImplementedException();
 		}
-		public abstract string TryGetMemberName(int member_id);
-		public abstract bool IsValidMemberId(int member_id);
-		public abstract bool IsValidMemberName(string member_name);
-		public abstract int GetMemberId(string member_name);
-		string IProtoEnum.GetMemberName(int member_id)
+		public abstract string TryGetMemberName(int memberId);
+		public abstract bool IsValidMemberId(int memberId);
+		public abstract bool IsValidMemberName(string memberName);
+		public abstract int GetMemberId(string memberName);
+		string IProtoEnum.GetMemberName(int memberId)
 		{
-			Contract.Requires<ArgumentOutOfRangeException>(IsValidMemberId(member_id));
+			Contract.Requires<ArgumentOutOfRangeException>(IsValidMemberId(memberId));
 
 			throw new NotImplementedException();
 		}
@@ -63,12 +63,12 @@ namespace PhxLib.Collections
 	[Contracts.ContractClass(typeof(IProtoEnumWithUndefinedContract))]
 	public interface IProtoEnumWithUndefined : IProtoEnum
 	{
-		int TryGetMemberIdOrUndefined(string member_name);
+		int TryGetMemberIdOrUndefined(string memberName);
 
 		[Contracts.Pure]
-		int GetMemberIdOrUndefined(string member_name);
+		int GetMemberIdOrUndefined(string memberName);
 		[Contracts.Pure]
-		string GetMemberNameOrUndefined(int member_id);
+		string GetMemberNameOrUndefined(int memberId);
 
 		/// <summary>Number of members that are undefined</summary>
 		[Contracts.Pure]
@@ -79,16 +79,19 @@ namespace PhxLib.Collections
 	[Contracts.ContractClassFor(typeof(IProtoEnumWithUndefined))]
 	abstract class IProtoEnumWithUndefinedContract : IProtoEnumWithUndefined
 	{
-		public abstract int TryGetMemberId(string member_name);
-		public abstract string TryGetMemberName(int member_id);
-		public abstract bool IsValidMemberId(int member_id);
-		public abstract bool IsValidMemberName(string member_name);
-		public abstract int GetMemberId(string member_name);
-		public abstract string GetMemberName(int member_id);
+		#region IProtoEnum Members
+		public abstract int TryGetMemberId(string memberName);
+		public abstract string TryGetMemberName(int memberId);
+		public abstract bool IsValidMemberId(int memberId);
+		public abstract bool IsValidMemberName(string memberName);
+		public abstract int GetMemberId(string memberName);
+		public abstract string GetMemberName(int memberId);
 		public abstract int MemberCount { get; }
+		#endregion
 
-		public abstract int TryGetMemberIdOrUndefined(string member_name);
-		public abstract int GetMemberIdOrUndefined(string member_name);
+		#region IProtoEnumWithUndefined
+		public abstract int TryGetMemberIdOrUndefined(string memberName);
+		public abstract int GetMemberIdOrUndefined(string memberName);
 		public abstract string GetMemberNameOrUndefined(int member_id);
 
 		int IProtoEnumWithUndefined.MemberUndefinedCount { get {
@@ -100,7 +103,9 @@ namespace PhxLib.Collections
 			Contract.Ensures(Contract.Result<IEnumerable<string>>() != null);
 
 			throw new NotImplementedException();
-		} }
+		}
+		}
+		#endregion
 	};
 	#endregion
 
@@ -122,23 +127,23 @@ namespace PhxLib.Collections
 		}
 
 		#region IProtoEnum Members
-		public int TryGetMemberId(string member_name)		{ return mRoot.TryGetMemberId(member_name); }
-		public string TryGetMemberName(int member_id)		{ return mRoot.TryGetMemberName(member_id); }
-		public bool IsValidMemberId(int member_id)			{ return mRoot.IsValidMemberId(member_id); }
-		public bool IsValidMemberName(string member_name)	{ return mRoot.IsValidMemberName(member_name); }
-		public int GetMemberId(string member_name)			{ return mRoot.GetMemberId(member_name); }
-		public string GetMemberName(int member_id)			{ return mRoot.GetMemberName(member_id); }
+		public int TryGetMemberId(string memberName)		{ return mRoot.TryGetMemberId(memberName); }
+		public string TryGetMemberName(int memberId)		{ return mRoot.TryGetMemberName(memberId); }
+		public bool IsValidMemberId(int memberId)			{ return mRoot.IsValidMemberId(memberId); }
+		public bool IsValidMemberName(string memberName)	{ return mRoot.IsValidMemberName(memberName); }
+		public int GetMemberId(string memberName)			{ return mRoot.GetMemberId(memberName); }
+		public string GetMemberName(int memberId)			{ return mRoot.GetMemberName(memberId); }
 		public int MemberCount						{ get	{ return mRoot.MemberCount; } }
 		#endregion
 
 		#region IProtoEnumWithUndefined Members
-		public int TryGetMemberIdOrUndefined(string member_name)
+		public int TryGetMemberIdOrUndefined(string memberName)
 		{
-			int id = TryGetMemberId(member_name);
+			int id = TryGetMemberId(memberName);
 
 			if (id == -1 && MemberUndefinedCount != 0)
 			{
-				id = mUndefined.FindIndex(str => Util.StrEqualsIgnoreCase(str, member_name));
+				id = mUndefined.FindIndex(str => Util.StrEqualsIgnoreCase(str, memberName));
 				if (id != -1)
 					id = Util.GetUndefinedReferenceHandle(id);
 			}
@@ -146,30 +151,30 @@ namespace PhxLib.Collections
 			return id;
 		}
 
-		public int GetMemberIdOrUndefined(string member_name)
+		public int GetMemberIdOrUndefined(string memberName)
 		{
-			int id = TryGetMemberIdOrUndefined(member_name);
+			int id = TryGetMemberIdOrUndefined(memberName);
 
 			if (id == -1)
 			{
 				InitializeUndefined();
 
 				id = mUndefined.Count;
-				mUndefined.Add(member_name);
+				mUndefined.Add(memberName);
 				id = Util.GetUndefinedReferenceHandle(id);
 			}
 
 			return id;
 		}
 
-		public string GetMemberNameOrUndefined(int member_id)
+		public string GetMemberNameOrUndefined(int memberId)
 		{
 			string name;
 			
-			if(Util.IsUndefinedReferenceHandle(member_id))
-				name = mUndefined[Util.GetUndefinedReferenceDataIndex(member_id)];
+			if(Util.IsUndefinedReferenceHandle(memberId))
+				name = mUndefined[Util.GetUndefinedReferenceDataIndex(memberId)];
 			else
-				name = GetMemberName(member_id);
+				name = GetMemberName(memberId);
 
 			return name;
 		}
@@ -197,37 +202,37 @@ namespace PhxLib.Collections
 		}
 
 		#region IProtoEnum Members
-		public int TryGetMemberId(string member_name)
+		public int TryGetMemberId(string memberName)
 		{
-			return Array.FindIndex(kNames, n => Util.StrEqualsIgnoreCase(n, member_name));
+			return Array.FindIndex(kNames, n => Util.StrEqualsIgnoreCase(n, memberName));
 		}
-		public string TryGetMemberName(int member_id)
+		public string TryGetMemberName(int memberId)
 		{
-			return IsValidMemberId(member_id) ? GetMemberName(member_id) : null;
+			return IsValidMemberId(memberId) ? GetMemberName(memberId) : null;
 		}
-		public bool IsValidMemberId(int member_id)
+		public bool IsValidMemberId(int memberId)
 		{
-			return member_id >= 0 && member_id < kNames.Length;
+			return memberId >= 0 && memberId < kNames.Length;
 		}
-		public bool IsValidMemberName(string member_name)
+		public bool IsValidMemberName(string memberName)
 		{
-			int index = TryGetMemberId(member_name);
+			int index = TryGetMemberId(memberName);
 
 			return index != -1;
 		}
 
-		public int GetMemberId(string member_name)
+		public int GetMemberId(string memberName)
 		{
-			int index = TryGetMemberId(member_name);
+			int index = TryGetMemberId(memberName);
 
 			if (index == -1)
-				throw new ArgumentException(kUnregisteredMessage, member_name);
+				throw new ArgumentException(kUnregisteredMessage, memberName);
 
 			return index;
 		}
-		public string GetMemberName(int member_id)
+		public string GetMemberName(int memberId)
 		{
-			return kNames[member_id];
+			return kNames[memberId];
 		}
 
 		public int MemberCount { get { return kNames.Length; } }
