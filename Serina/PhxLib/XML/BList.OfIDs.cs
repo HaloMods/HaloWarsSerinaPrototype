@@ -77,23 +77,23 @@ namespace PhxLib.XML
 		public readonly StreamDelegate kStreamID;
 		public readonly GetContextDelegate kGetContext;
 
-		public BListOfIDsXmlParams(string element_name, StreamDelegate stream_id, GetContextDelegate get_ctxt = null) : base(element_name)
+		public BListOfIDsXmlParams(string elementName, StreamDelegate streamId, GetContextDelegate getCtxt = null) : base(elementName)
 		{
-			Contract.Requires<ArgumentNullException>(stream_id != null);
+			Contract.Requires<ArgumentNullException>(streamId != null);
 
 			RootName = null;
 			Flags = 0;
 
-			kStreamID = stream_id;
-			kGetContext = get_ctxt;
+			kStreamID = streamId;
+			kGetContext = getCtxt;
 		}
 	};
 	public class BListOfIDsXmlParams : BListOfIDsXmlParams<object>
 	{
-		public BListOfIDsXmlParams(string element_name, StreamDelegate stream_id, GetContextDelegate get_ctxt = null)
-			: base(element_name, stream_id, get_ctxt)
+		public BListOfIDsXmlParams(string elementName, StreamDelegate streamId, GetContextDelegate getCtxt = null)
+			: base(elementName, streamId, getCtxt)
 		{
-			Contract.Requires<ArgumentNullException>(stream_id != null);
+			Contract.Requires<ArgumentNullException>(streamId != null);
 		}
 	};
 

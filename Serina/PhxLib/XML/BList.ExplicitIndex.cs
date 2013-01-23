@@ -53,12 +53,12 @@ namespace PhxLib.XML
 
 		public BListExplicitIndexXmlParams() { }
 		/// <summary>Sets ElementName and sets DataName (defaults to attribute usage)</summary>
-		/// <param name="element_name"></param>
-		/// <param name="index_name"></param>
-		public BListExplicitIndexXmlParams(string element_name, string index_name) : base(element_name)
+		/// <param name="elementName"></param>
+		/// <param name="indexName"></param>
+		public BListExplicitIndexXmlParams(string elementName, string indexName) : base(elementName)
 		{
 			RootName = null;
-			DataName = index_name;
+			DataName = indexName;
 			Flags = 0;
 		}
 

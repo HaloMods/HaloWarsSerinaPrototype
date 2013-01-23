@@ -12,7 +12,9 @@ namespace PhxLib.Collections
 	{
 	};
 
-	public abstract class BListBase<T> : /*List<T>,*/ IEqualityComparer<BListBase<T>>, IEnumerable<T>
+	/// <summary>Our base interface for lists of comparable objects</summary>
+	/// <typeparam name="T">Comparable object's type</typeparam>
+	public abstract class BListBase<T> : IEqualityComparer<BListBase<T>>, IEnumerable<T>
 	{
 		protected static readonly IEqualityComparer<T> kValueEqualityComparer = EqualityComparer<T>.Default;
 
@@ -112,7 +114,7 @@ namespace PhxLib.Collections
 	};
 
 	/// <summary>For an array of items which have no specific order or names</summary>
-	/// <typeparam name="T"></typeparam>
+	/// <typeparam name="T">Game Data's type</typeparam>
 	/// <see cref="Engine.BProtoTechEffect"/>
 	public class BListArray<T> : BListBase<T>
 		where T : IO.IPhxXmlStreamable, new()

@@ -39,7 +39,7 @@ namespace PhxLib.XML
 		}
 
 		public static void Serialize<T>(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
-			Collections.BListAutoId<T> list, BListXmlParams @params, bool force_no_root_element_streaming = false)
+			Collections.BListAutoId<T> list, BListXmlParams @params, bool forceNoRootElementStreaming = false)
 			where T : class, Collections.IListAutoIdObject, new()
 		{
 			Contract.Requires(s != null);
@@ -47,49 +47,49 @@ namespace PhxLib.XML
 			Contract.Requires(list != null);
 			Contract.Requires(@params != null);
 
-			if (force_no_root_element_streaming) @params.SetForceNoRootElementStreaming(true);
+			if (forceNoRootElementStreaming) @params.SetForceNoRootElementStreaming(true);
 			using(var xs = CreateXmlSerializer(list, @params))
 			{
 				xs.StreamXml(s, mode, xsi);
 			}
-			if (force_no_root_element_streaming) @params.SetForceNoRootElementStreaming(false);
+			if (forceNoRootElementStreaming) @params.SetForceNoRootElementStreaming(false);
 		}
 
 		public static void SerializePreload(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xsi,
-			IBListAutoIdXmlSerializer xs, bool force_no_root_element_streaming = false)
+			IBListAutoIdXmlSerializer xs, bool forceNoRootElementStreaming = false)
 		{
 			Contract.Requires(s != null);
 			Contract.Requires(xsi != null);
 			Contract.Requires(xs != null);
 			Contract.Requires(!xs.IsDisposed);
 
-			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(true);
+			if (forceNoRootElementStreaming) xs.Params.SetForceNoRootElementStreaming(true);
 			xs.StreamXmlPreload(s, xsi);
-			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(false);
+			if (forceNoRootElementStreaming) xs.Params.SetForceNoRootElementStreaming(false);
 		}
 		public static void Serialize(KSoft.IO.XmlElementStream s, FA mode, BXmlSerializerInterface xsi,
-			IBListAutoIdXmlSerializer xs, bool force_no_root_element_streaming = false)
+			IBListAutoIdXmlSerializer xs, bool forceNoRootElementStreaming = false)
 		{
 			Contract.Requires(s != null);
 			Contract.Requires(xsi != null);
 			Contract.Requires(xs != null);
 			Contract.Requires(!xs.IsDisposed);
 
-			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(true);
+			if (forceNoRootElementStreaming) xs.Params.SetForceNoRootElementStreaming(true);
 			xs.StreamXml(s, mode, xsi);
-			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(false);
+			if (forceNoRootElementStreaming) xs.Params.SetForceNoRootElementStreaming(false);
 		}
 		public static void SerializeUpdate(KSoft.IO.XmlElementStream s, BXmlSerializerInterface xsi,
-			IBListAutoIdXmlSerializer xs, bool force_no_root_element_streaming = false)
+			IBListAutoIdXmlSerializer xs, bool forceNoRootElementStreaming = false)
 		{
 			Contract.Requires(s != null);
 			Contract.Requires(xsi != null);
 			Contract.Requires(xs != null);
 			Contract.Requires(!xs.IsDisposed);
 
-			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(true);
+			if (forceNoRootElementStreaming) xs.Params.SetForceNoRootElementStreaming(true);
 			xs.StreamXmlUpdate(s, xsi);
-			if (force_no_root_element_streaming) xs.Params.SetForceNoRootElementStreaming(false);
+			if (forceNoRootElementStreaming) xs.Params.SetForceNoRootElementStreaming(false);
 		}
 	};
 

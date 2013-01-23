@@ -64,12 +64,12 @@ namespace PhxLib.XML
 				default: return false;
 			}
 		}
-		public bool StreamXmlForTypeName(KSoft.IO.XmlElementStream s, FA mode, string xml_name, ref int dbid,
+		public bool StreamXmlForTypeName(KSoft.IO.XmlElementStream s, FA mode, string xmlName, ref int dbid,
 			Engine.DatabaseTypeKind kind,
-			bool is_optional = true, XmlNodeType xml_source = Util.kSourceElement)
+			bool isOptional = true, XmlNodeType xmlSource = Util.kSourceElement)
 		{
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xml_source));
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xml_source) == (xml_name != null));
+			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xmlSource));
+			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xmlSource) == (xmlName != null));
 
 			string id_name = null;
 			bool was_streamed = true;
@@ -77,10 +77,10 @@ namespace PhxLib.XML
 
 			if (mode == FA.Read)
 			{
-				if (is_optional)
-					was_streamed = Util.StreamInternStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
+				if (isOptional)
+					was_streamed = Util.StreamInternStringOpt(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 				else
-					Util.StreamInternString(s, mode, xml_name, ref id_name, to_lower, xml_source);
+					Util.StreamInternString(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 
 				if (was_streamed)
 				{
@@ -97,20 +97,20 @@ namespace PhxLib.XML
 				id_name = Database.GetName(kind, dbid);
 				Contract.Assert(!string.IsNullOrEmpty(id_name));
 
-				if (is_optional)
-					Util.StreamInternStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
+				if (isOptional)
+					Util.StreamInternStringOpt(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 				else
-					Util.StreamInternString(s, mode, xml_name, ref id_name, to_lower, xml_source);
+					Util.StreamInternString(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 			}
 
 			return was_streamed;
 		}
-		public bool StreamXmlForDBID(KSoft.IO.XmlElementStream s, FA mode, string xml_name, ref int dbid, 
+		public bool StreamXmlForDBID(KSoft.IO.XmlElementStream s, FA mode, string xmlName, ref int dbid, 
 			Engine.DatabaseObjectKind kind,
-			bool is_optional = true, XmlNodeType xml_source = Util.kSourceElement)
+			bool isOptional = true, XmlNodeType xmlSource = Util.kSourceElement)
 		{
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xml_source));
-			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xml_source) == (xml_name != null));
+			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(xmlSource));
+			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(xmlSource) == (xmlName != null));
 
 			string id_name = null;
 			bool was_streamed = true;
@@ -118,10 +118,10 @@ namespace PhxLib.XML
 
 			if (mode == FA.Read)
 			{
-				if (is_optional)
-					was_streamed = Util.StreamInternStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
+				if (isOptional)
+					was_streamed = Util.StreamInternStringOpt(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 				else
-					Util.StreamInternString(s, mode, xml_name, ref id_name, to_lower, xml_source);
+					Util.StreamInternString(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 
 				if (was_streamed)
 				{
@@ -138,10 +138,10 @@ namespace PhxLib.XML
 				id_name = Database.GetName(kind, dbid);
 				Contract.Assert(!string.IsNullOrEmpty(id_name));
 
-				if (is_optional)
-					Util.StreamInternStringOpt(s, mode, xml_name, ref id_name, to_lower, xml_source);
+				if (isOptional)
+					Util.StreamInternStringOpt(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 				else
-					Util.StreamInternString(s, mode, xml_name, ref id_name, to_lower, xml_source);
+					Util.StreamInternString(s, mode, xmlName, ref id_name, to_lower, xmlSource);
 			}
 
 			return was_streamed;

@@ -27,6 +27,10 @@ namespace PhxLib.Collections
 		}
 	};
 
+	/// <summary>
+	/// Our base interface for lists of comparable objects, whose elements occupy an explicit index
+	/// </summary>
+	/// <typeparam name="T">Comparble object's type</typeparam>
 	public abstract class BListExplicitIndexBase<T> : BListBase<T>
 	{
 		internal BListExplicitIndexParams<T> ExplicitIndexParams { get { return Params as BListExplicitIndexParams<T>; } }
@@ -70,6 +74,10 @@ namespace PhxLib.Collections
 		}
 	};
 
+	/// <summary>
+	/// Our base interface for lists of game data, whose elements occupy an explicit index
+	/// </summary>
+	/// <typeparam name="T">Game Data's type</typeparam>
 	public class BListExplicitIndex<T> : BListExplicitIndexBase<T>
 		where T : IEqualityComparer<T>, IO.IPhxXmlStreamable, new()
 	{

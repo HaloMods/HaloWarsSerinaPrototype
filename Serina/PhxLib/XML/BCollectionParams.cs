@@ -66,33 +66,33 @@ namespace PhxLib.XML
 
 		protected BCollectionXmlParams() {}
 		/// <summary>Sets RootName to plural of ElementName</summary>
-		/// <param name="element_name"></param>
-		protected BCollectionXmlParams(string element_name)
+		/// <param name="elementName"></param>
+		protected BCollectionXmlParams(string elementName)
 		{
-			RootName = element_name + "s";
-			ElementName = element_name;
+			RootName = elementName + "s";
+			ElementName = elementName;
 		}
 
 		#region XmlElementStream util
-		protected static void StreamValue(KSoft.IO.XmlElementStream s, FA mode, string value_name, ref string value, 
-			bool use_inner_text, bool use_element, bool intern_value, bool to_lower)
+		protected static void StreamValue(KSoft.IO.XmlElementStream s, FA mode, string valueName, ref string value, 
+			bool useInnerText, bool useElement, bool internValue, bool toLower)
 		{
-			if (use_inner_text)			s.StreamCursor(mode, ref value);
-			else if (use_element)		s.StreamElement(mode, value_name, ref value);
-			else if (value_name != null)s.StreamAttribute(mode, value_name, ref value);
+			if (useInnerText)			s.StreamCursor(mode, ref value);
+			else if (useElement)		s.StreamElement(mode, valueName, ref value);
+			else if (valueName != null)s.StreamAttribute(mode, valueName, ref value);
 
 			if (mode == FA.Read)
 			{
-				if (to_lower) value = value.ToLowerInvariant();
-				if (intern_value) value = string.Intern(value);
+				if (toLower) value = value.ToLowerInvariant();
+				if (internValue) value = string.Intern(value);
 			}
 		}
-		protected static void StreamValue(KSoft.IO.XmlElementStream s, FA mode, string value_name, ref int value, 
-			bool use_inner_text, bool use_element)
+		protected static void StreamValue(KSoft.IO.XmlElementStream s, FA mode, string valueName, ref int value, 
+			bool useInnerText, bool useElement)
 		{
-			if (use_inner_text)			s.StreamCursor(mode, ref value);
-			else if (use_element)		s.StreamElement(mode, value_name, ref value);
-			else if (value_name != null)s.StreamAttribute(mode, value_name, ref value);
+			if (useInnerText)			s.StreamCursor(mode, ref value);
+			else if (useElement)		s.StreamElement(mode, valueName, ref value);
+			else if (valueName != null)	s.StreamAttribute(mode, valueName, ref value);
 		}
 		#endregion
 	};

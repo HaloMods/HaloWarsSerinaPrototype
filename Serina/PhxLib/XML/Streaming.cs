@@ -14,7 +14,7 @@ namespace PhxLib.XML
 		public const XmlNodeType kSourceCursor = XmlNodeType.Text;
 
 		public static void StreamString(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref string value, bool to_lower, XmlNodeType type = kSourceAttr, bool intern = false)
+			ref string value, bool toLower, XmlNodeType type = kSourceAttr, bool intern = false)
 		{
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(type));
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
@@ -25,12 +25,12 @@ namespace PhxLib.XML
 
 			if (mode == FA.Read)
 			{
-				if (to_lower) value = value.ToLowerInvariant();
+				if (toLower) value = value.ToLowerInvariant();
 				if (intern) value = string.Intern(value);
 			}
 		}
 		public static bool StreamStringOpt(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref string value, bool to_lower, XmlNodeType type = kSourceAttr, bool intern = false)
+			ref string value, bool toLower, XmlNodeType type = kSourceAttr, bool intern = false)
 		{
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(type));
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
@@ -42,7 +42,7 @@ namespace PhxLib.XML
 
 			if (mode == FA.Read && result)
 			{
-				if (to_lower) value = value.ToLowerInvariant();
+				if (toLower) value = value.ToLowerInvariant();
 				if (intern) value = string.Intern(value);
 			}
 
@@ -50,20 +50,20 @@ namespace PhxLib.XML
 		}
 
 		public static void StreamInternString(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref string value, bool to_lower, XmlNodeType type = kSourceAttr)
+			ref string value, bool toLower, XmlNodeType type = kSourceAttr)
 		{
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(type));
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
 
-			StreamString(s, mode, name, ref value, to_lower, type, true);
+			StreamString(s, mode, name, ref value, toLower, type, true);
 		}
 		public static bool StreamInternStringOpt(KSoft.IO.XmlElementStream s, FA mode, string name,
-			ref string value, bool to_lower, XmlNodeType type = kSourceAttr)
+			ref string value, bool toLower, XmlNodeType type = kSourceAttr)
 		{
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceIsValid(type));
 			Contract.Requires(KSoft.IO.XmlElementStream.StreamSourceRequiresName(type) == (name != null));
 
-			return StreamStringOpt(s, mode, name, ref value, to_lower, type, true);
+			return StreamStringOpt(s, mode, name, ref value, toLower, type, true);
 		}
 
 		public static bool StreamElementNamedFlag(KSoft.IO.XmlElementStream s, FA mode, string name,

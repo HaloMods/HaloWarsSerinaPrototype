@@ -55,15 +55,15 @@ namespace PhxLib.Engine
 		bool UpdateDirectoryIsValid { get { return UpdateDirectory != null; } }
 		public bool UseTitleUpdates { get; set; }
 
-		public GameDirectories(string root, string update_root = null)
+		public GameDirectories(string root, string updateRoot = null)
 		{
 			RootDirectory = root;
-			UpdateDirectory = update_root;
+			UpdateDirectory = updateRoot;
 			UseTitleUpdates = true;
 
 			// Leave some breadcrumbs for the programmer in the event that they're confused as why an update file isn't loading.
 			if (!UpdateDirectoryIsValid)
-				Debug.Trace.Engine.TraceInformation("GameDirectories: No matching update directory for '{0}'", update_root);
+				Debug.Trace.Engine.TraceInformation("GameDirectories: No matching update directory for '{0}'", updateRoot);
 
 			Art = kArtPath;//Path.Combine(RootDirectory, kArtPath);
 
@@ -124,34 +124,34 @@ namespace PhxLib.Engine
 				default: throw new NotImplementedException();
 			}
 		}
-		public string GetAbsoluteDirectory(ContentStorage loc, GameDirectory game_dir)
+		public string GetAbsoluteDirectory(ContentStorage loc, GameDirectory gameDir)
 		{
 			string root = GetContentLocation(loc);
-			string dir = GetDirectory(game_dir);
+			string dir = GetDirectory(gameDir);
 			return Path.Combine(root, dir);
 		}
 
-		bool TryGetFileImpl(ContentStorage loc, GameDirectory game_dir, string filename, out FileInfo file, string ext = null)
+		bool TryGetFileImpl(ContentStorage loc, GameDirectory gameDir, string filename, out FileInfo file, string ext = null)
 		{
 			file = null;
 
 			string root = GetContentLocation(loc);
-			string dir = GetDirectory(game_dir);
+			string dir = GetDirectory(gameDir);
 			string file_path = Path.Combine(root, dir, filename);
 			if (!string.IsNullOrEmpty(ext)) file_path += ext;
 
 			return (file = new FileInfo(file_path)).Exists;
 		}
-		bool TryGetFileFromUpdateOrGame(GameDirectory game_dir, string filename, out FileInfo file, string ext = null)
+		bool TryGetFileFromUpdateOrGame(GameDirectory gameDir, string filename, out FileInfo file, string ext = null)
 		{
 			file = null;
 
 			if (!UseTitleUpdates)
-				return TryGetFileImpl(ContentStorage.Game, game_dir, filename, out file, ext);
+				return TryGetFileImpl(ContentStorage.Game, gameDir, filename, out file, ext);
 
 			//////////////////////////////////////////////////////////////////////////
 			// Try to get the file from the TU storage first
-			string dir = GetDirectory(game_dir);
+			string dir = GetDirectory(gameDir);
 			string file_path = Path.Combine(dir, filename);
 			if (!string.IsNullOrEmpty(ext)) file_path += ext;
 
@@ -173,25 +173,25 @@ namespace PhxLib.Engine
 			}
 			return true;
 		}
-		public bool TryGetFile(ContentStorage loc, GameDirectory game_dir, string filename, out FileInfo file, string ext = null)
+		public bool TryGetFile(ContentStorage loc, GameDirectory gameDir, string filename, out FileInfo file, string ext = null)
 		{
 			Contract.Requires(!string.IsNullOrEmpty(filename));
 			file = null;
 
 			if (loc == ContentStorage.UpdateOrGame)
-				return TryGetFileFromUpdateOrGame(game_dir, filename, out file, ext);
+				return TryGetFileFromUpdateOrGame(gameDir, filename, out file, ext);
 			else
-				return TryGetFileImpl(loc, game_dir, filename, out file, ext);
+				return TryGetFileImpl(loc, gameDir, filename, out file, ext);
 		}
 
-		public IEnumerable<string> GetFiles(ContentStorage loc, GameDirectory game_dir, string search_pat)
+		public IEnumerable<string> GetFiles(ContentStorage loc, GameDirectory gameDir, string searchPattern)
 		{
 			Contract.Requires(loc != ContentStorage.UpdateOrGame, "Must iterate storages separately");
-			Contract.Requires(!string.IsNullOrEmpty(search_pat));
+			Contract.Requires(!string.IsNullOrEmpty(searchPattern));
 
-			string dir = GetAbsoluteDirectory(loc, game_dir);
+			string dir = GetAbsoluteDirectory(loc, gameDir);
 
-			return Directory.GetFiles(dir, search_pat);
+			return Directory.GetFiles(dir, searchPattern);
 		}
 	};
 }

@@ -12,22 +12,22 @@ namespace Serina
 	/// <summary>Interaction logic for App.xaml</summary>
 	public partial class App : Application
 	{
-		static bool PathsAreGood(string root, string update, string app_xml, 
-			ref string out_root, ref string out_update, ref string out_app_xml)
+		static bool PathsAreGood(string root, string update, string appXml, 
+			ref string outRoot, ref string outUpdate, ref string outAppXml)
 		{
 			bool exists = IO.Directory.Exists(root) && IO.Directory.Exists(update);
 
 			if (exists)
 			{
-				out_root = root;
-				out_update = update;
-				out_app_xml = app_xml;
+				outRoot = root;
+				outUpdate = update;
+				outAppXml = appXml;
 			}
 			return exists;
 		}
-		static PhxLib.PhxEngine InitializeHaloWars(string game_root, string update_root)
+		static PhxLib.PhxEngine InitializeHaloWars(string gameRoot, string updateRoot)
 		{
-			var hw = PhxLib.PhxEngine.CreateForHaloWars(game_root, update_root);
+			var hw = PhxLib.PhxEngine.CreateForHaloWars(gameRoot, updateRoot);
 			hw.Load();
 			return hw;
 		}

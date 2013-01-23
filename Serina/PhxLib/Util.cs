@@ -67,14 +67,14 @@ namespace PhxLib
 			}
 		}
 
-		public static bool ParseGameTime(string str, out DateTime game_time, out string error_details)
+		public static bool ParseGameTime(string str, out DateTime gameTime, out string errorDetails)
 		{
 			const DateTimeStyles k_styles = DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite | 
 				DateTimeStyles.NoCurrentDateDefault;
 
 			bool result = false;
-			game_time = new DateTime(1, 1, 1);
-			error_details = "";
+			gameTime = new DateTime(1, 1, 1);
+			errorDetails = "";
 
 			if (!str.Contains(':'))
 			{
@@ -82,17 +82,17 @@ namespace PhxLib
 				result = int.TryParse(str, out seconds);
 
 				if (!result)
-					error_details = "Invalid 'seconds' value";
+					errorDetails = "Invalid 'seconds' value";
 				else
-					game_time = game_time.AddSeconds(seconds);
+					gameTime = gameTime.AddSeconds(seconds);
 			}
 			else
 			{
 				result = DateTime.TryParseExact(str, "mm:ss", 
-					System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat, k_styles, out game_time);
+					System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat, k_styles, out gameTime);
 
 				if (!result)
-					error_details = "Invalid 'time' value";
+					errorDetails = "Invalid 'time' value";
 			}
 
 			return result;
